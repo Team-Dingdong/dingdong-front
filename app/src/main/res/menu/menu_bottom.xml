@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/bottom_home"
+        app:showAsAction="ifRoom"
+        android:enabled="true"
+        android:icon="@drawable/ic_home"
+        android:title="home" />
+
+    <item
+        android:id="@+id/bottom_chatting"
+        app:showAsAction="ifRoom"
+        android:enabled="true"
+        android:icon="@drawable/ic_chat"
+        android:title="chat"/>
+
+    <item
+        android:id="@+id/bottom_profile"
+        app:showAsAction="ifRoom"
+        android:enabled="true"
+        android:icon="@drawable/ic_insert_emoticon"
+        android:title="profile"/>
+
+    <item
+        android:id="@+id/bottom_mypage"
+        app:showAsAction="ifRoom"
+        android:enabled="true"
+        android:icon="@drawable/ic_person"
+        android:title="mypage"/>
+
+</menu>
