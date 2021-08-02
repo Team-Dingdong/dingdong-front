@@ -48,6 +48,7 @@ public class ShareListAdpater extends RecyclerView.Adapter<ShareListAdpater.shar
                 .into(holder.image);
         holder.title.setText(share.getTitle());
         holder.price.setText(share.getPrice());
+        holder.date.setText(share.getDate());
 
     }
 
@@ -59,7 +60,7 @@ public class ShareListAdpater extends RecyclerView.Adapter<ShareListAdpater.shar
 
     public class sharelistViewHolder extends RecyclerView.ViewHolder{
 
-        public TextView place, title, hashtags, price, personnel;
+        public TextView place, title, hashtags, price, personnel, date;
         public ImageView image;
 
         public sharelistViewHolder(@NonNull @NotNull View itemView) {
@@ -71,6 +72,7 @@ public class ShareListAdpater extends RecyclerView.Adapter<ShareListAdpater.shar
             hashtags = itemView.findViewById(R.id.tv_hashtag);
             price = itemView.findViewById(R.id.tv_price);
             image = itemView.findViewById(R.id.imageView);
+            date = itemView.findViewById(R.id.tv_date);
         }
     }
 }

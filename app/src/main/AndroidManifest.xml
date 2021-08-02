@@ -3,6 +3,10 @@
     package="org.techtown.dingdong">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+
+    출처: https://satisfactoryplace.tistory.com/149 [만족]
 
     <application
         android:allowBackup="true"
