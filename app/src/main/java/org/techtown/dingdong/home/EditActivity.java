@@ -10,11 +10,17 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -22,14 +28,16 @@ import android.widget.Toast;
 
 import org.techtown.dingdong.R;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class EditActivity extends AppCompatActivity {
 
     private Spinner select_category, select_personnel;
-    private String selected_category;
+    private String selected_category, res_price, res_detail, res_title, res_place, res_hash;
     private int selected_personnel;
     private RecyclerView recycler_image;
+    private EditText et_title, et_detail, et_price, et_hashtags, et_place;
     private ImageButton btn_imgupload;
     ArrayList<Uri> uriList = new ArrayList<>();
     ImageUploadAdapter imageUploadAdapter;
@@ -100,8 +108,81 @@ public class EditActivity extends AppCompatActivity {
 
         recycler_image = findViewById(R.id.image_recycler);
 
+        et_price = findViewById(R.id.et_price);
+        et_hashtags = findViewById(R.id.et_hashtag);
+
+        DecimalFormat df = new DecimalFormat("#,###");
+        res_price = "";
+
+
+        et_price.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(!TextUtils.isEmpty(s.toString()) && !s.toString().equals(res_price)){
+                    res_price = df.format(Double.parseDouble(s.toString().replaceAll(",","")));
+                    et_price.setText(res_price);
+                    et_price.setSelection(res_price.length());
+
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
+        et_hashtags.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                //추후수정
+                
+
+                if(!TextUtils.isEmpty(s.toString()) && !s.toString().equals(res_hash)){
+                    res_hash = s.toString().replaceFirst(" ","\t\t#");
+                    et_hashtags.setText(res_hash);
+                    et_hashtags.setSelection(res_hash.length());
+
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                int cnt = 0;
+                int pos = s.toString().indexOf('#');
+                while( pos != -1) {
+                    cnt++;
+                    pos = s.toString().indexOf('#',pos+1);
+                }
+
+                if(cnt == 5){
+                    InputFilter inputFilter = new InputFilter.LengthFilter(s.toString().length());
+                    InputFilter[] filters = new InputFilter[]{inputFilter};
+                    et_hashtags.setFilters(filters);
+                }
+
+
+            }
+        });
+
 
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
