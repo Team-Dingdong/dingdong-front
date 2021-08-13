@@ -87,7 +87,7 @@ public class Tab4Fragment extends Fragment {
         sharelist_data = new ArrayList<>();
         sharelist_data = sharelist;
         sharelistrecycler.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL, false));
-        shareListAdpater = new ShareListAdpater(sharelist_data);
+        shareListAdpater = new ShareListAdpater(getActivity(), sharelist_data);
         sharelistrecycler.setAdapter(shareListAdpater);
 
     }

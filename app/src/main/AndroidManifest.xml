@@ -15,7 +15,7 @@
         android:theme="@style/Theme.Dingdong">
         <activity android:name=".home.ShareDetailActivity"></activity>
         <activity android:name=".home.EditActivity" />
-        <activity android:name=".chatting.chattingActivity" />
+        <activity android:name=".chatting.ChattingActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
