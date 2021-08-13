@@ -1,5 +1,6 @@
 package org.techtown.dingdong.chatting;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +11,7 @@ import androidx.fragment.app.Fragment;
 
 import org.techtown.dingdong.R;
 
-public class chattingFragment extends Fragment {
+public class ChattingFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -21,7 +22,10 @@ public class chattingFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public chattingFragment() {
+
+    private Button btn_chat;
+
+    public ChattingFragment() {
         // Required empty public constructor
     }
 
@@ -34,8 +38,8 @@ public class chattingFragment extends Fragment {
      * @return A new instance of fragment contentsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static chattingFragment newInstance(String param1, String param2) {
-        chattingFragment fragment = new chattingFragment();
+    public static ChattingFragment newInstance(String param1, String param2) {
+        ChattingFragment fragment = new ChattingFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -59,6 +63,16 @@ public class chattingFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View v = inflater.inflate(R.layout.fragment_chatting, container, false);
+
+
+        btn_chat = v.findViewById(R.id.button);
+
+        btn_chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), ChattingActivity.class));
+            }
+        });
 
         return v;
     }

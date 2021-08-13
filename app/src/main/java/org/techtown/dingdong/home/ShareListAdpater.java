@@ -1,5 +1,7 @@
 package org.techtown.dingdong.home;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,15 +14,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import org.jetbrains.annotations.NotNull;
+import org.techtown.dingdong.MainActivity;
 import org.techtown.dingdong.R;
 
 import java.util.ArrayList;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 public class ShareListAdpater extends RecyclerView.Adapter<ShareListAdpater.sharelistViewHolder> {
 
     private final ArrayList<Share> sharelist;
+    private Context context;
+    Share share;
 
-    public ShareListAdpater(ArrayList<Share> sharelist) {
+    public ShareListAdpater(Context context, ArrayList<Share> sharelist) {
+
+        this.context = context;
         this.sharelist = sharelist;
     }
 
@@ -38,7 +47,7 @@ public class ShareListAdpater extends RecyclerView.Adapter<ShareListAdpater.shar
     @Override
     public void onBindViewHolder(@NonNull @NotNull ShareListAdpater.sharelistViewHolder holder, int position) {
 
-        Share share = sharelist.get(position);
+        share = sharelist.get(position);
 
         holder.place.setText(share.getPlace());
         holder.personnel.setText(Integer.toString(share.getPersonnel_actual()) + "/" + Integer.toString(share.getPersonnel_capacity()));
@@ -65,6 +74,14 @@ public class ShareListAdpater extends RecyclerView.Adapter<ShareListAdpater.shar
 
         public sharelistViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    context.startActivity(new Intent(v.getContext(), ShareDetailActivity.class));
+
+                }
+            });
 
             place = itemView.findViewById(R.id.tv_place);
             title = itemView.findViewById(R.id.tv_title);
