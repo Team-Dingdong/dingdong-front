@@ -8,8 +8,8 @@
 
     <EditText
         android:id="@+id/edt_number_validation"
-        android:layout_width="331dp"
-        android:layout_height="56dp"
+        android:layout_width="340dp"
+        android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="232dp"
@@ -20,13 +20,15 @@
         android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/edittext_border"/>
 
     <Button
         android:id="@+id/btn_validation"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_marginTop="200dp"
+        android:enabled="false"
         android:text="인증번호 확인"
         app:layout_constraintEnd_toEndOf="@+id/edt_number_validation"
         app:layout_constraintStart_toStartOf="@+id/edt_number_validation"
