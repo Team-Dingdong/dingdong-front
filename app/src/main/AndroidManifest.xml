@@ -14,9 +14,7 @@
         android:theme="@style/Theme.Dingdong">
         <activity android:name=".login_register.RegisterActivity"></activity>
 
-        <meta-data
-            android:name="com.google.android.actions"
-            android:resource="@xml/toolbar_dropshadow" />
+
 
         <activity android:name=".login_register.LoginOrRegisterActivity" />
         <activity android:name=".login_register.LoginActivity" />
