@@ -13,9 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Dingdong">
         <activity android:name=".login_register.RegisterActivity"></activity>
-
-
-
         <activity android:name=".login_register.LoginOrRegisterActivity" />
         <activity android:name=".login_register.LoginActivity" />
         <activity android:name=".home.ShareDetailActivity" />
