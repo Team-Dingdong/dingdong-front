@@ -69,7 +69,7 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:src="@drawable/ic_people"></ImageView>
+                        app:srcCompat="@drawable/ic_people"></ImageView>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -120,7 +120,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_alarm">
+                    app:srcCompat="@drawable/ic_alarm">
                 </ImageView>
 
                 <TextView
@@ -141,7 +141,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="#00000000"
-                    android:src="@drawable/btn_keyboard_arrow_right">
+                    app:srcCompat="@drawable/btn_keyboard_arrow_right">
 
                 </ImageButton>
 
@@ -166,7 +166,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="#00000000"
-                    android:src="@drawable/ic_plus">
+                    app:srcCompat="@drawable/ic_plus">
 
                 </ImageButton>
                 
@@ -196,7 +196,7 @@
                         android:layout_marginLeft="8dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/btn_send">
+                        app:srcCompat="@drawable/btn_send">
 
                     </ImageButton>
                     
