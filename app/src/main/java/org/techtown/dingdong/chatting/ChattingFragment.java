@@ -8,53 +8,23 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.techtown.dingdong.R;
 
+import java.util.ArrayList;
+
 public class ChattingFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-
-    private Button btn_chat;
+    private ArrayList<Chat> chats;
+    private ArrayList<ChatRoom> chatRooms;
+    private RecyclerView recyclerView;
+    ChatRoomListAdapter chatRoomListAdapter;
 
     public ChattingFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment contentsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ChattingFragment newInstance(String param1, String param2) {
-        ChattingFragment fragment = new ChattingFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-    private Button button;
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
     }
 
     @Override
@@ -64,16 +34,35 @@ public class ChattingFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_chatting, container, false);
 
+        setDummy();
 
-        btn_chat = v.findViewById(R.id.button);
-
-        btn_chat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getActivity(), ChattingActivity.class));
-            }
-        });
+        recyclerView = v.findViewById(R.id.recycler_chathome);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        chatRoomListAdapter = new ChatRoomListAdapter(getActivity(), chatRooms);
+        recyclerView.setAdapter(chatRoomListAdapter);
 
         return v;
+    }
+
+    public void setDummy(){
+        chats = new ArrayList<>();
+        chats.add(new Chat("안녕하세요 여러분","원선","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
+                "오후 1:30",Boolean.TRUE,ChatType.ViewType.LEFT_CONTENT ));
+        chats.add(new Chat("넵 안녕하세요","다루","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
+                "오후 2:30",Boolean.FALSE,ChatType.ViewType.RIGHT_CONTENT ));
+        chats.add(new Chat("반갑습니다!","다루","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
+                "오후 3:30",Boolean.FALSE,ChatType.ViewType.LEFT_CONTENT ));
+        chats.add(new Chat("반갑습니다!","다루","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
+                "오후 4:30",Boolean.FALSE,ChatType.ViewType.LEFT_CONTENT ));
+        chats.add(new Chat("반갑습니다!","다루","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
+                "오후 5:30",Boolean.FALSE,ChatType.ViewType.LEFT_CONTENT ));
+
+        chatRooms = new ArrayList<>();
+        chatRooms.add(new ChatRoom("https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",chats,"감자를 나누고 싶어요","3"));
+        chatRooms.add(new ChatRoom("https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510_1280.jpg",chats,"양파를 나누고 싶어요","2"));
+        chatRooms.add(new ChatRoom("https://cdn.pixabay.com/photo/2021/08/08/10/34/ocean-6530523__480.jpg",chats,"물을 나누고 싶어요","3"));
+        chatRooms.add(new ChatRoom("https://cdn.pixabay.com/photo/2016/08/11/08/43/potatoes-1585060__480.jpg",chats,"뭐든 나누고 싶어요","2"));
+
+
     }
 }
