@@ -37,7 +37,8 @@ public class EditActivity extends AppCompatActivity {
     private String selected_category, res_price, res_detail, res_title, res_place, res_hash;
     private int selected_personnel;
     private RecyclerView recycler_image;
-    private EditText et_title, et_detail, et_price, et_hashtags, et_place;
+    private EditText et_title, et_detail, et_price, et_place,
+    et_hashtag1, et_hashtag2, et_hashtag3, et_hashtag4, et_hashtag5 ;
     private ImageButton btn_imgupload;
     ArrayList<Uri> uriList = new ArrayList<>();
     ImageUploadAdapter imageUploadAdapter;
@@ -109,7 +110,11 @@ public class EditActivity extends AppCompatActivity {
         recycler_image = findViewById(R.id.image_recycler);
 
         et_price = findViewById(R.id.et_price);
-        et_hashtags = findViewById(R.id.et_hashtag);
+        et_hashtag1 = findViewById(R.id.et_hashtag1);
+        et_hashtag2 = findViewById(R.id.et_hashtag2);
+        et_hashtag3 = findViewById(R.id.et_hashtag3);
+        et_hashtag4 = findViewById(R.id.et_hashtag4);
+        et_hashtag5 = findViewById(R.id.et_hashtag5);
 
         DecimalFormat df = new DecimalFormat("#,###");
         res_price = "";
@@ -138,8 +143,7 @@ public class EditActivity extends AppCompatActivity {
             }
         });
 
-
-        et_hashtags.addTextChangedListener(new TextWatcher() {
+        et_hashtag1.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -148,37 +152,90 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                //추후수정
-                
+            }
 
-                if(!TextUtils.isEmpty(s.toString()) && !s.toString().equals(res_hash)){
-                    res_hash = s.toString().replaceFirst(" ","\t\t#");
-                    et_hashtags.setText(res_hash);
-                    et_hashtags.setSelection(res_hash.length());
-
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 0 ){
+                    et_hashtag2.setEnabled(true);
                 }
+                else{
+                    et_hashtag2.setEnabled(false);
+                }
+
+            }
+        });
+
+
+        et_hashtag2.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
 
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
-                int cnt = 0;
-                int pos = s.toString().indexOf('#');
-                while( pos != -1) {
-                    cnt++;
-                    pos = s.toString().indexOf('#',pos+1);
+                if (s.length() > 0 ){
+                    et_hashtag3.setEnabled(true);
                 }
-
-                if(cnt == 5){
-                    InputFilter inputFilter = new InputFilter.LengthFilter(s.toString().length());
-                    InputFilter[] filters = new InputFilter[]{inputFilter};
-                    et_hashtags.setFilters(filters);
+                else{
+                    et_hashtag3.setEnabled(false);
                 }
-
 
             }
         });
+
+        et_hashtag3.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 0 ){
+                    et_hashtag4.setEnabled(true);
+                }
+                else{
+                    et_hashtag4.setEnabled(false);
+                }
+
+            }
+        });
+
+        et_hashtag4.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 0 ){
+                    et_hashtag5.setEnabled(true);
+                }
+                else{
+                    et_hashtag5.setEnabled(false);
+                }
+
+            }
+        });
+
 
 
     }
@@ -199,14 +256,14 @@ public class EditActivity extends AppCompatActivity {
 
                 imageUploadAdapter = new ImageUploadAdapter(uriList, getApplicationContext());
                 recycler_image.setAdapter(imageUploadAdapter);
-                recycler_image.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
+                recycler_image.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
             }
             else{
                 ClipData clipData = data.getClipData();
                 Log.e("clipData", String.valueOf(clipData.getItemCount()));
 
-                if(clipData.getItemCount() > 3){
+                if(clipData.getItemCount() + uriList.size() > 3){
                     Toast.makeText(getApplicationContext(), "사진은 3장까지 선택 가능합니다.", Toast.LENGTH_LONG).show();
                 }
                 else{
@@ -224,7 +281,7 @@ public class EditActivity extends AppCompatActivity {
 
                     imageUploadAdapter = new ImageUploadAdapter(uriList, getApplicationContext());
                     recycler_image.setAdapter(imageUploadAdapter);
-                    recycler_image.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
+                    recycler_image.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
                 }
             }
         }
