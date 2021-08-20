@@ -12,14 +12,14 @@ import android.view.MenuItem;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.jetbrains.annotations.NotNull;
-import org.techtown.dingdong.chatting.chattingFragment;
+import org.techtown.dingdong.chatting.ChattingFragment;
 import org.techtown.dingdong.home.HomeFragment;
 import org.techtown.dingdong.mypage.myPageFragment;
 import org.techtown.dingdong.profile.profileFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-    chattingFragment chattingFragment;
+    ChattingFragment chattingFragment;
     HomeFragment homeFragment;
     myPageFragment myPageFragment;
     profileFragment profileFragment;
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         homeFragment = new HomeFragment();
-        chattingFragment = new chattingFragment();
+        chattingFragment = new ChattingFragment();
         profileFragment = new profileFragment();
         myPageFragment = new myPageFragment();
 

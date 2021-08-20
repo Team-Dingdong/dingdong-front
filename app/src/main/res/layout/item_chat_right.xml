@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_marginTop="6dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="77dp"
+            android:fontFamily="@font/noto_sans"
+            android:text="오후 12:58"
+            android:textFontWeight="400" />
+
+        <TextView
+            android:id="@+id/chat"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="9dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bgr_chat_right"
+            android:fontFamily="@font/noto_sans"
+            android:paddingHorizontal="21dp"
+            android:paddingVertical="11dp"
+            android:text="감자감자감자감자감자감자"
+            android:textColor="#FFFFFF"
+            android:textFontWeight="400"
+            android:textSize="16dp"
+            android:textStyle="normal" />
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

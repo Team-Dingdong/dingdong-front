@@ -24,4 +24,5 @@ public interface Apiinterface {
 
     @POST("/api/v1/auth")
     Call<Loginitem> LoginRequest(@Body LoginRequest loginRequest);
+
 }

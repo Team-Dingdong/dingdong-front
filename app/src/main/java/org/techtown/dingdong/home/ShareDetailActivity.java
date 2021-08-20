@@ -15,6 +15,7 @@ import org.techtown.dingdong.R;
 public class ShareDetailActivity extends AppCompatActivity {
 
 
+
     private ViewPager2 sliderImageViewPager;
     private LinearLayout layoutIndicator;
     private String[] images = new String[]{

@@ -1,47 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".chatting.chattingActivity"
-    android:fitsSystemWindows="true">
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="100dp">
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.core.widget.NestedScrollView>
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    tools:context=".chatting.ChattingActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:elevation="0dp"
-        app:elevation="0dp"
-        android:layout_height="wrap_content">
+        app:elevation="0dp">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:elevation="0dp"
-            app:elevation="0dp"
             android:layout_height="56dp"
-            android:fitsSystemWindows="true"
             android:background="@null"
-            app:titleEnabled="false"
-            app:layout_scrollFlags="scroll|snap|enterAlways">
+            android:elevation="0dp"
+            android:fitsSystemWindows="true"
+            app:elevation="0dp"
+            app:layout_scrollFlags="scroll|snap|enterAlways"
+            app:titleEnabled="false">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -65,18 +49,18 @@
                     android:fontFamily="@font/noto_sans"
                     android:text="채팅방명"
                     android:textColor="#000000"
-                    android:textStyle="bold"
                     android:textSize="16sp"
+                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <LinearLayout
+                    android:id="@+id/pepole"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
-                    android:id="@+id/pepole"
                     android:orientation="horizontal"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/textView2"
@@ -85,7 +69,7 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:src="@drawable/ic_people"></ImageView>
+                        app:srcCompat="@drawable/ic_people"></ImageView>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -104,7 +88,130 @@
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-
     </com.google.android.material.appbar.AppBarLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/frameLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/chatting_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="70dp">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+            <LinearLayout
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:background="#B2FFE2">
+
+                <ImageView
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_alarm">
+                </ImageView>
+
+                <TextView
+                    android:layout_gravity="center"
+                    android:layout_width="275dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/noto_sans"
+                    android:textFontWeight="700"
+                    android:layout_marginLeft="15dp"
+                    android:textStyle="bold"
+                    android:textColor="#000000"
+                    android:textSize="16sp"
+                    android:text="20210801 17시 17분 노원구청 앞에서 거래"/>
+
+                <ImageButton
+                    android:layout_marginLeft="19dp"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#00000000"
+                    app:srcCompat="@drawable/btn_keyboard_arrow_right">
+
+                </ImageButton>
+
+            </LinearLayout>
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp">
+
+                <ImageButton
+                    android:id="@+id/btn_plus"
+                    android:layout_marginLeft="23dp"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#00000000"
+                    app:srcCompat="@drawable/ic_plus">
+
+                </ImageButton>
+                
+                <LinearLayout
+                    android:layout_marginLeft="19dp"
+                    android:layout_gravity="center"
+                    android:layout_width="330dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bgr_bar">
+                    
+                    <EditText
+                        android:id="@+id/et_chat"
+                        android:paddingLeft="15dp"
+                        android:paddingVertical="3dp"
+                        android:fontFamily="@font/noto_sans"
+                        android:layout_gravity="center"
+                        android:layout_width="290dp"
+                        android:maxHeight="40dp"
+                        android:background="#00000000"
+                        android:layout_height="wrap_content">
+
+                    </EditText>
+                    <ImageButton
+                        android:id="@+id/btn_send"
+                        android:layout_gravity="center"
+                        android:background="#00000000"
+                        android:layout_marginLeft="8dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/btn_send">
+
+                    </ImageButton>
+                    
+                    
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+</LinearLayout>

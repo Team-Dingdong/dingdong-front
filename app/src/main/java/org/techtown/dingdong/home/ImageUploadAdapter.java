@@ -20,12 +20,13 @@ import java.util.ArrayList;
 
 public class ImageUploadAdapter extends RecyclerView.Adapter<ImageUploadAdapter.ViewHolder> {
 
-    private ArrayList<Uri> mData = null;
-    private Context mcontext = null;
+    private ArrayList<Uri> Data = null;
+    Context context;
+    private int position;
 
     public ImageUploadAdapter(ArrayList<Uri> mData, Context mcontext) {
-        this.mData = mData;
-        this.mcontext = mcontext;
+        this.Data = mData;
+        this.context = mcontext;
     }
 
     @NonNull
@@ -43,17 +44,24 @@ public class ImageUploadAdapter extends RecyclerView.Adapter<ImageUploadAdapter.
     @Override
     public void onBindViewHolder(@NonNull @NotNull ImageUploadAdapter.ViewHolder holder, int position) {
 
-        Uri image_uri =mData.get(position);
+        Uri image_uri =Data.get(position);
 
-        Glide.with(mcontext)
+        Glide.with(context)
                 .load(image_uri)
                 .into(holder.image);
+
+        holder.btn_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeItem(position);
+            }
+        });
 
     }
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        return Data.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -65,7 +73,20 @@ public class ImageUploadAdapter extends RecyclerView.Adapter<ImageUploadAdapter.
             super(itemView);
             image = itemView.findViewById(R.id.image);
             btn_delete = itemView.findViewById(R.id.btn_delete);
+
         }
 
     }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    public void removeItem(int position){
+        Data.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position,Data.size());
+    }
+
+
 }
