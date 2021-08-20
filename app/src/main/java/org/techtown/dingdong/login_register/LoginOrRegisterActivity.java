@@ -1,21 +1,23 @@
 package org.techtown.dingdong.login_register;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.android.volley.Response;
+import androidx.appcompat.app.AppCompatActivity;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.network.Api;
+import org.techtown.dingdong.network.Apiinterface;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginOrRegisterActivity extends AppCompatActivity {
     private EditText et_phone;
@@ -36,17 +38,19 @@ public class LoginOrRegisterActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                message= btn_transfer.getText().toString();
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+                message= et_phone.getText().toString();
                 if(message.length() == 11){
                     btn_transfer.setEnabled(true);
                 }
                 else{
                     btn_transfer.setEnabled(false);
                 }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
             }
         });
 
@@ -58,19 +62,26 @@ public class LoginOrRegisterActivity extends AppCompatActivity {
 
                 message= btn_transfer.getText().toString();
 
-                Response.Listener<String> responseListener = new Response.Listener<String>() {
+                AuthRequest authRequest = new AuthRequest(message);
+                Apiinterface apiinterface = Api.getClient().create(Apiinterface.class);
+                Call<AuthResponse> call = apiinterface.setAuth(authRequest);
+                call.enqueue(new Callback<AuthResponse>() {
                     @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            int status = jsonObject.getInt("status");
-                            Toast.makeText(getApplicationContext(),"인증문자가 발송됐습니다.",Toast.LENGTH_SHORT).show();
+                    public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+                        Log.d("retrofit", String.valueOf(response));
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        if(response.isSuccessful() && response.body() != null){
+                            Log.d("retrofit", response.toString());
+                            Log.d("retrofit", String.valueOf(response.body().status));
                         }
                     }
-                };
+
+                    @Override
+                    public void onFailure(Call<AuthResponse> call, Throwable t) {
+
+                    }
+                });
+
 
                 //인증확인하는 화면으로 전환
                 Intent intent = new Intent(LoginOrRegisterActivity.this, LoginActivity.class);
