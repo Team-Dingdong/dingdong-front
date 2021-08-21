@@ -1,7 +1,5 @@
 package org.techtown.dingdong.login_register;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -10,14 +8,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.network.Api;
+import org.techtown.dingdong.network.Apiinterface;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
     EditText edt_number_validation;
     Button btn_validation;
     String authNumber;
-
+    Button startbutton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +46,11 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
                 authNumber= edt_number_validation.getText().toString();
                 if(authNumber.length() == 6){
                     btn_validation.setEnabled(true);
@@ -48,18 +59,49 @@ public class LoginActivity extends AppCompatActivity {
                     btn_validation.setEnabled(false);
                 }
             }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-            }
         });
 
         btn_validation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //서버로 폰번호,인증번호 전달
-                //현재 validation.java를 volley로 작성해놔서 letrofit으로 고칠지 미정
-                
+
+                LoginRequest loginRequest = new LoginRequest(phoneNumber, authNumber);
+                Apiinterface apiinterface = Api.getClient().create(Apiinterface.class);
+                Call<Loginitem> call = apiinterface.LoginRequest(loginRequest);
+
+                call.enqueue(new Callback<Loginitem>() {
+                    @Override
+                    public void onResponse(Call<Loginitem> call, Response<Loginitem> response) {
+                        if(response.isSuccessful() && response.body() != null){
+                            Loginitem loginitem = response.body();
+                            LoginResponse loginResponse = loginitem.loginResponse;
+                            int res = loginitem.status;
+
+                            if(res == 201){
+                                //회원가입
+
+                            }
+                            else if(res == 200){
+
+                                //로그인
+                            }
+                            else if(res == 400){
+                                //시간초과
+                            }
+                            else{
+                                //기타예외
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Loginitem> call, Throwable t) {
+
+                    }
+                });
+
+
 
             }
         });
