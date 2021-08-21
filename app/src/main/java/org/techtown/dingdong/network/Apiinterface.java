@@ -9,7 +9,7 @@ import retrofit2.http.Query;
 
 public interface Apiinterface {
 
-    @GET("/post")
-    Call<Shareitem> getData(@Query("page") int num);
+    //@GET("/post")
+    //Call<Shareitem> getData(@Query("page") int num);
 
 }

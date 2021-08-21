@@ -1,20 +1,27 @@
 package org.techtown.dingdong.home;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.jetbrains.annotations.NotNull;
 import org.techtown.dingdong.MainActivity;
 import org.techtown.dingdong.R;
 
@@ -22,12 +29,15 @@ import java.util.ArrayList;
 
 public class HomeFragment extends Fragment {
 
-    private ImageButton btn_edit;
+    private ImageButton btn_edit, cat1, cat2, cat3, cat4;
     private RecyclerView sharelistrecycler;
     ShareListAdpater shareListAdpater;
     private ArrayList<Share> sharelist_data, sharelist_latest, sharelist_deadline;
     private LinearLayout btn_trans, fruit;
-    private TextView tv_align;
+    private TextView tv_align, tv_region;
+    private Spinner select_region;
+    private String selected_region;
+    String[] region = {"미아2동", "안암동"};
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -81,7 +91,49 @@ public class HomeFragment extends Fragment {
         sharelistrecycler = v.findViewById(R.id.sharelist);
         btn_trans = v.findViewById(R.id.trans);
         tv_align = v.findViewById(R.id.align);
+        tv_region = v.findViewById(R.id.tv_region);
         fruit = v.findViewById(R.id.fruit);
+        select_region = v.findViewById(R.id.select_region);
+        cat1 = v.findViewById(R.id.cat1);
+        cat2 = v.findViewById(R.id.cat2);
+        cat3 = v.findViewById(R.id.cat3);
+        cat4 = v.findViewById(R.id.cat4);
+
+        //동네 선택 스피너 세팅
+        ArrayAdapter<String> regionadapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, region){
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View v =  super.getView(position, convertView, parent);
+
+                ((TextView) v).setTextColor(Color.WHITE);
+
+                return v;
+            }
+
+            @Override
+            public View getDropDownView(int position, @Nullable @org.jetbrains.annotations.Nullable View convertView, @NonNull @NotNull ViewGroup parent) {
+                View v =  super.getDropDownView(position, convertView, parent);
+
+
+                return v;
+            }
+        };
+        regionadapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        select_region.setAdapter(regionadapter);
+        select_region.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selected_region = region[position];
+                tv_region.setText(selected_region);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
 
         setDummy();
@@ -103,11 +155,35 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        fruit.setOnClickListener(new View.OnClickListener() {
+        cat1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                ((MainActivity) getActivity()).replaceFragment(MainFragment.newInstance());
+                ((MainActivity) getActivity()).replaceFragment(MainFragment.newInstance(0));
+
+            }
+        });
+
+        cat2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).replaceFragment(MainFragment.newInstance(1));
+
+            }
+        });
+
+        cat3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).replaceFragment(MainFragment.newInstance(2));
+
+            }
+        });
+
+        cat4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).replaceFragment(MainFragment.newInstance(3));
 
             }
         });
