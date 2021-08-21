@@ -1,22 +1,47 @@
 package org.techtown.dingdong.login_register;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class LoginResponse {
 
-    @SerializedName("accessToken")
-    public String accesstoken;
+    @SerializedName("data")
+    @Expose
+    public Data data;
 
-    public LoginResponse(String accesstoken) {
-        this.accesstoken = accesstoken;
+    @SerializedName("code")
+    @Expose
+    public String result;
+
+    public Data getData() {
+        return data;
+    }
+
+    public void setData(Data data) {
+        this.data = data;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    public class Data{
+        @SerializedName("accessToken")
+        @Expose
+        public String accessToken;
+
+        public String getAccessToken() {
+            return accessToken;
+        }
+
+        public void setAccessToken(String accessToken) {
+            this.accessToken = accessToken;
+        }
     }
 
 
-    public String getAccesstoken() {
-        return accesstoken;
-    }
-
-    public void setAccesstoken(String accesstoken) {
-        this.accesstoken = accesstoken;
-    }
 }

@@ -2,12 +2,14 @@ package org.techtown.dingdong.login_register;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,6 +25,8 @@ public class LoginOrRegisterActivity extends AppCompatActivity {
     private EditText et_phone;
     private Button btn_transfer;
     String message;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,36 +64,54 @@ public class LoginOrRegisterActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //버튼 클릭하면 인증하는 화면으로 전환하고, 인증인텐트에 번호 전달, 인증하는 인텐트에서는 서버연결하고 서버로 번호 전달
 
-                message= btn_transfer.getText().toString();
+                message= et_phone.getText().toString();
 
                 AuthRequest authRequest = new AuthRequest(message);
+                Log.d("tag", message);
                 Apiinterface apiinterface = Api.getClient().create(Apiinterface.class);
                 Call<AuthResponse> call = apiinterface.setAuth(authRequest);
                 call.enqueue(new Callback<AuthResponse>() {
                     @Override
                     public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
-                        Log.d("retrofit", String.valueOf(response));
 
-                        if(response.isSuccessful() && response.body() != null){
-                            Log.d("retrofit", response.toString());
-                            Log.d("retrofit", String.valueOf(response.body().status));
+                        if(response.isSuccessful()){
+
+                            if(response.body().result.equals("CREATED")){
+
+                                AuthResponse result = response.body();
+                                AuthResponse.Data data = result.data;
+                                String time = data.requestTime;
+                                Log.d("성공", String.valueOf(response.body()));
+
+                                Intent intent = new Intent(LoginOrRegisterActivity.this, LoginActivity.class);
+                                intent.putExtra("phoneNumber", message);
+                                intent.putExtra("time", time);
+                                startActivity(intent);
+
+                            }
                         }
+                        else{
+                            Log.d("문제발생", String.valueOf(response));
+                        }
+
+
+
                     }
 
                     @Override
                     public void onFailure(Call<AuthResponse> call, Throwable t) {
 
+                        Log.d("tag", t.toString());
+
                     }
                 });
 
-
-                //인증확인하는 화면으로 전환
-                Intent intent = new Intent(LoginOrRegisterActivity.this, LoginActivity.class);
-                intent.putExtra("phoneNumber", message);
-                startActivity(intent);
             }
         });
 
-
     }
+
+
+
+
 }
