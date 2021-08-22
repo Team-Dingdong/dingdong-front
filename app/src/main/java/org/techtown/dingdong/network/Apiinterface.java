@@ -23,4 +23,8 @@ public interface Apiinterface {
     @POST("/api/v1/auth")
     Call<LoginResponse> LoginRequest(@Body LoginRequest loginRequest);
 
+
+    //@POST("/api/v1/auth")
+    //Call<LoginResponse> LoginRequest(@Body LoginRequest loginRequest);
+
 }

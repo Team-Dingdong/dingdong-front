@@ -34,6 +34,47 @@ public class LoginResponse {
         @Expose
         public String accessToken;
 
+        @SerializedName("refreshToken")
+        @Expose
+        public String refreshToken;
+
+        @SerializedName("grantType")
+        @Expose
+        private String tokentype;
+
+        public String getTokentype() {
+            // OAuth requires uppercase Authorization HTTP header value for token type
+            if(!Character.isUpperCase(tokentype.charAt(0))) {
+                tokentype = Character.toString(tokentype.charAt(0)).toUpperCase() + tokentype.substring(1);
+            }
+
+            return tokentype;
+        }
+
+        public void setToken_type(String tokentype) {
+            this.tokentype = tokentype;
+        }
+
+        public String getRefreshToken() {
+            return refreshToken;
+        }
+
+        public void setRefreshToken(String refreshToken) {
+            this.refreshToken = refreshToken;
+        }
+
+        public String getExpireIn() {
+            return expireIn;
+        }
+
+        public void setExpireIn(String expireIn) {
+            this.expireIn = expireIn;
+        }
+
+        @SerializedName("accessTokenExpiresIn")
+        @Expose
+        public String expireIn;
+
         public String getAccessToken() {
             return accessToken;
         }

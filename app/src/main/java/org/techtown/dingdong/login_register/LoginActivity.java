@@ -1,6 +1,8 @@
 package org.techtown.dingdong.login_register;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
@@ -13,13 +15,17 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.sql.Timestamp;
 
+import okhttp3.Interceptor;
+import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -114,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 String phoneNumber = "01050468554";
                 LoginRequest loginRequest = new LoginRequest(phoneNumber, authNumber);
-                Apiinterface apiinterface = Api.getClient().create(Apiinterface.class);
+                Apiinterface apiinterface = Api.createService(Apiinterface.class);
                 Call<LoginResponse> call = apiinterface.LoginRequest(loginRequest);
                 Log.w(phoneNumber, authNumber);
                 call.enqueue(new Callback<LoginResponse>() {
@@ -127,13 +133,23 @@ public class LoginActivity extends AppCompatActivity {
                             if(response.body().result.equals("SIGNUP_SUCCESS")){
 
                                 Log.d("회원가입성공", String.valueOf(response));
-                                //String token = response.body().data.accessToken;
+                                String token = response.body().data.accessToken;
 
                             }
                             else if(response.body().result.equals("LOGIN_SUCCESS")){
 
+                                SharedPreferences preferences = getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+
+
                                 Log.d("로그인성공", String.valueOf(response));
-                                //String token = response.body().data.accessToken;
+                                LoginResponse.Data mToken = response.body().data;
+                                Log.d("로그인성공", mToken.getAccessToken());
+                                Token token = new Token(mToken.getAccessToken(),mToken.getRefreshToken(),mToken.getExpireIn(),mToken.getTokentype());
+                                preferences.edit().putBoolean("oauth.loggedin",true).apply();
+                                preferences.edit().putString("oauth.accesstoken", token.getAccessToken()).apply();
+                                preferences.edit().putString("oauth.refreshtoken", token.getRefreshToken()).apply();
+                                preferences.edit().putString("oauth.expire", token.getExpireIn()).apply();
+                                preferences.edit().putString("oauth.tokentype", token.getGrantType()).apply();
 
                             }
                             
