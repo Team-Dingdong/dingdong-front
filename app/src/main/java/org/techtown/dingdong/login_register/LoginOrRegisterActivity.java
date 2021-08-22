@@ -68,7 +68,7 @@ public class LoginOrRegisterActivity extends AppCompatActivity {
 
                 AuthRequest authRequest = new AuthRequest(message);
                 Log.d("tag", message);
-                Apiinterface apiinterface = Api.getClient().create(Apiinterface.class);
+                Apiinterface apiinterface = Api.createService(Apiinterface.class);
                 Call<AuthResponse> call = apiinterface.setAuth(authRequest);
                 call.enqueue(new Callback<AuthResponse>() {
                     @Override
