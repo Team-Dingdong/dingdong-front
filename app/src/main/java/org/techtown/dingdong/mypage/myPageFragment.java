@@ -1,13 +1,17 @@
 package org.techtown.dingdong.mypage;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
+import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
 
 
@@ -60,6 +64,12 @@ public class myPageFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View v = inflater.inflate(R.layout.fragment_mypage, container, false);
+
+        TextView tv = v.findViewById(R.id.textView);
+
+
+        SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+        tv.setText(pref.getString("oauth.accesstoken",""));
 
         return v;
     }

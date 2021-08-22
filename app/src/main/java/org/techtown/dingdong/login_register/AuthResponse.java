@@ -4,25 +4,38 @@ import com.google.gson.annotations.SerializedName;
 import java.sql.Timestamp;
 
 public class AuthResponse {
-    @SerializedName("status")
-    public int status;
-    @SerializedName("data")
-    public Data data;
+   @SerializedName("result")
+    public String result;
+   @SerializedName("data")
+   public Data data;
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    public Data getData() {
+        return data;
+    }
+
+    public void setData(Data data) {
+        this.data = data;
+    }
+
 
     public class Data{
         @SerializedName("requestTime")
-        public Timestamp time;
+       public String requestTime;
 
-        public Data(Timestamp time) {
-            this.time = time;
+        public String getRequestTime() {
+            return requestTime;
         }
 
-        public Timestamp getTime() {
-            return time;
-        }
-
-        public void setTime(Timestamp time) {
-            this.time = time;
+        public void setRequestTime(String requestTime) {
+            this.requestTime = requestTime;
         }
     }
 }
