@@ -23,7 +23,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Api {
     public static String BASE_URL = "http://3.38.61.13:8080/";
-    private static Retrofit retrofit;
+    public static Retrofit retrofit;
     private static Context context;
     private static Token token;
     public static Retrofit getClient(){
@@ -64,14 +64,19 @@ public class Api {
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create());
 
+        Log.d("토큰", "정상");
+
         if(accessToken != null){
             context = c;
             token = accessToken;
+            Log.d("토큰", "if문들어감");
             final Token token  = accessToken;
             httpClient.addInterceptor(new Interceptor() {
                 @Override
                 public Response intercept(Chain chain) throws IOException {
                     Request original = chain.request();
+
+                    Log.d("토큰", "토큰저장됨");
 
                     Request.Builder requestBuilder = original.newBuilder()
                             .header("Accept","application/json")
@@ -89,6 +94,7 @@ public class Api {
 
         OkHttpClient client = httpClient.build();
         Retrofit retrofit = builder.client(client).build();
+        Log.d("토큰", "리턴잘됨");
         return retrofit.create(serviceClass);
     }
 

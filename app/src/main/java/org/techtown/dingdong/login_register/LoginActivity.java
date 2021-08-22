@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.gson.Gson;
+
 import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
 import org.techtown.dingdong.network.Api;
@@ -141,7 +143,7 @@ public class LoginActivity extends AppCompatActivity {
                                 SharedPreferences preferences = getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
 
 
-                                Log.d("로그인성공", String.valueOf(response));
+                                Log.d("로그인성공", new Gson().toJson(response.body()));
                                 LoginResponse.Data mToken = response.body().data;
                                 Log.d("로그인성공", mToken.getAccessToken());
                                 Token token = new Token(mToken.getAccessToken(),mToken.getRefreshToken(),mToken.getExpireIn(),mToken.getTokentype());
