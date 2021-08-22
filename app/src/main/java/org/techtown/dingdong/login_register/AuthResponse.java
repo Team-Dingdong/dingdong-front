@@ -10,7 +10,7 @@ public class AuthResponse {
     public Data data;
 
     public class Data{
-        @SerializedName("requestTime")
+        @SerializedName("data.requestTime")
         public Timestamp time;
 
         public Data(Timestamp time) {
