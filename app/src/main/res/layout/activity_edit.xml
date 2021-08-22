@@ -185,15 +185,14 @@
             app:layout_constraintTop_toBottomOf="@+id/et_detail">
 
 
-
             <EditText
                 android:id="@+id/et_hashtag1"
                 android:layout_width="60dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:backgroundTint="#000000"
                 android:ems="10"
-                android:hint="(선택)"
                 android:fontFamily="@font/noto_sans"
+                android:hint="(선택)"
                 android:inputType="textPersonName"
                 android:maxLength="10"
                 android:textColor="#000000"
@@ -346,7 +345,7 @@
         android:layout_height="60dp"
         android:background="#000000">
 
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/linearLayout5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -356,6 +355,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+
+            <Spinner
+                android:id="@+id/select_region"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content">
+            </Spinner>
             <TextView
                 android:id="@+id/tv_region"
                 android:layout_width="wrap_content"
@@ -371,13 +376,18 @@
             </TextView>
 
             <ImageView
+                android:layout_gravity="center_vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="7dp"
-                app:srcCompat="@drawable/ic_listup_white"></ImageView>
+                android:layout_marginLeft="80dp"
+                app:srcCompat="@drawable/ic_listup_white">
+
+            </ImageView>
+
 
             <TextView
-                android:layout_marginLeft="2dp"
+                android:layout_marginLeft="100dp"
+                android:layout_gravity="center_vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/noto_sans"
@@ -386,9 +396,9 @@
                 android:textFontWeight="300"
                 android:textSize="14dp" />
 
-        </LinearLayout>
+        </FrameLayout>
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="180dp"
             android:layout_height="match_parent"
             android:orientation="horizontal"
@@ -398,6 +408,12 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <Button
+                android:id="@+id/btn_enroll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#00000000">
+            </Button>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -412,7 +428,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
 
-        </LinearLayout>
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

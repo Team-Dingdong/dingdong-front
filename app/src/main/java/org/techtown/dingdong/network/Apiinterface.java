@@ -11,12 +11,7 @@ import retrofit2.http.POST;
 
 public interface Apiinterface {
 
-    //@GET("/post")
-    //Call<Shareitem> getData(@Query("page") int num);
-    //Call<AuthResponse> setAuth(@Body AuthRequest authRequest);
-
-    //Call<AuthResponse> setAuth(@Field("to") String ID);
-
+    
     @POST("/api/v1/auth/send-sms")
     Call<AuthResponse> setAuth(@Body AuthRequest authRequest);
 
