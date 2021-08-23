@@ -330,7 +330,7 @@ public class EditActivity extends AppCompatActivity {
 
                             if(response.isSuccessful()){
                                 Log.d("성공","등록이완료됨");
-                                Toast.makeText(EditActivity.this, "등록이 완료되었습니", Toast.LENGTH_LONG).show();
+                                Toast.makeText(EditActivity.this, "등록이 완료되었습니다.", Toast.LENGTH_LONG).show();
 
                                 Handler handler = new Handler();
                                 handler.postDelayed(new Runnable() {
