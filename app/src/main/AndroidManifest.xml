@@ -2,11 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.techtown.dingdong">
 
+    <!--
+         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+         Google Maps Android API v2, but you must specify either coarse or fine
+         location permissions for the "MyLocation" functionality.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -18,12 +22,10 @@
         android:usesCleartextTraffic="true">
 
         <meta-data
-
             android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
 
-            android:value="AIzaSyAfg07uT1VaOf-53XrkMSXw4Z3e1mZGWdg" />
-
-        <activity android:name=".mytown.changetownActivity"></activity>
+        <activity android:name=".mytown.changetownActivity" />
         <activity android:name=".login_register.RegisterActivity" />
         <activity android:name=".login_register.LoginOrRegisterActivity" />
         <activity android:name=".login_register.LoginActivity" />

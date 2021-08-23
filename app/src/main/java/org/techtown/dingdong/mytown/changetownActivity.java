@@ -1,6 +1,14 @@
 package org.techtown.dingdong.mytown;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import android.Manifest;
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,12 +22,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -38,7 +40,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.techtown.dingdong.MainActivity;
 import org.techtown.dingdong.R;
+
 
 import java.io.IOException;
 import java.util.List;
@@ -87,16 +91,18 @@ public class changetownActivity extends AppCompatActivity
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_changetown);
+
+        /*binding = ActivityMapsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());*/
 
         mLayout = findViewById(R.id.layout_changetown);
 
-        //locationRequest = LocationRequest.create()
-        LocationRequest locationRequest = new LocationRequest()
+        locationRequest = new LocationRequest()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(UPDATE_INTERVAL_MS)
                 .setFastestInterval(FASTEST_UPDATE_INTERVAL_MS);
-
+        Log .d(TAG, "onActivityResult : 로케이션리퀘 확인");
 
         LocationSettingsRequest.Builder builder =
                 new LocationSettingsRequest.Builder();
@@ -109,7 +115,10 @@ public class changetownActivity extends AppCompatActivity
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+            mapFragment.getMapAsync(this);
+        /*if(mapFragment != null){
+            mapFragment.getMapAsync(this);
+        }*/
     }
 
     @Override
@@ -118,9 +127,13 @@ public class changetownActivity extends AppCompatActivity
 
         mMap = googleMap;
 
+
         //런타임 퍼미션 요청 대화상자나 GPS 활성 요청 대화상자 보이기전에
         //지도의 초기위치를 서울로 이동
         setDefaultLocation();
+
+
+
 
 
 
@@ -277,6 +290,7 @@ public class changetownActivity extends AppCompatActivity
     }
 
 
+
     @Override
     protected void onStop() {
 
@@ -306,6 +320,7 @@ public class changetownActivity extends AppCompatActivity
                     latlng.longitude,
                     1);
         } catch (IOException ioException) {
+
             //네트워크 문제
             Toast.makeText(this, "지오코더 서비스 사용불가", Toast.LENGTH_LONG).show();
             return "지오코더 서비스 사용불가";
@@ -349,6 +364,7 @@ public class changetownActivity extends AppCompatActivity
         markerOptions.title(markerTitle);
         markerOptions.snippet(markerSnippet);
         markerOptions.draggable(true);
+
 
 
         currentMarker = mMap.addMarker(markerOptions);
@@ -482,27 +498,14 @@ public class changetownActivity extends AppCompatActivity
                 + "위치 설정을 수정하실래요?");
         builder.setCancelable(true);
         builder.setPositiveButton("설정", new DialogInterface.OnClickListener() {
-          //  ActivityResultLauncher<Intent> startActivityResult = registerForActivityResult(
-                  //  new ActivityResultContracts.StartActivityForResult(),
-                   // new ActivityResultCallback<ActivityResult>() {
-                      //  @Override public void onActivityResult(ActivityResult result) {
-                         //   if (result.getResultCode() == Activity.RESULT_OK) {
-                         //       Log.d(TAG, "MainActivity로 돌아왔다. ");
-                         //   }
-                       // }
-                   // });
-
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 Intent callGPSSettingIntent
                         = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivityForResult(callGPSSettingIntent, GPS_ENABLE_REQUEST_CODE);
-
             }
         });
-
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 dialog.cancel();
