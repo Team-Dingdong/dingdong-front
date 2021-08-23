@@ -1,6 +1,7 @@
 package org.techtown.dingdong.chatting;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 
 public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatViewHolder> {
     private ArrayList<Chat> myChatList;
+    private String prev = "0";
 
     public ChattingAdapter(ArrayList<Chat> myChatList) {
         this.myChatList = myChatList;
@@ -65,10 +67,26 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
     @Override
     public void onBindViewHolder(@NonNull @NotNull ChattingAdapter.ChatViewHolder holder, int position) {
 
+
+        String mytime = myChatList.get(position).getTime().substring(11,16);
+        String mydate = myChatList.get(position).getTime().substring(0,10);//2021-08-23 17:00:33.822
+        String cur = myChatList.get(position).getTime().substring(8,10);
+        if(position != 0){
+        prev = myChatList.get(position-1).getTime().substring(8,10);}
+        else{
+            prev = "0";
+        }
+        Log.d("비교",prev + cur);
+
         if(holder instanceof ChattingAdapter.LeftViewHolder){
+            if(!cur.equals(prev)){
+                //latestdate = myChatList.get(position).getTime().substring(8,10);
+                ((ChattingAdapter.LeftViewHolder)holder).tv_date.setVisibility(View.VISIBLE);
+                ((ChattingAdapter.LeftViewHolder)holder).tv_date.setText(mydate);
+            }
             ((ChattingAdapter.LeftViewHolder)holder).tv_username.setText(myChatList.get(position).getName());
             ((ChattingAdapter.LeftViewHolder)holder).tv_content.setText(myChatList.get(position).getContent());
-            ((ChattingAdapter.LeftViewHolder)holder).tv_time.setText(myChatList.get(position).getTime());
+            ((ChattingAdapter.LeftViewHolder)holder).tv_time.setText(mytime);
             Glide.with(((ChattingAdapter.LeftViewHolder) holder).profile.getContext())
                     .load(myChatList.get(position).getProfile())
                     .into(((ChattingAdapter.LeftViewHolder) holder).profile);
@@ -78,20 +96,35 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
 
         }
         else if(holder instanceof ChattingAdapter.RightViewHolder){
+            if(!cur.equals(prev)){
+                //latestdate = myChatList.get(position).getTime().substring(8,10);
+                ((ChattingAdapter.RightViewHolder)holder).tv_date.setVisibility(View.VISIBLE);
+                ((ChattingAdapter.RightViewHolder)holder).tv_date.setText(mydate);
+            }
             ((ChattingAdapter.RightViewHolder)holder).tv_content.setText(myChatList.get(position).getContent());
-            ((ChattingAdapter.RightViewHolder)holder).tv_time.setText(myChatList.get(position).getTime());
+            ((ChattingAdapter.RightViewHolder)holder).tv_time.setText(mytime);
 
         }
         else if(holder instanceof ChattingAdapter.CenterViewHolder){
+            if(!cur.equals(prev)){
+                //latestdate = myChatList.get(position).getTime().substring(8,10);
+                ((ChattingAdapter.CenterViewHolder)holder).tv_date.setVisibility(View.VISIBLE);
+                ((ChattingAdapter.CenterViewHolder)holder).tv_date.setText(mydate);
+            }
             ((ChattingAdapter.CenterViewHolder)holder).tv_content.setText(myChatList.get(position).getContent());
-            ((ChattingAdapter.CenterViewHolder)holder).tv_time.setText(myChatList.get(position).getTime());
+            ((ChattingAdapter.CenterViewHolder)holder).tv_time.setText(mytime);
         }
         else if(holder instanceof ChattingAdapter.LeftIMGViewHolder){
+            if(!cur.equals(prev)){
+                //latestdate = myChatList.get(position).getTime().substring(8,10);
+                ((ChattingAdapter.LeftIMGViewHolder)holder).tv_date.setVisibility(View.VISIBLE);
+                ((ChattingAdapter.LeftIMGViewHolder)holder).tv_date.setText(mydate);
+            }
             ((ChattingAdapter.LeftIMGViewHolder)holder).tv_username.setText(myChatList.get(position).getName());
             Glide.with(((ChattingAdapter.LeftIMGViewHolder) holder).img_content.getContext())
                     .load(myChatList.get(position).getContent())
                     .into(((ChattingAdapter.LeftIMGViewHolder) holder).img_content);
-            ((ChattingAdapter.LeftIMGViewHolder)holder).tv_time.setText(myChatList.get(position).getTime());
+            ((ChattingAdapter.LeftIMGViewHolder)holder).tv_time.setText(mytime);
             Glide.with(((ChattingAdapter.LeftIMGViewHolder) holder).profile.getContext())
                     .load(myChatList.get(position).getProfile())
                     .into(((ChattingAdapter.LeftIMGViewHolder) holder).profile);
@@ -100,10 +133,15 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
             }
         }
         else{
+            if(!cur.equals(prev)){
+                //latestdate = myChatList.get(position).getTime().substring(8,10);
+                ((ChattingAdapter.RightIMGViewHolder)holder).tv_date.setVisibility(View.VISIBLE);
+                ((ChattingAdapter.RightIMGViewHolder)holder).tv_date.setText(mydate);
+            }
             Glide.with(((ChattingAdapter.RightIMGViewHolder) holder).img_content.getContext())
                     .load(myChatList.get(position).getContent())
                     .into(((ChattingAdapter.RightIMGViewHolder) holder).img_content);
-            ((ChattingAdapter.RightIMGViewHolder)holder).tv_time.setText(myChatList.get(position).getTime());
+            ((ChattingAdapter.RightIMGViewHolder)holder).tv_time.setText(mytime);
         }
 
     }
@@ -127,10 +165,12 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
     public class RightIMGViewHolder extends ChatViewHolder {
         ImageView img_content;
         TextView tv_time;
+        TextView tv_date;
         public RightIMGViewHolder(View view) {
             super(view);
             img_content = view.findViewById(R.id.chat_img);
             tv_time = view.findViewById(R.id.time);
+            tv_date = view.findViewById(R.id.tv_date);
         }
     }
 
@@ -139,6 +179,7 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
         TextView tv_username;
         ImageView img_content;
         TextView tv_time;
+        TextView tv_date;
         public LeftIMGViewHolder(View view) {
             super(view);
             profile = view.findViewById(R.id.userimage);
@@ -146,6 +187,7 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
             img_content = view.findViewById(R.id.chat_img);
             tv_time = view.findViewById(R.id.time);
             master = view.findViewById(R.id.ismaster);
+            tv_date = view.findViewById(R.id.tv_date);
         }
     }
 
@@ -154,6 +196,7 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
         TextView tv_username;
         TextView tv_content;
         TextView tv_time;
+        TextView tv_date;
         public LeftViewHolder(View view) {
             super(view);
             profile = view.findViewById(R.id.userimage);
@@ -161,26 +204,31 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
             tv_content = view.findViewById(R.id.chat);
             tv_time = view.findViewById(R.id.time);
             master = view.findViewById(R.id.ismaster);
+            tv_date = view.findViewById(R.id.tv_date);
         }
     }
 
     public class RightViewHolder extends ChatViewHolder {
         TextView tv_content;
         TextView tv_time;
+        TextView tv_date;
         public RightViewHolder(View view) {
             super(view);
             tv_content = view.findViewById(R.id.chat);
             tv_time = view.findViewById(R.id.time);
+            tv_date = view.findViewById(R.id.tv_date);
         }
     }
 
     public class CenterViewHolder extends ChatViewHolder {
         TextView tv_content;
         TextView tv_time;
+        TextView tv_date;
         public CenterViewHolder(View view) {
             super(view);
             tv_content = view.findViewById(R.id.chat);
             tv_time = view.findViewById(R.id.time);
+            tv_date = view.findViewById(R.id.tv_date);
         }
     }
 
