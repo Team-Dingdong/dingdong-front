@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 
 import org.techtown.dingdong.R;
 import org.techtown.dingdong.login_register.LoginOrRegisterActivity;
+import org.techtown.dingdong.mytown.changetownActivity;
 
 public class profileFragment extends Fragment {
 
@@ -23,6 +24,7 @@ public class profileFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     Button startbtn;
+    Button townbtn;
     public profileFragment() {
         // Required empty public constructor
     }
@@ -67,6 +69,16 @@ public class profileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getActivity(), LoginOrRegisterActivity.class));
+            }
+        });
+
+        townbtn= v.findViewById(R.id.changetown);
+
+        townbtn.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), changetownActivity.class));
             }
         });
 
