@@ -152,7 +152,12 @@ public class HomeFragment extends Fragment {
                    }
 
                 }else{
-                    Log.d("실패", String.valueOf(response));
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
                 }
             }
 

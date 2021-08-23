@@ -94,7 +94,7 @@ public class Share {
         return personnelcapacity;
     }
 
-    public void setPersonnel_capacity(String personnelcapacity) {
+    public void setPersonnelcapacity(String personnelcapacity) {
         this.personnelcapacity = personnelcapacity;
     }
 
