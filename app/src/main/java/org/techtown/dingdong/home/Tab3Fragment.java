@@ -1,20 +1,33 @@
 package org.techtown.dingdong.home;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
+import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.login_register.Token;
+import org.techtown.dingdong.network.Api;
+import org.techtown.dingdong.network.Apiinterface;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 //간식류탭
 public class Tab3Fragment extends Fragment {
@@ -73,6 +86,53 @@ public class Tab3Fragment extends Fragment {
         sharelistrecycler = v.findViewById(R.id.sharelist);
         btn_trans = v.findViewById(R.id.trans);
         tv_align = v.findViewById(R.id.align);
+
+
+        SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+        String access = pref.getString("oauth.accesstoken","");
+        String refresh = pref.getString("oauth.refreshtoken","");
+        String expire = pref.getString("oauth.expire","");
+        String tokentype = pref.getString("oauth.tokentype","");
+
+        Token token = new Token(access,refresh,expire,tokentype);
+
+        Log.d("토큰", String.valueOf(access));
+
+
+        Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
+        Call<PostResponse> call = apiinterface.getCategoryData(3);
+        call.enqueue(new Callback<PostResponse>() {
+            @Override
+            public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    if(response.body().getResult().equals("POST_READ_SUCCESS")){
+                        PostResponse res = response.body();
+                        Log.d("성공", new Gson().toJson(res));
+
+                        ArrayList<Share> mList = new ArrayList<>();
+                        mList = res.getData().getShare();
+                        //String json = new Gson().toJson(res.getData().getShare());
+                        setShareListRecycler(sharelistrecycler, mList);
+
+                    }
+
+                }else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<PostResponse> call, Throwable t) {
+                Log.d("외않되", String.valueOf(t));
+
+            }
+        });
 
         //setDummy();
 
