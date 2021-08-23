@@ -27,8 +27,10 @@ public class AuthResponse {
 
 
     public class Data{
+
         @SerializedName("requestTime")
        public String requestTime;
+
 
         public String getRequestTime() {
             return requestTime;
