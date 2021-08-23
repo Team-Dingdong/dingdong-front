@@ -304,24 +304,28 @@ public class EditActivity extends AppCompatActivity {
                 if(et_place.getText().length() > 0 && et_title.getText().length() >0 &&
                         et_detail.getText().length()>0 &&et_price.getText().length() >0 ){
 
+                    //9,999로 받아오기 때문에 Integer로 변환하기 위해 ','를 없애줌
                     res_price = et_price.getText().toString().replace(",","");
 
+                    //리퀘스트 생성
                     PostRequest postRequest = new PostRequest(et_title.getText().toString(), selected_personnel,
                            Integer.parseInt(res_price), et_detail.getText().toString(),
                             et_place.getText().toString(), category);
 
-
+                    //저장된 토큰을 받아옴
                     SharedPreferences pref = getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
                     String access = pref.getString("oauth.accesstoken","");
                     String refresh = pref.getString("oauth.refreshtoken","");
                     String expire = pref.getString("oauth.expire","");
                     String tokentype = pref.getString("oauth.tokentype","");
 
+                    //토큰을 저장
                     Token token = new Token(access,refresh,expire,tokentype);
 
                     Log.d("토큰", String.valueOf(access));
 
 
+                    //토큰을 이용해 통신하도록 레트로핏 통신 클래스에 전달
                     Apiinterface apiinterface = Api.createService(Apiinterface.class,token,EditActivity.this);
                     Call<ResponseBody> call = apiinterface.setPost(postRequest);
                     call.enqueue(new Callback<ResponseBody>() {
@@ -332,6 +336,7 @@ public class EditActivity extends AppCompatActivity {
                                 Log.d("성공","등록이완료됨");
                                 Toast.makeText(EditActivity.this, "등록이 완료되었습니다.", Toast.LENGTH_LONG).show();
 
+                                //핸들러를 통한 액티비티 종료 시점 조절
                                 Handler handler = new Handler();
                                 handler.postDelayed(new Runnable() {
                                     @Override
@@ -364,8 +369,6 @@ public class EditActivity extends AppCompatActivity {
             }
         });
 
-
-
     }
 
 
@@ -391,7 +394,7 @@ public class EditActivity extends AppCompatActivity {
                 ClipData clipData = data.getClipData();
                 Log.e("clipData", String.valueOf(clipData.getItemCount()));
 
-                //갤러리 내부에서 선택한 아이템의 개수와 기선택된 아이템의 개수가 3개를 넘지 않게끔
+                //갤러리 내부에서 선택한 아이템의 개수와 기선택된 아이템의 개수의 합이 3개를 넘지 않게끔
                 if(clipData.getItemCount() + uriList.size() > 3){
                     Toast.makeText(getApplicationContext(), "사진은 3장까지 선택 가능합니다.", Toast.LENGTH_LONG).show();
                 }
