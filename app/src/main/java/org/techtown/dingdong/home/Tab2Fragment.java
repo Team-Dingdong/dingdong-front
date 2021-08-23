@@ -76,9 +76,9 @@ public class Tab2Fragment extends Fragment {
         btn_trans = v.findViewById(R.id.trans);
         tv_align = v.findViewById(R.id.align);
 
-        setDummy();
+        //setDummy();
 
-        setShareListRecycler(sharelistrecycler, sharelist_deadline);
+        //setShareListRecycler(sharelistrecycler, sharelist_deadline);
 
         return v;
     }
@@ -94,7 +94,7 @@ public class Tab2Fragment extends Fragment {
 
     }
 
-    public void setDummy(){
+    public void setDummy(){/*
         sharelist_latest = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             sharelist_latest.add(new Share("감자를 나누고 싶어요",new String[]{
@@ -111,7 +111,7 @@ public class Tab2Fragment extends Fragment {
                     "https://cdn.pixabay.com/photo/2019/12/26/10/44/horse-4720178_1280.jpg",
                     "https://cdn.pixabay.com/photo/2014/03/03/16/15/mosque-279015_1280.jpg"
             }, "감자를 제발 나눠주고 싶네요 \n 집에 너무 많아가지고 힘들어요...","7분전","#양파 #나눠요","10,000","울집앞",4,3));
-        }
+        }*/
 
     }
 }

@@ -21,6 +21,7 @@
             android:orientation="vertical">
 
             <ImageButton
+                android:id="@+id/cat1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#00000000"
@@ -50,6 +51,7 @@
             android:orientation="vertical">
 
             <ImageButton
+                android:id="@+id/cat2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#00000000"
@@ -77,6 +79,7 @@
             android:orientation="vertical">
 
             <ImageButton
+                android:id="@+id/cat3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#00000000"
@@ -106,6 +109,7 @@
             android:orientation="vertical">
 
             <ImageButton
+                android:id="@+id/cat4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#00000000"
@@ -204,7 +208,7 @@
                 android:layout_height="match_parent">
 
 
-                <LinearLayout
+                <FrameLayout
                     android:id="@+id/pepole"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -213,6 +217,14 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
+
+                    <Spinner
+                        android:id="@+id/select_region"
+                        android:layout_width="70dp"
+                        android:background="#ffffff"
+                        android:backgroundTint="#ffffff"
+                        android:layout_height="wrap_content">
+                    </Spinner>
 
                     <TextView
                         android:id="@+id/tv_region"
@@ -229,12 +241,13 @@
                     </TextView>
 
                     <ImageView
+                        android:layout_gravity="center_vertical"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="7dp"
+                        android:layout_marginLeft="90dp"
                         app:srcCompat="@drawable/ic_listup"></ImageView>
 
-                </LinearLayout>
+                </FrameLayout>
 
 
                 <ImageButton

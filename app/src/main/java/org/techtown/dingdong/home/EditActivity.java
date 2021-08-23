@@ -33,19 +33,20 @@ import java.util.ArrayList;
 
 public class EditActivity extends AppCompatActivity {
 
-    private Spinner select_category, select_personnel;
-    private String selected_category, res_price, res_detail, res_title, res_place, res_hash;
+    private Spinner select_category, select_personnel, select_region;
+    private String selected_category, res_price, res_detail, res_title, res_place, res_hash, selected_region;
     private int selected_personnel;
     private RecyclerView recycler_image;
-    private EditText et_title, et_detail, et_price, et_place,
-    et_hashtag1, et_hashtag2, et_hashtag3, et_hashtag4, et_hashtag5 ;
-    private ImageButton btn_imgupload;
+    private EditText et_title, et_detail, et_price, et_place, et_hashtag1, et_hashtag2, et_hashtag3, et_hashtag4, et_hashtag5 ;
+    private TextView tv_region;
+    private ImageButton btn_imgupload, btn_back;
     ArrayList<Uri> uriList = new ArrayList<>();
     ImageUploadAdapter imageUploadAdapter;
 
 
     String[] categories = {"과일·채소", "육류·계란", "간식류", "생필품", "기타"};
     String[] personnels = {"1", "2", "3", "4"};
+    String[] region = {"미아2동", "안암동"};
 
 
     @Override
@@ -56,6 +57,39 @@ public class EditActivity extends AppCompatActivity {
         select_category = findViewById(R.id.category);
         select_personnel = findViewById(R.id.personnel);
         btn_imgupload = findViewById(R.id.btn_imgupload);
+        select_region = findViewById(R.id.select_region);
+        tv_region = findViewById(R.id.tv_region);
+        btn_back = findViewById(R.id.ic_back);
+
+
+        //뒤로가기 눌렀을때
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+
+
+        //동네 선택 스피너 세팅
+        ArrayAdapter<String> regionadapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, region);
+        regionadapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        select_region.setAdapter(regionadapter);
+        select_region.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selected_region = region[position];
+                tv_region.setText(selected_region);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
 
         ArrayAdapter<String> categoryadapter = new ArrayAdapter<String>(
                 this, android.R.layout.simple_spinner_item, categories

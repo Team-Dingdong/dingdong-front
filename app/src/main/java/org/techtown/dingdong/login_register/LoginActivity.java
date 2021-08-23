@@ -1,19 +1,33 @@
 package org.techtown.dingdong.login_register;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.gson.Gson;
+
+import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
 
+import java.io.IOException;
+import java.sql.Date;
+import java.sql.Timestamp;
+
+import okhttp3.Interceptor;
+import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -24,6 +38,15 @@ public class LoginActivity extends AppCompatActivity {
     Button btn_validation;
     String authNumber;
     Button startbutton;
+    private TextView tv_timer;
+    private static final int MILLISINFUTURE = 301;
+    private static final int COUNT_DOWN_INTERVAL = 1000;
+    private int count = 300;
+    public CountDownTimer countDownTimer;
+    String time = "2021-08-21T12:23:19.883418";
+    String str;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,10 +55,39 @@ public class LoginActivity extends AppCompatActivity {
         //버튼, 텍스트에딧 연결
         edt_number_validation = findViewById(R.id.edt_number_validation);
         btn_validation = findViewById(R.id.btn_validation);
+        tv_timer = findViewById(R.id.tv_timer);
 
+        /*
         //인텐트, 객체 받아오기
         Intent intent = getIntent();
         String phoneNumber = intent.getStringExtra("phoneNumber");
+        time = intent.getStringExtra("time");
+        
+        //timestamp 형식에 맞게 변환함
+        //5분 - (현재시간 - 요청시간)
+        time = time.substring(0,10) + " " +time.substring(11,19);
+        Timestamp curtime = new Timestamp(System.currentTimeMillis());
+        Timestamp reqtime = Timestamp.valueOf(time);
+        long myT = MILLISINFUTURE - (curtime.getTime() - reqtime.getTime())/1000%60;
+        count = (int) myT;
+
+        countDownTimer = new CountDownTimer( myT*1000,COUNT_DOWN_INTERVAL) {
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+                str = String.valueOf(count/60) + ":" + String.valueOf((count%60<=9)?"0"+count%60:count%60);
+                tv_timer.setText(str);
+                count --;
+            }
+
+            @Override
+            public void onFinish() {
+                count = (int) myT;
+            }
+        };
+
+        countDownTimer.start();*/
+
 
         //인증번호 6자리 입력하면 버튼 활성화
         edt_number_validation.addTextChangedListener(new TextWatcher() {
@@ -66,39 +118,64 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //서버로 폰번호,인증번호 전달
 
+                authNumber= edt_number_validation.getText().toString();
+
+                String phoneNumber = "01050468554";
                 LoginRequest loginRequest = new LoginRequest(phoneNumber, authNumber);
-                Apiinterface apiinterface = Api.getClient().create(Apiinterface.class);
-                Call<Loginitem> call = apiinterface.LoginRequest(loginRequest);
-
-                call.enqueue(new Callback<Loginitem>() {
+                Apiinterface apiinterface = Api.createService(Apiinterface.class);
+                Call<LoginResponse> call = apiinterface.LoginRequest(loginRequest);
+                Log.w(phoneNumber, authNumber);
+                call.enqueue(new Callback<LoginResponse>() {
                     @Override
-                    public void onResponse(Call<Loginitem> call, Response<Loginitem> response) {
-                        if(response.isSuccessful() && response.body() != null){
-                            Loginitem loginitem = response.body();
-                            LoginResponse loginResponse = loginitem.loginResponse;
-                            int res = loginitem.status;
+                    public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
 
-                            if(res == 201){
-                                //회원가입
+
+                        if(response.isSuccessful()){
+
+                            if(response.body().result.equals("SIGNUP_SUCCESS")){
+
+                                Log.d("회원가입성공", String.valueOf(response));
+                                String token = response.body().data.accessToken;
 
                             }
-                            else if(res == 200){
+                            else if(response.body().result.equals("LOGIN_SUCCESS")){
 
-                                //로그인
+                                SharedPreferences preferences = getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+
+
+                                Log.d("로그인성공", new Gson().toJson(response.body()));
+                                LoginResponse.Data mToken = response.body().data;
+                                Log.d("로그인성공", mToken.getAccessToken());
+                                Token token = new Token(mToken.getAccessToken(),mToken.getRefreshToken(),mToken.getExpireIn(),mToken.getTokentype());
+                                preferences.edit().putBoolean("oauth.loggedin",true).apply();
+                                preferences.edit().putString("oauth.accesstoken", token.getAccessToken()).apply();
+                                preferences.edit().putString("oauth.refreshtoken", token.getRefreshToken()).apply();
+                                preferences.edit().putString("oauth.expire", token.getExpireIn()).apply();
+                                preferences.edit().putString("oauth.tokentype", token.getGrantType()).apply();
+
                             }
-                            else if(res == 400){
-                                //시간초과
-                            }
-                            else{
-                                //기타예외
-                            }
+                            
+                        }else{
+
+                            Log.d("Bad req", String.valueOf(response));
                         }
+
+
+                        //LoginResponse loginResponse = response.body();
+                       // LoginResponse.Data data = loginResponse.data;
+                        //String token = response.body().data.accessToken;
+
+                        //Log.d("성공", token);
+
                     }
 
                     @Override
-                    public void onFailure(Call<Loginitem> call, Throwable t) {
+                    public void onFailure(Call<LoginResponse> call, Throwable t) {
+                        Log.d("실패", "외않되");
 
                     }
+
+
                 });
 
 

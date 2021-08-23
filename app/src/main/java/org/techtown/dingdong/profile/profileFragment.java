@@ -10,6 +10,7 @@ import android.widget.Button;
 import androidx.fragment.app.Fragment;
 
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.login_register.LoginActivity;
 import org.techtown.dingdong.login_register.LoginOrRegisterActivity;
 import org.techtown.dingdong.mytown.changetownActivity;
 
@@ -68,7 +69,8 @@ public class profileFragment extends Fragment {
         startbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), LoginOrRegisterActivity.class));
+                startActivity(new Intent(getActivity(), LoginActivity.class));
+                //startActivity(new Intent(getActivity(), LoginOrRegisterActivity.class));
             }
         });
 

@@ -2,6 +2,7 @@ package org.techtown.dingdong.home;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,9 @@ import org.jetbrains.annotations.NotNull;
 import org.techtown.dingdong.MainActivity;
 import org.techtown.dingdong.R;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 
 import static androidx.core.content.ContextCompat.startActivity;
 
@@ -49,15 +52,17 @@ public class ShareListAdpater extends RecyclerView.Adapter<ShareListAdpater.shar
 
         share = sharelist.get(position);
 
+
         holder.place.setText(share.getPlace());
-        holder.personnel.setText(Integer.toString(share.getPersonnel_actual()) + "/" + Integer.toString(share.getPersonnel_capacity()));
-        holder.hashtags.setText(share.getHashtag());
+        holder.personnel.setText(share.getPersonnelcapacity());
+        //holder.personnel.setText(Integer.toString(share.getPersonnel_actual()) + "/" + Integer.toString(share.getPersonnel_capacity()));
+        //holder.hashtags.setText(share.getHashtag());
         Glide.with(holder.image.getContext())
-                .load(share.getImages()[0])
+                .load(share.getImages())
                 .into(holder.image);
         holder.title.setText(share.getTitle());
         holder.price.setText(share.getPrice());
-        holder.date.setText(share.getDate());
+        holder.date.setText(calcDate(share.getDate()));
 
     }
 
@@ -79,7 +84,6 @@ public class ShareListAdpater extends RecyclerView.Adapter<ShareListAdpater.shar
                 @Override
                 public void onClick(View v) {
                     context.startActivity(new Intent(v.getContext(), ShareDetailActivity.class));
-
                 }
             });
 
@@ -91,5 +95,31 @@ public class ShareListAdpater extends RecyclerView.Adapter<ShareListAdpater.shar
             image = itemView.findViewById(R.id.imageView);
             date = itemView.findViewById(R.id.tv_date);
         }
+    }
+
+    public String calcDate(String date){
+        String time = date;
+        String result;
+        time = time.substring(0,10) + " " +time.substring(11,19);
+        Log.d("time",time);
+        Timestamp posttime = Timestamp.valueOf(time);
+        Timestamp curtime = new Timestamp(System.currentTimeMillis());
+        long diff = curtime.getTime() - posttime.getTime();
+        //long mysec = diff / 1000 % 60;
+        long mymin = diff / (60 * 1000) % 60;
+        long myhour = diff / (60 * 60 * 1000) % 24;
+        long myday = diff / (24 * 60 * 60 * 1000);
+
+        if(myday > 0){
+            result = Integer.toString((int) myday) + "일전";
+
+        }else if(myday <= 0 && myhour > 0){
+            result = Integer.toString((int) myhour) + "시간" + "전";
+        }
+        else{
+            result = Integer.toString((int) myday) + "분" + "전";
+        }
+
+        return result;
     }
 }
