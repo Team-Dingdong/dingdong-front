@@ -14,12 +14,17 @@ import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface Apiinterface {
 
     @GET("/api/v1/post")
     Call<PostResponse> getData(@Query("page") int num);
+
+
+    @GET("/api/v1/post/category/{id}")
+    Call<PostResponse> getCategoryData(@Path("id") int id);
     //Call<AuthResponse> setAuth(@Body AuthRequest authRequest);
     //Call<AuthResponse> setAuth(@Field("to") String ID);
 
