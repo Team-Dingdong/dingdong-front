@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         profileFragment = new profileFragment();
         myPageFragment = new myPageFragment();
 
-        setFrag(0); //첫 프래그먼트 화면을 무엇으로 지정해줄 것인지 결정
+        setFrag(2); //첫 프래그먼트 화면을 무엇으로 지정해줄 것인지 결정
     }
 
 

@@ -1,15 +1,30 @@
 package org.techtown.dingdong.mypage;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
-import org.techtown.dingdong.R;
+import com.google.gson.Gson;
 
+import org.techtown.dingdong.BuildConfig;
+import org.techtown.dingdong.R;
+import org.techtown.dingdong.login_register.LoginRequest;
+import org.techtown.dingdong.login_register.LoginResponse;
+import org.techtown.dingdong.login_register.Token;
+import org.techtown.dingdong.network.Api;
+import org.techtown.dingdong.network.Apiinterface;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class myPageFragment extends Fragment {
@@ -60,6 +75,37 @@ public class myPageFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View v = inflater.inflate(R.layout.fragment_mypage, container, false);
+
+        TextView tv = v.findViewById(R.id.textView);
+
+
+        SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+        String access = pref.getString("oauth.accesstoken","");
+        String refresh = pref.getString("oauth.refreshtoken","");
+        String expire = pref.getString("oauth.expire","");
+        String tokentype = pref.getString("oauth.tokentype","");
+
+        Token token = new Token(access,refresh,expire,tokentype);
+
+        Log.d("토큰", String.valueOf(access));
+
+        Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
+        Call<LoginResponse> call = apiinterface.LoginRequest(new LoginRequest("01011111111","123456"));
+        call.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                Log.d("불러오기성공", new Gson().toJson(response.body()));
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+
+            }
+        });
+
+
+
+
 
         return v;
     }

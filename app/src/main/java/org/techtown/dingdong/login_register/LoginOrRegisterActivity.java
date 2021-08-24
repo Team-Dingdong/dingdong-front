@@ -1,26 +1,32 @@
 package org.techtown.dingdong.login_register;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.TextView;
 
-import com.android.volley.Response;
+import androidx.appcompat.app.AppCompatActivity;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.network.Api;
+import org.techtown.dingdong.network.Apiinterface;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginOrRegisterActivity extends AppCompatActivity {
     private EditText et_phone;
     private Button btn_transfer;
     String message;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,17 +42,19 @@ public class LoginOrRegisterActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                message= btn_transfer.getText().toString();
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+                message= et_phone.getText().toString();
                 if(message.length() == 11){
                     btn_transfer.setEnabled(true);
                 }
                 else{
                     btn_transfer.setEnabled(false);
                 }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
             }
         });
 
@@ -56,29 +64,54 @@ public class LoginOrRegisterActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //버튼 클릭하면 인증하는 화면으로 전환하고, 인증인텐트에 번호 전달, 인증하는 인텐트에서는 서버연결하고 서버로 번호 전달
 
-                message= btn_transfer.getText().toString();
+                message= et_phone.getText().toString();
 
-                Response.Listener<String> responseListener = new Response.Listener<String>() {
+                AuthRequest authRequest = new AuthRequest(message);
+                Log.d("tag", message);
+                Apiinterface apiinterface = Api.createService(Apiinterface.class);
+                Call<AuthResponse> call = apiinterface.setAuth(authRequest);
+                call.enqueue(new Callback<AuthResponse>() {
                     @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            int status = jsonObject.getInt("status");
-                            Toast.makeText(getApplicationContext(),"인증문자가 발송됐습니다.",Toast.LENGTH_SHORT).show();
+                    public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        if(response.isSuccessful()){
+
+                            if(response.body().result.equals("CREATED")){
+
+                                AuthResponse result = response.body();
+                                AuthResponse.Data data = result.data;
+                                String time = data.requestTime;
+                                Log.d("성공", String.valueOf(response.body()));
+
+                                Intent intent = new Intent(LoginOrRegisterActivity.this, LoginActivity.class);
+                                intent.putExtra("phoneNumber", message);
+                                intent.putExtra("time", time);
+                                startActivity(intent);
+
+                            }
                         }
-                    }
-                };
+                        else{
+                            Log.d("문제발생", String.valueOf(response));
+                        }
 
-                //인증확인하는 화면으로 전환
-                Intent intent = new Intent(LoginOrRegisterActivity.this, LoginActivity.class);
-                intent.putExtra("phoneNumber", message);
-                startActivity(intent);
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<AuthResponse> call, Throwable t) {
+
+                        Log.d("tag", t.toString());
+
+                    }
+                });
+
             }
         });
 
-
     }
+
+
+
+
 }

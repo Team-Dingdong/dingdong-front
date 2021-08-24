@@ -1,25 +1,45 @@
 package org.techtown.dingdong.home;
 
-public class Share {
-    private String title;
-    private String[]images;
-    private String maintext;
-    private String date;
-    private String hashtag;
-    private String price;
-    private String place;
-    private int personnel_capacity, personnel_actual;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-    public Share(String title, String[] images, String maintext, String date, String hashtag, String price, String place, int personnel_capacity, int personnel_actual) {
+import java.io.InputStream;
+import java.sql.Timestamp;
+
+public class Share {
+    @SerializedName("title")
+    @Expose
+    private String title;
+    @SerializedName("imageUrl")
+    @Expose
+    private String images;
+    @SerializedName("bio")
+    @Expose
+    private String maintext;
+    @SerializedName("createdDate")
+    @Expose
+    private String date;
+    //private String hashtag;
+    @SerializedName("cost")
+    @Expose
+    private String price;
+    @SerializedName("local")
+    @Expose
+    private String place;
+    @SerializedName("people")
+    @Expose
+    private String  personnelcapacity;
+    //private int personnelactual;
+
+
+    public Share(String title, String images, String maintext, String date, String price, String place, String personnelcapacity) {
         this.title = title;
         this.images = images;
         this.maintext = maintext;
         this.date = date;
-        this.hashtag = hashtag;
         this.price = price;
         this.place = place;
-        this.personnel_capacity = personnel_capacity;
-        this.personnel_actual = personnel_actual;
+        this.personnelcapacity = personnelcapacity;
     }
 
     public String getTitle() {
@@ -30,11 +50,11 @@ public class Share {
         this.title = title;
     }
 
-    public String[] getImages() {
+    public String getImages() {
         return images;
     }
 
-    public void setImages(String[] images) {
+    public void setImages(String images) {
         this.images = images;
     }
 
@@ -54,14 +74,6 @@ public class Share {
         this.date = date;
     }
 
-    public String getHashtag() {
-        return hashtag;
-    }
-
-    public void setHashtag(String hashtag) {
-        this.hashtag = hashtag;
-    }
-
     public String getPrice() {
         return price;
     }
@@ -78,19 +90,12 @@ public class Share {
         this.place = place;
     }
 
-    public int getPersonnel_capacity() {
-        return personnel_capacity;
+    public String getPersonnelcapacity() {
+        return personnelcapacity;
     }
 
-    public void setPersonnel_capacity(int personnel_capacity) {
-        this.personnel_capacity = personnel_capacity;
+    public void setPersonnelcapacity(String personnelcapacity) {
+        this.personnelcapacity = personnelcapacity;
     }
 
-    public int getPersonnel_actual() {
-        return personnel_actual;
-    }
-
-    public void setPersonnel_actual(int personnel_actual) {
-        this.personnel_actual = personnel_actual;
-    }
 }

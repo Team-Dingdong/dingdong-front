@@ -23,6 +23,21 @@
         app:layout_constraintTop_toTopOf="parent"
         android:background="@drawable/edittext_border"/>
 
+    <TextView
+        android:id="@+id/tv_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="#FF6363"
+        android:textSize="20dp"
+        android:textFontWeight="700"
+        android:fontFamily="@font/montserrat_regular"
+        android:text="5:00"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edt_number_validation" />
+
     <Button
         android:id="@+id/btn_validation"
         android:layout_width="0dp"

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.view.LayoutInflater;
@@ -29,14 +30,16 @@ public class MainFragment extends Fragment {
     Context context;
     PagerAdapter pagerAdapter;
     private ImageButton btn_back;
+    int pos;
     private String[] tabs = new String[]{"과일·채소", "육류·계란", "간식", "생필품", "기타"};
 
-    public MainFragment() {
-        // Required empty public constructor
+    public MainFragment(int pos) {
+        this.pos = pos;
     }
 
-    public static MainFragment newInstance() {
-       return new MainFragment();
+
+    public static MainFragment newInstance(int pos) {
+       return new MainFragment(pos);
     }
 
 
@@ -54,11 +57,12 @@ public class MainFragment extends Fragment {
         Fragment fragment2 = new Tab2Fragment().newInstance("", "");
         Fragment fragment3 = new Tab3Fragment().newInstance("", "");
         Fragment fragment4 = new Tab4Fragment().newInstance("", "");
-        Fragment fragment5 = new Tab5Fragment().newInstance("", "");
+        //Fragment fragment5 = new Tab5Fragment().newInstance("", "");
 
         TabLayout tabLayout = view.findViewById(R.id.tablayout);
         viewPager = view.findViewById(R.id.pager);
         btn_back = view.findViewById(R.id.btn_back);
+
 
 
         pagerAdapter = new PagerAdapter(this);
@@ -66,12 +70,13 @@ public class MainFragment extends Fragment {
         pagerAdapter.addFrag(fragment2);
         pagerAdapter.addFrag(fragment3);
         pagerAdapter.addFrag(fragment4);
-        pagerAdapter.addFrag(fragment5);
+        //pagerAdapter.addFrag(fragment5);
 
         viewPager.setAdapter(pagerAdapter);
 
-        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> tab.setText(tabs[position])).attach();
 
+        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> tab.setText(tabs[position])).attach();
+        viewPager.setCurrentItem(pos);
 
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override

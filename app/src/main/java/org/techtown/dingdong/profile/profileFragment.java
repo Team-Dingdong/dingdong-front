@@ -1,5 +1,6 @@
 package org.techtown.dingdong.profile;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,9 @@ import android.widget.Button;
 import androidx.fragment.app.Fragment;
 
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.login_register.LoginActivity;
+import org.techtown.dingdong.login_register.LoginOrRegisterActivity;
+import org.techtown.dingdong.mytown.changetownActivity;
 
 public class profileFragment extends Fragment {
 
@@ -20,7 +24,8 @@ public class profileFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    Button startbtn;
+    Button townbtn;
     public profileFragment() {
         // Required empty public constructor
     }
@@ -59,6 +64,26 @@ public class profileFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
+        startbtn= v.findViewById(R.id.button);
+
+        startbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), LoginActivity.class));
+                //startActivity(new Intent(getActivity(), LoginOrRegisterActivity.class));
+            }
+        });
+
+        townbtn= v.findViewById(R.id.changetown);
+
+        townbtn.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), changetownActivity.class));
+            }
+        });
+
 
         return v;
     }
