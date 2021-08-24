@@ -2,6 +2,7 @@ package org.techtown.dingdong.chatting;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -25,8 +26,9 @@ public class ChattingBottomDialogFragment extends BottomSheetDialogFragment {
     ImageButton btn_gallery, btn_planning, btn_delete;
     LinearLayout sec_delete, sec_gallery, sec_planning;
     Context context;
+    Boolean ismaster;
     onInteractionListener mListener;
-    private final int BTN_GALLERY = 1;
+    private final int BTN_GALLERY = 1, BTN_PLANNING = 2;
 
 
     interface onInteractionListener{
@@ -34,8 +36,9 @@ public class ChattingBottomDialogFragment extends BottomSheetDialogFragment {
 
     }
 
-    public ChattingBottomDialogFragment(Context context) {
+    public ChattingBottomDialogFragment(Context context, Boolean ismaster) {
         this.context = context;
+        this.ismaster = ismaster;
     }
 
     @Override
@@ -64,6 +67,11 @@ public class ChattingBottomDialogFragment extends BottomSheetDialogFragment {
         View v = inflater.inflate(R.layout.fragment_chatting_bottom_dialog, container, false);
 
         btn_gallery = v.findViewById(R.id.btn_gallery);
+        btn_planning = v.findViewById(R.id.btn_palnning);
+
+        if(!ismaster){
+            btn_planning.setVisibility(View.GONE);
+        }
 
         btn_gallery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +80,16 @@ public class ChattingBottomDialogFragment extends BottomSheetDialogFragment {
 
             }
         });
+
+        btn_planning.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onButtonChoice(BTN_PLANNING);
+
+            }
+        });
+
+
 
 
         return v;

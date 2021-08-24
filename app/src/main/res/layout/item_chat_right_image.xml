@@ -28,10 +28,10 @@
 
         <TextView
             android:id="@+id/time"
+            android:layout_marginLeft="135dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:layout_marginLeft="125dp"
             android:fontFamily="@font/noto_sans"
             android:text="오후 12:58"
             android:textFontWeight="400" />

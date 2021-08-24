@@ -8,5 +8,8 @@ public class ChatType {
         public static final int CENTER_CONTENT = 2;
         public static final int LEFT_CONTENT_IMG = 3;
         public static final int RIGHT_CONTENT_IMG = 4;
+        public static final int LEFT_CONTENT_PLAN = 5;
+        public static final int RIGHT_CONTENT_PLAN = 6;
+
     }
 }

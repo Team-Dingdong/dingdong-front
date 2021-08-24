@@ -29,7 +29,7 @@
                 android:id="@+id/btn_gallery"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/btn_gallary"
+                app:srcCompat="@drawable/btn_gallary"
                 android:background="#00000000">
             </ImageButton>
 
@@ -56,7 +56,7 @@
                 android:id="@+id/btn_palnning"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/btn_alarm"
+                app:srcCompat="@drawable/btn_alarm"
                 android:background="#00000000">
             </ImageButton>
 
@@ -83,7 +83,7 @@
                 android:id="@+id/btn_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/btn_delete"
+                app:srcCompat="@drawable/btn_delete"
                 android:background="#00000000">
             </ImageButton>
 

@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -57,10 +58,20 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
             return new ChattingAdapter.LeftIMGViewHolder(view);
 
         }
-        else{
+        else if(viewType == ChatType.ViewType.RIGHT_CONTENT_IMG){
 
             view = inflater.inflate(R.layout.item_chat_right_image, parent, false);
             return new ChattingAdapter.RightIMGViewHolder(view);
+        }
+        else if(viewType == ChatType.ViewType.LEFT_CONTENT_PLAN){
+
+            view = inflater.inflate(R.layout.item_chat_left_planning, parent, false);
+            return new ChattingAdapter.LeftPLANViewHolder(view);
+
+        }
+        else{
+            view = inflater.inflate(R.layout.item_chat_right_planning, parent, false);
+            return new ChattingAdapter.RightPLANViewHolder(view);
         }
     }
 
@@ -132,7 +143,7 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
                 ((ChattingAdapter.LeftIMGViewHolder)holder).master.setVisibility(View.VISIBLE);
             }
         }
-        else{
+        else if(holder instanceof ChattingAdapter.RightIMGViewHolder){
             if(!cur.equals(prev)){
                 //latestdate = myChatList.get(position).getTime().substring(8,10);
                 ((ChattingAdapter.RightIMGViewHolder)holder).tv_date.setVisibility(View.VISIBLE);
@@ -142,6 +153,32 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
                     .load(myChatList.get(position).getContent())
                     .into(((ChattingAdapter.RightIMGViewHolder) holder).img_content);
             ((ChattingAdapter.RightIMGViewHolder)holder).tv_time.setText(mytime);
+        }
+        else if(holder instanceof ChattingAdapter.LeftPLANViewHolder){
+            if(!cur.equals(prev)){
+                //latestdate = myChatList.get(position).getTime().substring(8,10);
+                ((ChattingAdapter.LeftPLANViewHolder)holder).tv_date.setVisibility(View.VISIBLE);
+                ((ChattingAdapter.LeftPLANViewHolder)holder).tv_date.setText(mydate);
+            }
+
+            ((ChattingAdapter.LeftPLANViewHolder)holder).tv_username.setText(myChatList.get(position).getName());
+            ((ChattingAdapter.LeftPLANViewHolder)holder).tv_time.setText(mytime);
+            Glide.with(((ChattingAdapter.LeftPLANViewHolder) holder).profile.getContext())
+                    .load(myChatList.get(position).getProfile())
+                    .into(((ChattingAdapter.LeftPLANViewHolder) holder).profile);
+            ((ChattingAdapter.LeftPLANViewHolder)holder).tv_info.setText(myChatList.get(position).getContent());
+            if(myChatList.get(position).getMaster() == Boolean.TRUE){
+                ((ChattingAdapter.LeftPLANViewHolder)holder).master.setVisibility(View.VISIBLE);
+        } }
+        else{
+            if(!cur.equals(prev)){
+                //latestdate = myChatList.get(position).getTime().substring(8,10);
+                ((ChattingAdapter.RightPLANViewHolder)holder).tv_date.setVisibility(View.VISIBLE);
+                ((ChattingAdapter.RightPLANViewHolder)holder).tv_date.setText(mydate);
+            }
+            ((ChattingAdapter.RightPLANViewHolder)holder).tv_time.setText(mytime);
+            ((ChattingAdapter.RightPLANViewHolder)holder).tv_info.setText(myChatList.get(position).getContent());
+
         }
 
     }
@@ -229,6 +266,45 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
             tv_content = view.findViewById(R.id.chat);
             tv_time = view.findViewById(R.id.time);
             tv_date = view.findViewById(R.id.tv_date);
+        }
+    }
+
+    public class LeftPLANViewHolder extends ChatViewHolder{
+
+        ImageView profile, master;
+        TextView tv_username;
+        TextView tv_time;
+        TextView tv_date;
+        TextView tv_info, tv_status, tv_personnel;
+        Button btn_ok;
+
+        public LeftPLANViewHolder(View view) {
+            super(view);
+            profile = view.findViewById(R.id.userimage);
+            tv_username = view.findViewById(R.id.username);
+            tv_time = view.findViewById(R.id.time);
+            master = view.findViewById(R.id.ismaster);
+            tv_date = view.findViewById(R.id.tv_date);
+            btn_ok = view.findViewById(R.id.btn_ok);
+            tv_info = view.findViewById(R.id.tv_info);
+            tv_personnel = view.findViewById(R.id.tv_personnel);
+        }
+    }
+
+    public class RightPLANViewHolder extends ChatViewHolder{
+
+        TextView tv_time;
+        TextView tv_date;
+        TextView tv_info, tv_status, tv_personnel;
+        Button btn_ok;
+
+        public RightPLANViewHolder(View view) {
+            super(view);
+            tv_time = view.findViewById(R.id.time);
+            tv_date = view.findViewById(R.id.tv_date);
+            btn_ok = view.findViewById(R.id.btn_ok);
+            tv_info = view.findViewById(R.id.tv_info);
+            tv_personnel = view.findViewById(R.id.tv_personnel);
         }
     }
 
