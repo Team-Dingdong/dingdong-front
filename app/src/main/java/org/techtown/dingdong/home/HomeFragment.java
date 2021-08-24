@@ -216,6 +216,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getActivity(), EditActivity.class));
+                //startActivity(new Intent(getActivity(), ShareDetailActivity.class));
             }
         });
 

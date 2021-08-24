@@ -18,16 +18,30 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
+                android:layout_marginBottom="50dp"
                 android:layout_height="wrap_content">
 
 
-                <FrameLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/frameLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="215dp"
+                    android:layout_height="280dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
+
+
+                    <LinearLayout
+                        android:id="@+id/layout_indicators"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="150dp"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingBottom="8dp"
+                        app:layout_constraintEnd_toStartOf="@+id/image_slider"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"></LinearLayout>
 
                     <androidx.viewpager2.widget.ViewPager2
                         android:id="@+id/image_slider"
@@ -37,18 +51,8 @@
 
                     </androidx.viewpager2.widget.ViewPager2>
 
-                    <LinearLayout
-                        android:id="@+id/layout_indicators"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="179dp"
-                        android:gravity="center"
-                        android:orientation="horizontal"
-                        android:paddingBottom="8dp">
 
-                    </LinearLayout>
-
-                </FrameLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/constraintLayout2"
@@ -114,7 +118,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:background="#00000000"
-                            android:src="@drawable/ic_thumbsup_small" />
+                            app:srcCompat="@drawable/ic_thumbsup_small" />
 
                         <TextView
                             android:id="@+id/tv_like"
@@ -133,7 +137,7 @@
                             android:layout_gravity="center"
                             android:layout_marginLeft="5dp"
                             android:background="#00000000"
-                            android:src="@drawable/ic_thumbsdown_small" />
+                            app:srcCompat="@drawable/ic_thumbsdown_small" />
 
                         <TextView
                             android:id="@+id/tv_dislike"
@@ -183,7 +187,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"
-                        android:src="@drawable/ic_people">
+                        app:srcCompat="@drawable/ic_people">
 
                     </ImageView>
 
@@ -219,7 +223,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:background="#00000000"
-                        android:src="@drawable/ic_place" />
+                        app:srcCompat="@drawable/ic_place" />
 
                     <TextView
                         android:id="@+id/tv_place"
@@ -240,7 +244,7 @@
                         android:layout_marginStart="7dp"
                         android:layout_marginLeft="7dp"
                         android:background="#00000000"
-                        android:src="@drawable/ic_category" />
+                        app:srcCompat="@drawable/ic_category" />
 
                     <TextView
                         android:id="@+id/tv_category"
@@ -476,7 +480,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="5dp"
-                    android:src="@drawable/ic_people">
+                    app:srcCompat="@drawable/ic_people">
 
                 </ImageView>
 

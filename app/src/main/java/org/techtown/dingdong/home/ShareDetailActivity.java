@@ -5,7 +5,9 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -28,6 +30,7 @@ public class ShareDetailActivity extends AppCompatActivity {
             "날짜별 예약 대상은 해당 날짜 끝자리와 생년월일 끝자리가 일치하는 사람으로 지정된다. 가령, 예약이 시작되는 9일의 경우, 생년월일 끝자리가 9인 사람들이 예약 대상이다. 날짜별 예약은 오후 8시부터 이튿날 오후 6시까지 진행된다.";
     private String title = "18~49세 다음달 9일부터 10부제";
     private TextView tv_detail, tv_title;
+    private ImageButton btn_back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,8 @@ public class ShareDetailActivity extends AppCompatActivity {
         layoutIndicator = findViewById(R.id.layout_indicators);
         tv_detail = findViewById(R.id.tv_detail);
         tv_title = findViewById(R.id.tv_title);
+        btn_back = findViewById(R.id.ic_back);
+
 
         tv_detail.setText(detail);
         tv_title.setText(title);
@@ -56,16 +61,25 @@ public class ShareDetailActivity extends AppCompatActivity {
         setupIndicators(images.length);
 
 
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+
     }
 
-    private void setupIndicators(int length) {
-        ImageView [] indicators = new ImageView[length];
+
+    private void setupIndicators(int count) {
+        ImageView[] indicators = new ImageView[count];
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
-        );
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
         params.setMargins(16, 8, 16, 8);
 
-        for (int i = 0; i < indicators.length; i++){
+        for (int i = 0; i < indicators.length; i++) {
             indicators[i] = new ImageView(this);
             indicators[i].setImageDrawable(ContextCompat.getDrawable(this,
                     R.drawable.bg_indicator_inactive));
@@ -77,9 +91,9 @@ public class ShareDetailActivity extends AppCompatActivity {
 
     private void setCurrentIndicator(int position) {
         int childCount = layoutIndicator.getChildCount();
-        for(int i=0; i<childCount; i++){
+        for (int i = 0; i < childCount; i++) {
             ImageView imageView = (ImageView) layoutIndicator.getChildAt(i);
-            if(i == position){
+            if (i == position) {
                 imageView.setImageDrawable(ContextCompat.getDrawable(
                         this,
                         R.drawable.bg_indicator_active
@@ -91,6 +105,5 @@ public class ShareDetailActivity extends AppCompatActivity {
                 ));
             }
         }
-
     }
 }
