@@ -136,6 +136,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         String t = time.toString();
         String d = "2021-08-22 17:00:33.822";
         Log.d("time",t);
+        //객체 추가
         chats.add(new Chat("안녕하세요 여러분","원선","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
                 d,Boolean.TRUE,ChatType.ViewType.LEFT_CONTENT ));
         chats.add(new Chat("넵 안녕하세요","다루","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
