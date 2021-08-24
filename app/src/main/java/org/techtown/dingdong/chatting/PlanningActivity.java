@@ -170,7 +170,7 @@ public class PlanningActivity extends AppCompatActivity {
         btn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(getd && getp && getd){
+                if(gett && getp && getd){
 
                     Toast.makeText(PlanningActivity.this, "생성이 완료되었습니다.",Toast.LENGTH_LONG).show();
 
