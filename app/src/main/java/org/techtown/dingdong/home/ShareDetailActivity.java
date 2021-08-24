@@ -12,13 +12,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator;
+
 import org.techtown.dingdong.R;
 
 public class ShareDetailActivity extends AppCompatActivity {
 
 
     private ViewPager2 sliderImageViewPager;
-    private LinearLayout layoutIndicator;
+    private SpringDotsIndicator indicator;
     private String[] images = new String[]{
             "https://cdn.pixabay.com/photo/2019/12/26/10/44/horse-4720178_1280.jpg",
             "https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
@@ -38,7 +40,7 @@ public class ShareDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_share_detail);
 
         sliderImageViewPager = findViewById(R.id.image_slider);
-        layoutIndicator = findViewById(R.id.layout_indicators);
+        indicator = findViewById(R.id.indicator);
         tv_detail = findViewById(R.id.tv_detail);
         tv_title = findViewById(R.id.tv_title);
         btn_back = findViewById(R.id.ic_back);
@@ -49,16 +51,7 @@ public class ShareDetailActivity extends AppCompatActivity {
 
         sliderImageViewPager.setOffscreenPageLimit(1);
         sliderImageViewPager.setAdapter(new ImageSliderAdapter(this, images));
-
-        sliderImageViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                setCurrentIndicator(position);
-            }
-        });
-
-        setupIndicators(images.length);
+        indicator.setViewPager2(sliderImageViewPager);
 
 
         btn_back.setOnClickListener(new View.OnClickListener() {
@@ -71,39 +64,4 @@ public class ShareDetailActivity extends AppCompatActivity {
 
     }
 
-
-    private void setupIndicators(int count) {
-        ImageView[] indicators = new ImageView[count];
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        params.setMargins(16, 8, 16, 8);
-
-        for (int i = 0; i < indicators.length; i++) {
-            indicators[i] = new ImageView(this);
-            indicators[i].setImageDrawable(ContextCompat.getDrawable(this,
-                    R.drawable.bg_indicator_inactive));
-            indicators[i].setLayoutParams(params);
-            layoutIndicator.addView(indicators[i]);
-        }
-        setCurrentIndicator(0);
-    }
-
-    private void setCurrentIndicator(int position) {
-        int childCount = layoutIndicator.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            ImageView imageView = (ImageView) layoutIndicator.getChildAt(i);
-            if (i == position) {
-                imageView.setImageDrawable(ContextCompat.getDrawable(
-                        this,
-                        R.drawable.bg_indicator_active
-                ));
-            } else {
-                imageView.setImageDrawable(ContextCompat.getDrawable(
-                        this,
-                        R.drawable.bg_indicator_inactive
-                ));
-            }
-        }
-    }
 }

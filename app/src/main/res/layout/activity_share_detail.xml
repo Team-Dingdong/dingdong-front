@@ -31,17 +31,6 @@
                     app:layout_constraintTop_toTopOf="parent">
 
 
-                    <LinearLayout
-                        android:id="@+id/layout_indicators"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="150dp"
-                        android:gravity="center"
-                        android:orientation="horizontal"
-                        android:paddingBottom="8dp"
-                        app:layout_constraintEnd_toStartOf="@+id/image_slider"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"></LinearLayout>
 
                     <androidx.viewpager2.widget.ViewPager2
                         android:id="@+id/image_slider"
@@ -50,6 +39,24 @@
                         android:background="#c5c5c5">
 
                     </androidx.viewpager2.widget.ViewPager2>
+
+                    <com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator
+                        android:id="@+id/indicator"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:dampingRatio="0.5"
+                        app:dotsCornerRadius="20dp"
+                        app:dotsSize="10dp"
+                        app:dotsColor="@color/mint"
+                        android:layout_marginBottom="10dp"
+                        app:dotsStrokeColor="@color/mint"
+                        app:dotsSpacing="6dp"
+                        app:dotsStrokeWidth="1dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/image_slider"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:stiffness="300" />
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
