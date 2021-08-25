@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +36,7 @@ public class ChattingFragment extends Fragment {
     private ArrayList<ChatRoom> chatRooms;
     private RecyclerView recyclerView;
     ChatRoomListAdapter chatRoomListAdapter;
+    Boolean ismaster = true;
 
     public ChattingFragment() {
         // Required empty public constructor
@@ -77,7 +80,28 @@ public class ChattingFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Log.i("Dialog", "네");
-                                chatRoomListAdapter.removeItem(position);
+                                
+                                if(ismaster){
+
+                                    final Snackbar snackbar = Snackbar.make(v,"방장은 거래를 나갈 수 없습니다.\n" + "채팅방-더보기-나눔파기를 통해 나눔을 파기해주세요.", Snackbar.LENGTH_INDEFINITE);
+                                    snackbar.setAction("확인", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            snackbar.dismiss();
+                                        }
+                                    });
+
+                                    TextView tvs = snackbar.getView().findViewById(com.google.android.material.R.id.snackbar_text);
+
+                                    tvs.setTextSize(13);
+
+                                    snackbar.show();
+
+
+                                }
+                                else{
+                                    chatRoomListAdapter.removeItem(position);
+                                }
 
                             }
                         }).show();
