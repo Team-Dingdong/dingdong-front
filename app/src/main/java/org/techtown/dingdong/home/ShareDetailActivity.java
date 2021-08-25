@@ -5,10 +5,14 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator;
 
 import org.techtown.dingdong.R;
 
@@ -16,7 +20,7 @@ public class ShareDetailActivity extends AppCompatActivity {
 
 
     private ViewPager2 sliderImageViewPager;
-    private LinearLayout layoutIndicator;
+    private SpringDotsIndicator indicator;
     private String[] images = new String[]{
             "https://cdn.pixabay.com/photo/2019/12/26/10/44/horse-4720178_1280.jpg",
             "https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
@@ -28,6 +32,7 @@ public class ShareDetailActivity extends AppCompatActivity {
             "날짜별 예약 대상은 해당 날짜 끝자리와 생년월일 끝자리가 일치하는 사람으로 지정된다. 가령, 예약이 시작되는 9일의 경우, 생년월일 끝자리가 9인 사람들이 예약 대상이다. 날짜별 예약은 오후 8시부터 이튿날 오후 6시까지 진행된다.";
     private String title = "18~49세 다음달 9일부터 10부제";
     private TextView tv_detail, tv_title;
+    private ImageButton btn_back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,62 +40,28 @@ public class ShareDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_share_detail);
 
         sliderImageViewPager = findViewById(R.id.image_slider);
-        layoutIndicator = findViewById(R.id.layout_indicators);
+        indicator = findViewById(R.id.indicator);
         tv_detail = findViewById(R.id.tv_detail);
         tv_title = findViewById(R.id.tv_title);
+        btn_back = findViewById(R.id.ic_back);
+
 
         tv_detail.setText(detail);
         tv_title.setText(title);
 
         sliderImageViewPager.setOffscreenPageLimit(1);
         sliderImageViewPager.setAdapter(new ImageSliderAdapter(this, images));
+        indicator.setViewPager2(sliderImageViewPager);
 
-        sliderImageViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+
+        btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                setCurrentIndicator(position);
+            public void onClick(View v) {
+                finish();
             }
         });
 
-        setupIndicators(images.length);
-
 
     }
 
-    private void setupIndicators(int length) {
-        ImageView [] indicators = new ImageView[length];
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
-        );
-        params.setMargins(16, 8, 16, 8);
-
-        for (int i = 0; i < indicators.length; i++){
-            indicators[i] = new ImageView(this);
-            indicators[i].setImageDrawable(ContextCompat.getDrawable(this,
-                    R.drawable.bg_indicator_inactive));
-            indicators[i].setLayoutParams(params);
-            layoutIndicator.addView(indicators[i]);
-        }
-        setCurrentIndicator(0);
-    }
-
-    private void setCurrentIndicator(int position) {
-        int childCount = layoutIndicator.getChildCount();
-        for(int i=0; i<childCount; i++){
-            ImageView imageView = (ImageView) layoutIndicator.getChildAt(i);
-            if(i == position){
-                imageView.setImageDrawable(ContextCompat.getDrawable(
-                        this,
-                        R.drawable.bg_indicator_active
-                ));
-            } else {
-                imageView.setImageDrawable(ContextCompat.getDrawable(
-                        this,
-                        R.drawable.bg_indicator_inactive
-                ));
-            }
-        }
-
-    }
 }
