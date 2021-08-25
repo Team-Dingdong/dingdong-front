@@ -20,7 +20,9 @@ import android.view.View;
 import android.widget.Adapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -39,6 +41,8 @@ import java.util.ArrayList;
 public class ChattingActivity extends AppCompatActivity implements ChattingBottomDialogFragment.onInteractionListener{
     private ArrayList<Chat> chats;
     private RecyclerView recycler_chat;
+    private TextView tv_people;
+    private ImageView img_people;
     private ImageButton btn_plus, btn_send, btn_back;
     private EditText et_message;
     private LinearLayout view_plus;
@@ -48,8 +52,6 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
     private String message;
     private String id = "1";
     private Boolean ismaster = true;
-
-
 
 
 
@@ -73,6 +75,16 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         btn_send = findViewById(R.id.btn_send);
         et_message = findViewById(R.id.et_chat);
         btn_back = findViewById(R.id.btn_back);
+
+        tv_people = findViewById(R.id.tv_people);
+
+
+        tv_people.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
 
         final ChattingBottomDialogFragment chattingBottomDialogFragment = new ChattingBottomDialogFragment(getApplicationContext(), ismaster);
