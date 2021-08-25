@@ -7,6 +7,7 @@ public class ChatRoom {
     private ArrayList<Chat> chats;
     private String title;
     private String personnel;
+    private String master;
     //private ArrayList<User> users;
 
     public ChatRoom(String image, ArrayList<Chat> chats, String title, String personnel) {

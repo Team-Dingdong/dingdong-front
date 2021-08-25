@@ -17,8 +17,11 @@ import com.bumptech.glide.Glide;
 import org.jetbrains.annotations.NotNull;
 import org.techtown.dingdong.MainActivity;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.chatting.ChattingActivity;
+import org.techtown.dingdong.chatting.PlanningActivity;
 
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +55,15 @@ public class ShareListAdpater extends RecyclerView.Adapter<ShareListAdpater.shar
 
         share = sharelist.get(position);
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), ShareDetailActivity.class);
+                intent.putExtra("id", share.getId());
+                context.startActivity(intent);
+            }
+        });
+
 
         holder.place.setText(share.getPlace());
         holder.personnel.setText(share.getPersonnelcapacity());
@@ -61,7 +73,7 @@ public class ShareListAdpater extends RecyclerView.Adapter<ShareListAdpater.shar
                 .load(share.getImages())
                 .into(holder.image);
         holder.title.setText(share.getTitle());
-        holder.price.setText(share.getPrice());
+        holder.price.setText(priceFormat(share.getPrice()));
         holder.date.setText(calcDate(share.getDate()));
 
     }
@@ -79,13 +91,6 @@ public class ShareListAdpater extends RecyclerView.Adapter<ShareListAdpater.shar
 
         public sharelistViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    context.startActivity(new Intent(v.getContext(), ShareDetailActivity.class));
-                }
-            });
 
             place = itemView.findViewById(R.id.tv_place);
             title = itemView.findViewById(R.id.tv_title);
@@ -117,9 +122,18 @@ public class ShareListAdpater extends RecyclerView.Adapter<ShareListAdpater.shar
             result = Integer.toString((int) myhour) + "시간" + "전";
         }
         else{
-            result = Integer.toString((int) myday) + "분" + "전";
+            result = Integer.toString((int) mymin) + "분" + "전";
         }
 
         return result;
+    }
+
+    public String priceFormat(String price){
+
+        DecimalFormat df = new DecimalFormat("#,###");
+        String res_price = "";
+        res_price = df.format(Double.parseDouble(price.replaceAll(",","")));
+
+        return res_price;
     }
 }

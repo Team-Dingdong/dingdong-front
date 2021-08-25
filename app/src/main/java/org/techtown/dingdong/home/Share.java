@@ -30,9 +30,10 @@ public class Share {
     @Expose
     private String  personnelcapacity;
     //private int personnelactual;
+    private String  id;
 
 
-    public Share(String title, String images, String maintext, String date, String price, String place, String personnelcapacity) {
+    public Share(String title, String images, String maintext, String date, String price, String place, String personnelcapacity, String id) {
         this.title = title;
         this.images = images;
         this.maintext = maintext;
@@ -40,6 +41,15 @@ public class Share {
         this.price = price;
         this.place = place;
         this.personnelcapacity = personnelcapacity;
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {
