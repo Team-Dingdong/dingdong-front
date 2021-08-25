@@ -139,6 +139,11 @@ public class HomeFragment extends Fragment {
                     setCall(token,trans);
                     trans = false;
                 }
+                else{
+                    //마감순일때
+                    setCall(token,trans);
+                    trans = true;
+                }
             }
         });
 

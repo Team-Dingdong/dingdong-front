@@ -77,11 +77,20 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         btn_back = findViewById(R.id.btn_back);
 
         tv_people = findViewById(R.id.tv_people);
+        img_people = findViewById(R.id.btn_people);
+
+        img_people.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ChattingActivity.this, UserListActivity.class));
+            }
+        });
 
 
         tv_people.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                startActivity(new Intent(ChattingActivity.this, UserListActivity.class));
 
             }
         });
