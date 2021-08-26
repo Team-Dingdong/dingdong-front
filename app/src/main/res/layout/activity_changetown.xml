@@ -34,6 +34,53 @@
         android:layout_height="307dp"
         tools:context=".MapsActivity" />
 
+    <TextView
+        android:id="@+id/tv1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="70dp"
+        android:text="설정돼 있는 위치는 혜화동, 한강로동이에요."
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:text="설정된 위치에서만 거래할 수 있어요."
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/tv2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:text="현재 위치는 한강로3가, 한강로동이에요."
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="24sp" />
+
+    <Button
+        android:id="@+id/list_btn"
+        android:layout_width="221dp"
+        android:layout_height="63dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:text="동네 변경하기"
+        android:textColor="#000000"
+        android:textSize="24sp"
+        app:backgroundTint="@color/blue" />
+
+
 
 
 </LinearLayout>
+
+
