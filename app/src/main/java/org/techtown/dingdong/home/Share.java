@@ -34,10 +34,10 @@ public class Share {
     private String place;
     @SerializedName("people")
     @Expose
-    private String  personnelcapacity;
-    //private int personnelactual;
-    private String  id;
-    private String[] images;
+    private String personnelcapacity;
+    @SerializedName("id")
+    @Expose
+    private String id;
 
     public Share(String title, String image1, String image2, String image3, String maintext, String date, String price, String place, String personnelcapacity, String id) {
         this.title = title;
@@ -50,18 +50,6 @@ public class Share {
         this.place = place;
         this.personnelcapacity = personnelcapacity;
         this.id = id;
-    }
-
-    public String[] getImages() {
-        return images;
-    }
-
-    public void setImages() {
-        String[] myimage = new String[3];
-        myimage[0] = image1;
-        myimage[1] = image2;
-        myimage[2] = image3;
-        this.images = myimage;
     }
 
     public String getId() {

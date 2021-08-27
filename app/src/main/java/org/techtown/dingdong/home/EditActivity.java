@@ -10,6 +10,8 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,6 +40,10 @@ import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -59,8 +65,9 @@ public class EditActivity extends AppCompatActivity {
     private ImageButton btn_imgupload, btn_back;
     private Button btn_enroll;
     ArrayList<Uri> uriList = new ArrayList<>();
+    ArrayList<String> imgList = new ArrayList<>();
     ImageUploadAdapter imageUploadAdapter;
-    private int id = 0;
+    private String id;
 
 
     String[] categories = {"과일·채소", "육류·계란", "간식류", "생필품", "기타"};
@@ -93,6 +100,9 @@ public class EditActivity extends AppCompatActivity {
 
         Token token = new Token(access, refresh, expire, tokentype);
 
+        Intent intent = getIntent();
+        id = intent.getStringExtra("id");
+
 
         //뒤로가기 눌렀을때
         btn_back.setOnClickListener(new View.OnClickListener() {
@@ -121,6 +131,8 @@ public class EditActivity extends AppCompatActivity {
 
             }
         });
+
+
 
 
         //카테고리 선택 스피너 세팅
@@ -310,10 +322,9 @@ public class EditActivity extends AppCompatActivity {
         });
 
 
-        id = 1;
 
         //게시물 수정일 경우 포스트 데이터 가져오기
-        if(id != 0) {
+        if(Integer.parseInt(id) != 0) {
             setShare(token);
             tv_btn.setText("나눔 수정하기");
         }
@@ -328,13 +339,11 @@ public class EditActivity extends AppCompatActivity {
                     //9,999로 받아오기 때문에 Integer로 변환하기 위해 ','를 없애줌
                     res_price = et_price.getText().toString().replace(",","");
 
-                    if(id != 0) {
+                    if(Integer.parseInt(id) != 0) {
                         setPatch(token);
-
                     }else{
                         //게시물 작성일경우
                         setPost(token);
-
                     }
 
 
@@ -359,7 +368,7 @@ public class EditActivity extends AppCompatActivity {
         //토큰을 이용해 통신하도록 레트로핏 통신 클래스에 전달
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,EditActivity.this);
 
-        Call<ResponseBody> call = apiinterface.setPatch(postRequest, id);
+        Call<ResponseBody> call = apiinterface.setPatch(postRequest, Integer.parseInt(id));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -412,6 +421,16 @@ public class EditActivity extends AppCompatActivity {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
                 if(response.isSuccessful()){
+
+                    /*for(int i=0; i<uriList.size(); i++) {
+                        try {
+                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(EditActivity.this.getContentResolver(),uriList.get(i));
+                            getResize(bitmap, Integer.toString((int)System.currentTimeMillis()));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }*/
+
                     Log.d("성공","등록이완료됨");
                     Toast.makeText(EditActivity.this, "등록이 완료되었습니다.", Toast.LENGTH_LONG).show();
 
@@ -447,7 +466,7 @@ public class EditActivity extends AppCompatActivity {
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,EditActivity.this);
 
-        Call<ShareResponse> call = apiinterface.getShare(id);
+        Call<ShareResponse> call = apiinterface.getShare(Integer.parseInt(id));
         call.enqueue(new Callback<ShareResponse>() {
             @SuppressLint("ResourceType")
             @Override
@@ -468,21 +487,28 @@ public class EditActivity extends AppCompatActivity {
                         select_category.setSelection(2);
                         //String json = new Gson().toJson(res.getData().getShare());
 
+                        if(share.getImage1()!=null){
                         if(!share.getImage1().equals("null")){
 
-                            uriList.add(Uri.parse(share.getImage1()));
+                            imgList.add(share.getImage1());
+
+                            //uriList.add(Uri.parse(share.getImage1()));
 
                             if(!share.getImage2().equals("null")){
-                                uriList.add(Uri.parse(share.getImage2()));}
+                                imgList.add(share.getImage2());
+                                //uriList.add(Uri.parse(share.getImage2()));
+                            }
                             if(!share.getImage3().equals("null")){
-                                uriList.add(Uri.parse(share.getImage3()));}
+                                imgList.add(share.getImage3());
+                                //uriList.add(Uri.parse(share.getImage3()));
+                            }
 
                             //이미지 리사이클러뷰 세팅
-                            imageUploadAdapter = new ImageUploadAdapter(uriList, getApplicationContext());
+                            imageUploadAdapter = new ImageUploadAdapter(imgList, getApplicationContext());
                             recycler_image.setAdapter(imageUploadAdapter);
                             recycler_image.setLayoutManager(new LinearLayoutManager(EditActivity.this, LinearLayoutManager.HORIZONTAL, false));
 
-                        }
+                        }}
                     }
 
                 }else{
@@ -518,8 +544,9 @@ public class EditActivity extends AppCompatActivity {
                 Log.e("single choice", String.valueOf(data.getData()));
                 Uri imageUri = data.getData();
                 uriList.add(imageUri);
+                imgList.add(imageUri.toString());
 
-                imageUploadAdapter = new ImageUploadAdapter(uriList, getApplicationContext());
+                imageUploadAdapter = new ImageUploadAdapter(imgList, getApplicationContext());
                 recycler_image.setAdapter(imageUploadAdapter);
                 recycler_image.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
@@ -529,7 +556,7 @@ public class EditActivity extends AppCompatActivity {
                 Log.e("clipData", String.valueOf(clipData.getItemCount()));
 
                 //갤러리 내부에서 선택한 아이템의 개수와 기선택된 아이템의 개수의 합이 3개를 넘지 않게끔
-                if(clipData.getItemCount() + uriList.size() > 3){
+                if(clipData.getItemCount() + imgList.size() > 3){
                     Toast.makeText(getApplicationContext(), "사진은 3장까지 선택 가능합니다.", Toast.LENGTH_LONG).show();
                 }
                 else{
@@ -540,17 +567,34 @@ public class EditActivity extends AppCompatActivity {
 
                         try{
                             uriList.add(imageUri);
+                            imgList.add(imageUri.toString());
                         } catch (Exception e){
                             Log.e("MultiImageActivity", "File select error", e);
                         }
                     }
 
                     //이미지 리사이클러뷰 세팅
-                    imageUploadAdapter = new ImageUploadAdapter(uriList, getApplicationContext());
+                    imageUploadAdapter = new ImageUploadAdapter(imgList, getApplicationContext());
                     recycler_image.setAdapter(imageUploadAdapter);
                     recycler_image.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
                 }
             }
         }
     }
+
+    private String getResize(Bitmap bitmap, String name) throws IOException {
+        File storage = getCacheDir();
+        String filename = name + ".jpg";
+        File imgfile = new File(storage, filename);
+
+        imgfile.createNewFile();
+        FileOutputStream out = new FileOutputStream(imgfile);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 40, out);
+        out.close();
+
+        return getCacheDir() + "/" + filename;
+    }
+
+
+
 }

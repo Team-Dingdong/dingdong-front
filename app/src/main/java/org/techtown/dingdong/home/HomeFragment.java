@@ -198,7 +198,10 @@ public class HomeFragment extends Fragment {
         btn_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), EditActivity.class));
+                Intent intent = new Intent(getContext(), EditActivity.class);
+                intent.putExtra("id","0");
+                //intent.putExtra("id", sharelist.get(position).getId());
+                startActivity(intent);
                 //startActivity(new Intent(getActivity(), ShareDetailActivity.class));
             }
         });

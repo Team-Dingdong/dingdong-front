@@ -2,11 +2,16 @@ package org.techtown.dingdong.home;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -14,29 +19,35 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator;
 
 import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
 import org.techtown.dingdong.login_register.Token;
+import org.techtown.dingdong.network.Api;
+import org.techtown.dingdong.network.Apiinterface;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ShareDetailActivity extends AppCompatActivity {
 
 
     private ViewPager2 sliderImageViewPager;
     private SpringDotsIndicator indicator;
-    private String[] images = new String[]{
-            "https://cdn.pixabay.com/photo/2019/12/26/10/44/horse-4720178_1280.jpg",
-            "https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-            "https://cdn.pixabay.com/photo/2014/03/03/16/15/mosque-279015_1280.jpg"
-    };
-
+    private String[] images = new String[3];
     private String detail = "코로나19 예방접종 대응추진단(추진단)의 ‘코로나19 예방접종 8~9월 시행계획’에 따르면, 1972년 1월 1일생부터 2003년 12월 31일 출생자 1천777만 명이 접종 대상자다. 사전예약은 8월 9일부터 18일까지 10개 대상군으로 나눠 실시된다.\n" +
             "\n" +
             "날짜별 예약 대상은 해당 날짜 끝자리와 생년월일 끝자리가 일치하는 사람으로 지정된다. 가령, 예약이 시작되는 9일의 경우, 생년월일 끝자리가 9인 사람들이 예약 대상이다. 날짜별 예약은 오후 8시부터 이튿날 오후 6시까지 진행된다.";
     private String title = "18~49세 다음달 9일부터 10부제";
     private TextView tv_detail, tv_title;
-    private ImageButton btn_back;
+    private ImageButton btn_back, btn_more;
+    private String id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,14 +59,12 @@ public class ShareDetailActivity extends AppCompatActivity {
         tv_detail = findViewById(R.id.tv_detail);
         tv_title = findViewById(R.id.tv_title);
         btn_back = findViewById(R.id.ic_back);
+        btn_more = findViewById(R.id.ic_more);
 
 
         tv_detail.setText(detail);
         tv_title.setText(title);
 
-        sliderImageViewPager.setOffscreenPageLimit(1);
-        sliderImageViewPager.setAdapter(new ImageSliderAdapter(this, images));
-        indicator.setViewPager2(sliderImageViewPager);
 
 
         SharedPreferences pref = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
@@ -66,8 +75,20 @@ public class ShareDetailActivity extends AppCompatActivity {
 
         Token token = new Token(access, refresh, expire, tokentype);
 
+        Intent intent = getIntent();
+        id = intent.getStringExtra("id");
 
+        setShare(token);
 
+        btn_more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ShareDetailActivity.this, EditActivity.class);
+                intent.putExtra("id",id);
+                //intent.putExtra("id", sharelist.get(position).getId());
+                startActivity(intent);
+            }
+        });
 
 
 
@@ -77,6 +98,73 @@ public class ShareDetailActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+    }
+
+    private void setShare(Token token){
+
+        Apiinterface apiinterface = Api.createService(Apiinterface.class,token,ShareDetailActivity.this);
+
+        Log.d("postedid",id);
+        Call<ShareResponse> call = apiinterface.getShare(Integer.parseInt(id));
+        call.enqueue(new Callback<ShareResponse>() {
+            @SuppressLint("ResourceType")
+            @Override
+            public void onResponse(Call<ShareResponse> call, Response<ShareResponse> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    if(response.body().getResult().equals("POST_READ_SUCCESS")){
+                        ShareResponse res = response.body();
+                        Log.d("성공", new Gson().toJson(res));
+
+                        Share share;
+                        share = res.getShare();
+
+                        //String json = new Gson().toJson(res.getData().getShare());
+                        tv_detail.setText(share.getMaintext());
+                        tv_title.setText(share.getTitle());
+
+                        if(share.getImage1()!=null){
+                        if(!share.getImage1().equals("null")){
+
+                            List<String> list = new ArrayList<String>();
+
+                            list.add(share.getImage1());
+
+                            if(!share.getImage2().equals("null")){
+                                list.add(share.getImage2());
+                            }
+                            if(!share.getImage3().equals("null")){
+                                list.add(share.getImage3());
+                            }
+
+                            images = list.toArray(new String[0]);
+
+                            sliderImageViewPager.setOffscreenPageLimit(1);
+                            sliderImageViewPager.setAdapter(new ImageSliderAdapter(ShareDetailActivity.this, images));
+                            indicator.setViewPager2(sliderImageViewPager);
+
+                        }}
+                    }
+
+                }else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ShareResponse> call, Throwable t) {
+
+                Log.d("외않되", String.valueOf(t));
+
+            }
+        });
+
+
 
 
     }

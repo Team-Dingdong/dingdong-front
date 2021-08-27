@@ -59,7 +59,8 @@ public class ShareListAdpater extends RecyclerView.Adapter<ShareListAdpater.shar
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), ShareDetailActivity.class);
-                intent.putExtra("id", share.getId());
+                intent.putExtra("id", sharelist.get(position).getId());
+                Log.d("postid",sharelist.get(position).getId());
                 context.startActivity(intent);
             }
         });
