@@ -55,7 +55,7 @@ public class EditActivity extends AppCompatActivity {
     private int selected_personnel = 2, category = 1;
     private RecyclerView recycler_image;
     private EditText et_title, et_detail, et_price, et_place, et_hashtag1, et_hashtag2, et_hashtag3, et_hashtag4, et_hashtag5 ;
-    private TextView tv_region;
+    private TextView tv_region, tv_btn;
     private ImageButton btn_imgupload, btn_back;
     private Button btn_enroll;
     ArrayList<Uri> uriList = new ArrayList<>();
@@ -83,6 +83,7 @@ public class EditActivity extends AppCompatActivity {
         et_detail = findViewById(R.id.et_detail);
         et_title = findViewById(R.id.et_title);
         et_place = findViewById(R.id.et_place);
+        tv_btn = findViewById(R.id.post_text);
 
         SharedPreferences pref = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         String access = pref.getString("oauth.accesstoken", "");
@@ -314,6 +315,7 @@ public class EditActivity extends AppCompatActivity {
         //게시물 수정일 경우 포스트 데이터 가져오기
         if(id != 0) {
             setShare(token);
+            tv_btn.setText("나눔 수정하기");
         }
 
 
