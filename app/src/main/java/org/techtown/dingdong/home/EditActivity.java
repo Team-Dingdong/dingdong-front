@@ -47,6 +47,8 @@ import retrofit2.Response;
 
 public class EditActivity extends AppCompatActivity {
 
+    //수정삭제
+
     private Spinner select_category, select_personnel, select_region;
     private String selected_category, res_price, res_detail, res_title, res_place, res_hash, selected_region;
     private int selected_personnel = 2, category = 1;

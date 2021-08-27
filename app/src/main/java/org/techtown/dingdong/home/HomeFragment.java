@@ -51,15 +51,15 @@ import retrofit2.Retrofit;
 
 public class HomeFragment extends Fragment {
 
-    private ImageButton btn_edit, cat1, cat2, cat3, cat4;
+    private ImageButton btn_edit, cat1, cat2, cat3, cat4, btn_trans;
     private RecyclerView sharelistrecycler;
     ShareListAdpater shareListAdpater;
     private List<Share> list = null;
     private ArrayList<Share> sharelist_data, sharelist_latest, sharelist_deadline;
-    private LinearLayout btn_trans, fruit;
     private TextView tv_align, tv_region;
     private Spinner select_region;
     private String selected_region;
+    private Boolean trans = true; //버튼 선택시 true(최신순) -> false(마감임)
     String[] region = {"미아2동", "안암동"};
 
 
@@ -112,10 +112,9 @@ public class HomeFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
         btn_edit = v.findViewById(R.id.btn_edit);
         sharelistrecycler = v.findViewById(R.id.sharelist);
-        btn_trans = v.findViewById(R.id.trans);
-        tv_align = v.findViewById(R.id.align);
+        btn_trans = v.findViewById(R.id.btn_trans);
+        tv_align = v.findViewById(R.id.tv_align);
         tv_region = v.findViewById(R.id.tv_region);
-        fruit = v.findViewById(R.id.fruit);
         select_region = v.findViewById(R.id.select_region);
         cat1 = v.findViewById(R.id.cat1);
         cat2 = v.findViewById(R.id.cat2);
@@ -132,41 +131,17 @@ public class HomeFragment extends Fragment {
 
         Log.d("토큰", String.valueOf(access));
 
-
-        Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
-        Call<PostResponse> call = apiinterface.getData(0);
-
-        call.enqueue(new Callback<PostResponse>() {
+        btn_trans.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
-                if(response.isSuccessful() && response.body() != null){
-                   if(response.body().getResult().equals("POST_READ_SUCCESS")){
-                       PostResponse res = response.body();
-                       Log.d("성공", new Gson().toJson(res));
-
-                       ArrayList<Share> mList = new ArrayList<>();
-                       mList = res.getData().getShare();
-                       //String json = new Gson().toJson(res.getData().getShare());
-                       setShareListRecycler(sharelistrecycler, mList);
-
-                   }
-
-                }else{
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
+            public void onClick(View v) {
+                if(trans){
+                    //최신순일때
+                    setCall(token,trans);
+                    trans = false;
                 }
             }
-
-            @Override
-            public void onFailure(Call<PostResponse> call, Throwable t) {
-                Log.d("외않되", String.valueOf(t));
-
-            }
         });
+
 
 
 
@@ -216,6 +191,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getActivity(), EditActivity.class));
+                //startActivity(new Intent(getActivity(), ShareDetailActivity.class));
             }
         });
 
@@ -271,6 +247,47 @@ public class HomeFragment extends Fragment {
 
     }
 
+
+    public void setCall(Token token, Boolean bool){
+
+        Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
+        Call<PostResponse> call = apiinterface.getData(0);
+
+        call.enqueue(new Callback<PostResponse>() {
+            @Override
+            public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    if(response.body().getResult().equals("POST_READ_SUCCESS")){
+                        PostResponse res = response.body();
+                        Log.d("성공", new Gson().toJson(res));
+
+                        ArrayList<Share> mList = new ArrayList<>();
+                        mList = res.getData().getShare();
+                        //String json = new Gson().toJson(res.getData().getShare());
+                        setShareListRecycler(sharelistrecycler, mList);
+
+                    }
+
+                }else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PostResponse> call, Throwable t) {
+                Log.d("외않되", String.valueOf(t));
+
+            }
+        });
+
+
+
+    }
 
 
 

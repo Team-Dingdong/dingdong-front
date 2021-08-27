@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,6 +42,10 @@ public class PlanningActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_planning);
+
+
+        Intent intent = getIntent();
+        String id = intent.getStringExtra("id");
 
         btn_datepick = findViewById(R.id.btn_datepick);
         btn_timepick = findViewById(R.id.btn_timepick);
@@ -170,7 +175,7 @@ public class PlanningActivity extends AppCompatActivity {
         btn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(getd && getp && getd){
+                if(gett && getp && getd){
 
                     Toast.makeText(PlanningActivity.this, "생성이 완료되었습니다.",Toast.LENGTH_LONG).show();
 
