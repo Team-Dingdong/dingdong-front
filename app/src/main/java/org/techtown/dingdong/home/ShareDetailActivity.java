@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +16,9 @@ import android.widget.TextView;
 
 import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator;
 
+import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.login_register.Token;
 
 public class ShareDetailActivity extends AppCompatActivity {
 
@@ -52,6 +56,19 @@ public class ShareDetailActivity extends AppCompatActivity {
         sliderImageViewPager.setOffscreenPageLimit(1);
         sliderImageViewPager.setAdapter(new ImageSliderAdapter(this, images));
         indicator.setViewPager2(sliderImageViewPager);
+
+
+        SharedPreferences pref = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+        String access = pref.getString("oauth.accesstoken", "");
+        String refresh = pref.getString("oauth.refreshtoken", "");
+        String expire = pref.getString("oauth.expire", "");
+        String tokentype = pref.getString("oauth.tokentype", "");
+
+        Token token = new Token(access, refresh, expire, tokentype);
+
+
+
+
 
 
         btn_back.setOnClickListener(new View.OnClickListener() {

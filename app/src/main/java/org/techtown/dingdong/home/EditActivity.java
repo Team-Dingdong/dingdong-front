@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -59,6 +60,7 @@ public class EditActivity extends AppCompatActivity {
     private Button btn_enroll;
     ArrayList<Uri> uriList = new ArrayList<>();
     ImageUploadAdapter imageUploadAdapter;
+    private int id = 0;
 
 
     String[] categories = {"과일·채소", "육류·계란", "간식류", "생필품", "기타"};
@@ -82,6 +84,13 @@ public class EditActivity extends AppCompatActivity {
         et_title = findViewById(R.id.et_title);
         et_place = findViewById(R.id.et_place);
 
+        SharedPreferences pref = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+        String access = pref.getString("oauth.accesstoken", "");
+        String refresh = pref.getString("oauth.refreshtoken", "");
+        String expire = pref.getString("oauth.expire", "");
+        String tokentype = pref.getString("oauth.tokentype", "");
+
+        Token token = new Token(access, refresh, expire, tokentype);
 
 
         //뒤로가기 눌렀을때
@@ -300,6 +309,14 @@ public class EditActivity extends AppCompatActivity {
         });
 
 
+        id = 1;
+
+        //게시물 수정일 경우 포스트 데이터 가져오기
+        if(id != 0) {
+            setShare(token);
+        }
+
+
         btn_enroll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -309,65 +326,178 @@ public class EditActivity extends AppCompatActivity {
                     //9,999로 받아오기 때문에 Integer로 변환하기 위해 ','를 없애줌
                     res_price = et_price.getText().toString().replace(",","");
 
-                    //리퀘스트 생성
-                    PostRequest postRequest = new PostRequest(et_title.getText().toString(), selected_personnel,
-                           Integer.parseInt(res_price), et_detail.getText().toString(),
-                            et_place.getText().toString(), category);
+                    if(id != 0) {
+                        setPatch(token);
 
-                    //저장된 토큰을 받아옴
-                    SharedPreferences pref = getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
-                    String access = pref.getString("oauth.accesstoken","");
-                    String refresh = pref.getString("oauth.refreshtoken","");
-                    String expire = pref.getString("oauth.expire","");
-                    String tokentype = pref.getString("oauth.tokentype","");
+                    }else{
+                        //게시물 작성일경우
+                        setPost(token);
 
-                    //토큰을 저장
-                    Token token = new Token(access,refresh,expire,tokentype);
+                    }
 
-                    Log.d("토큰", String.valueOf(access));
-
-
-                    //토큰을 이용해 통신하도록 레트로핏 통신 클래스에 전달
-                    Apiinterface apiinterface = Api.createService(Apiinterface.class,token,EditActivity.this);
-                    Call<ResponseBody> call = apiinterface.setPost(postRequest);
-                    call.enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                            if(response.isSuccessful()){
-                                Log.d("성공","등록이완료됨");
-                                Toast.makeText(EditActivity.this, "등록이 완료되었습니다.", Toast.LENGTH_LONG).show();
-
-                                //핸들러를 통한 액티비티 종료 시점 조절
-                                Handler handler = new Handler();
-                                handler.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        finish();
-                                    }
-                                }, 1000);
-
-                            }else{
-                                Log.d("실패", new Gson().toJson(response.errorBody()));
-                                Log.d("실패", response.toString());
-                                Log.d("실패", String.valueOf(response.code()));
-                                Log.d("실패", response.message());
-                                Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                                Log.d("실패", new Gson().toJson(response.raw().request()));
-
-                            }
-                        }
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            Log.d("외않되","응?" );
-                        }
-                    });
 
 
                 }
                 else {
                     Toast.makeText(getApplicationContext(), "게시물이 다 채워지지 않았어요!", Toast.LENGTH_LONG).show();
                 }
+            }
+        });
+
+    }
+
+    private void setPatch(Token token){
+
+        //리퀘스트 생성
+        PostRequest postRequest = new PostRequest(et_title.getText().toString(), selected_personnel,
+                Integer.parseInt(res_price), et_detail.getText().toString(),
+                et_place.getText().toString(), category);
+
+
+        //토큰을 이용해 통신하도록 레트로핏 통신 클래스에 전달
+        Apiinterface apiinterface = Api.createService(Apiinterface.class,token,EditActivity.this);
+
+        Call<ResponseBody> call = apiinterface.setPatch(postRequest, id);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(response.isSuccessful()){
+                    Log.d("성공","수정이완료됨");
+                    Toast.makeText(EditActivity.this, "수정이 완료되었습니다.", Toast.LENGTH_LONG).show();
+
+                    //핸들러를 통한 액티비티 종료 시점 조절
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            finish();
+                        }
+                    }, 1000);
+
+                }else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("외않되","응?" );
+            }
+        });
+
+
+    }
+
+    private void setPost(Token token){
+
+        //리퀘스트 생성
+        PostRequest postRequest = new PostRequest(et_title.getText().toString(), selected_personnel,
+                Integer.parseInt(res_price), et_detail.getText().toString(),
+                et_place.getText().toString(), category);
+
+
+        //토큰을 이용해 통신하도록 레트로핏 통신 클래스에 전달
+        Apiinterface apiinterface = Api.createService(Apiinterface.class,token,EditActivity.this);
+        Call<ResponseBody> call = apiinterface.setPost(postRequest);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                if(response.isSuccessful()){
+                    Log.d("성공","등록이완료됨");
+                    Toast.makeText(EditActivity.this, "등록이 완료되었습니다.", Toast.LENGTH_LONG).show();
+
+                    //핸들러를 통한 액티비티 종료 시점 조절
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            finish();
+                        }
+                    }, 1000);
+
+                }else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("외않되","응?" );
+            }
+        });
+
+
+    }
+
+    private void setShare(Token token){
+
+        Apiinterface apiinterface = Api.createService(Apiinterface.class,token,EditActivity.this);
+
+        Call<ShareResponse> call = apiinterface.getShare(id);
+        call.enqueue(new Callback<ShareResponse>() {
+            @SuppressLint("ResourceType")
+            @Override
+            public void onResponse(Call<ShareResponse> call, Response<ShareResponse> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    if(response.body().getResult().equals("POST_READ_SUCCESS")){
+                        ShareResponse res = response.body();
+                        Log.d("성공", new Gson().toJson(res));
+
+                        Share share;
+                        share = res.getShare();
+
+                        et_detail.setText(share.getMaintext());
+                        et_title.setText(share.getTitle());
+                        et_price.setText(share.getPrice());
+                        et_place.setText(share.getPlace());
+                        select_personnel.setSelection(3);
+                        select_category.setSelection(2);
+                        //String json = new Gson().toJson(res.getData().getShare());
+
+                        if(!share.getImage1().equals("null")){
+
+                            uriList.add(Uri.parse(share.getImage1()));
+
+                            if(!share.getImage2().equals("null")){
+                                uriList.add(Uri.parse(share.getImage2()));}
+                            if(!share.getImage3().equals("null")){
+                                uriList.add(Uri.parse(share.getImage3()));}
+
+                            //이미지 리사이클러뷰 세팅
+                            imageUploadAdapter = new ImageUploadAdapter(uriList, getApplicationContext());
+                            recycler_image.setAdapter(imageUploadAdapter);
+                            recycler_image.setLayoutManager(new LinearLayoutManager(EditActivity.this, LinearLayoutManager.HORIZONTAL, false));
+
+                        }
+                    }
+
+                }else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ShareResponse> call, Throwable t) {
+
+                Log.d("외않되", String.valueOf(t));
+
             }
         });
 

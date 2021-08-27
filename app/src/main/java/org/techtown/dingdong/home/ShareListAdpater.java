@@ -70,7 +70,7 @@ public class ShareListAdpater extends RecyclerView.Adapter<ShareListAdpater.shar
         //holder.personnel.setText(Integer.toString(share.getPersonnel_actual()) + "/" + Integer.toString(share.getPersonnel_capacity()));
         //holder.hashtags.setText(share.getHashtag());
         Glide.with(holder.image.getContext())
-                .load(share.getImages())
+                .load(share.getImage1())
                 .into(holder.image);
         holder.title.setText(share.getTitle());
         holder.price.setText(priceFormat(share.getPrice()));
