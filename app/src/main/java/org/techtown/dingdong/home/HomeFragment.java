@@ -129,7 +129,6 @@ public class HomeFragment extends Fragment {
         String tokentype = pref.getString("oauth.tokentype","");
 
         Token token = new Token(access,refresh,expire,tokentype);
-        setCreatedData(token);
 
         Log.d("토큰", String.valueOf(access));
 
@@ -146,16 +145,12 @@ public class HomeFragment extends Fragment {
                     trans = false; //마감임박순 병렬로 바꾸기
                 }
                 else{
-                    //마감순일때
-                    setCall(token,trans);
-                    trans = true;
-                }
-            }
                     //마감임박순병렬일때 최신순을 불러오기
                     tv_align.setText("최신순");
                     setCreatedData(token);
                     trans = true; //최신순병렬로 바꾸기
-                }}
+                }
+            }
         });
 
 
