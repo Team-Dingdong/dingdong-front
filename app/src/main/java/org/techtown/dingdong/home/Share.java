@@ -10,9 +10,15 @@ public class Share {
     @SerializedName("title")
     @Expose
     private String title;
-    @SerializedName("imageUrl")
+    @SerializedName("imageUrl1")
     @Expose
-    private String images;
+    private String image1 = null;
+    @SerializedName("imageUrl2")
+    @Expose
+    private String image2 = null;
+    @SerializedName("imageUrl3")
+    @Expose
+    private String image3 = null;
     @SerializedName("bio")
     @Expose
     private String maintext;
@@ -28,14 +34,16 @@ public class Share {
     private String place;
     @SerializedName("people")
     @Expose
-    private String  personnelcapacity;
-    //private int personnelactual;
-    private String  id;
+    private String personnelcapacity;
+    @SerializedName("id")
+    @Expose
+    private String id;
 
-
-    public Share(String title, String images, String maintext, String date, String price, String place, String personnelcapacity, String id) {
+    public Share(String title, String image1, String image2, String image3, String maintext, String date, String price, String place, String personnelcapacity, String id) {
         this.title = title;
-        this.images = images;
+        this.image1 = image1;
+        this.image2 = image2;
+        this.image3 = image3;
         this.maintext = maintext;
         this.date = date;
         this.price = price;
@@ -60,12 +68,28 @@ public class Share {
         this.title = title;
     }
 
-    public String getImages() {
-        return images;
+    public String getImage1() {
+        return image1;
     }
 
-    public void setImages(String images) {
-        this.images = images;
+    public void setImage1(String image1) {
+        this.image1 = image1;
+    }
+
+    public String getImage2() {
+        return image2;
+    }
+
+    public void setImage2(String image2) {
+        this.image2 = image2;
+    }
+
+    public String getImage3() {
+        return image3;
+    }
+
+    public void setImage3(String image3) {
+        this.image3 = image3;
     }
 
     public String getMaintext() {
