@@ -52,6 +52,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
     private String message;
     private String id = "1";
     private Boolean ismaster = true;
+    ChattingBottomDialogFragment chattingBottomDialogFragment;
 
 
 
@@ -77,17 +78,26 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         btn_back = findViewById(R.id.btn_back);
 
         tv_people = findViewById(R.id.tv_people);
+        img_people = findViewById(R.id.btn_people);
+
+        img_people.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ChattingActivity.this, UserListActivity.class));
+            }
+        });
 
 
         tv_people.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                startActivity(new Intent(ChattingActivity.this, UserListActivity.class));
 
             }
         });
 
 
-        final ChattingBottomDialogFragment chattingBottomDialogFragment = new ChattingBottomDialogFragment(getApplicationContext(), ismaster);
+        chattingBottomDialogFragment = new ChattingBottomDialogFragment(getApplicationContext(), ismaster);
 
 
         btn_plus.setOnClickListener(new View.OnClickListener() {
@@ -177,13 +187,16 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                 Intent intent1 = new Intent(Intent.ACTION_PICK);
                 intent1.setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
                 startActivityForResult(intent1, OPEN_GALLERY);
+                chattingBottomDialogFragment.dismiss();
                 break;
             case 2:
                 Intent intent2 = new Intent(ChattingActivity.this,PlanningActivity.class);
                 intent2.putExtra("id",id);
                 startActivity(intent2);
+                chattingBottomDialogFragment.dismiss();
                 break;
             case 3:
+                chattingBottomDialogFragment.dismiss();
                 break;
 
         }
