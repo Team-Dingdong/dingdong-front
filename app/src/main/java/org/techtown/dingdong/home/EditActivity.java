@@ -2,6 +2,7 @@ package org.techtown.dingdong.home;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,7 +14,9 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.FileUtils;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -47,12 +50,17 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class EditActivity extends AppCompatActivity {
+
+    public int status = 0;
 
     //수정삭제
 
@@ -374,16 +382,23 @@ public class EditActivity extends AppCompatActivity {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if(response.isSuccessful()){
                     Log.d("성공","수정이완료됨");
-                    Toast.makeText(EditActivity.this, "수정이 완료되었습니다.", Toast.LENGTH_LONG).show();
 
-                    //핸들러를 통한 액티비티 종료 시점 조절
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            finish();
-                        }
-                    }, 1000);
+                    uploadImage(token, Integer.parseInt(id));
+
+                    if(status == 1) {
+
+                        Toast.makeText(EditActivity.this, "수정이 완료되었습니다.", Toast.LENGTH_LONG).show();
+
+                        //핸들러를 통한 액티비티 종료 시점 조절
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                finish();
+                            }
+                        }, 1000);
+
+                    }
 
                 }else{
                     Log.d("실패", new Gson().toJson(response.errorBody()));
@@ -415,33 +430,33 @@ public class EditActivity extends AppCompatActivity {
 
         //토큰을 이용해 통신하도록 레트로핏 통신 클래스에 전달
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,EditActivity.this);
-        Call<ResponseBody> call = apiinterface.setPost(postRequest);
-        call.enqueue(new Callback<ResponseBody>() {
+        Call<EditResponse> call = apiinterface.setPost(postRequest);
+        call.enqueue(new Callback<EditResponse>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<EditResponse> call, Response<EditResponse> response) {
 
                 if(response.isSuccessful()){
 
-                    /*for(int i=0; i<uriList.size(); i++) {
-                        try {
-                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(EditActivity.this.getContentResolver(),uriList.get(i));
-                            getResize(bitmap, Integer.toString((int)System.currentTimeMillis()));
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }*/
+                   EditResponse res = response.body();
+                   String resId = res.getId();
+                   Log.d("성공",resId);
 
-                    Log.d("성공","등록이완료됨");
-                    Toast.makeText(EditActivity.this, "등록이 완료되었습니다.", Toast.LENGTH_LONG).show();
+                   uploadImage(token, Integer.parseInt(resId));
 
-                    //핸들러를 통한 액티비티 종료 시점 조절
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            finish();
-                        }
-                    }, 1000);
+                    if(status == 1) {
+
+                        Toast.makeText(EditActivity.this, "수정이 완료되었습니다.", Toast.LENGTH_LONG).show();
+
+                        //핸들러를 통한 액티비티 종료 시점 조절
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                finish();
+                            }
+                        }, 1000);
+
+                    }
 
                 }else{
                     Log.d("실패", new Gson().toJson(response.errorBody()));
@@ -452,12 +467,17 @@ public class EditActivity extends AppCompatActivity {
                     Log.d("실패", new Gson().toJson(response.raw().request()));
 
                 }
+
             }
+
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<EditResponse> call, Throwable t) {
+
                 Log.d("외않되","응?" );
+
             }
         });
+
 
 
     }
@@ -582,7 +602,7 @@ public class EditActivity extends AppCompatActivity {
         }
     }
 
-    private String getResize(Bitmap bitmap, String name) throws IOException {
+    private File getResize(Bitmap bitmap, String name) throws IOException {
         File storage = getCacheDir();
         String filename = name + ".jpg";
         File imgfile = new File(storage, filename);
@@ -592,9 +612,73 @@ public class EditActivity extends AppCompatActivity {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 40, out);
         out.close();
 
-        return getCacheDir() + "/" + filename;
+
+        return new File(getCacheDir() + "/" + filename);
+
     }
 
+    private void uploadImage(Token token, int id) {
 
+        if(uriList.size() != 0) {
+            ArrayList<MultipartBody.Part> uplist = new ArrayList<>();
+            for (int i = 0; i < uriList.size(); i++) {
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(EditActivity.this.getContentResolver(), uriList.get(i));
+                    File file = getResize(bitmap, Integer.toString((int) System.currentTimeMillis()));
+
+                    RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                    uplist.add(MultipartBody.Part.createFormData("img", file.getName(), requestBody));
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            Apiinterface apiinterface = Api.createService(Apiinterface.class, token, EditActivity.this);
+            Call<ResponseBody> call = apiinterface.uploadImg(uplist, id);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                    if (response.isSuccessful()) {
+
+                        if (response.code() == 200) {
+                            Log.d("이미지등록성공", new Gson().toJson(response.code()));
+
+                            status = 1;
+                        }
+
+
+                    } else {
+
+                        Log.d("실패", new Gson().toJson(response.errorBody()));
+                        Log.d("실패", response.toString());
+                        Log.d("실패", String.valueOf(response.code()));
+                        Log.d("실패", response.message());
+                        Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                        Log.d("실패", new Gson().toJson(response.raw().request()));
+
+                        status = 0;
+
+
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    Log.d("외않되", String.valueOf(t));
+                    status = 0;
+
+                }
+            });
+
+
+        }
+        else{status = 1;}
+
+
+    }
 
 }

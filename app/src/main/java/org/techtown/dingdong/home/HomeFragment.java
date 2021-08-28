@@ -51,7 +51,7 @@ import retrofit2.Retrofit;
 
 public class HomeFragment extends Fragment {
 
-    private ImageButton btn_edit, cat1, cat2, cat3, cat4, btn_trans;
+    private ImageButton btn_edit, cat1, cat2, cat3, cat4, btn_trans, btn_search;
     private RecyclerView sharelistrecycler;
     ShareListAdpater shareListAdpater;
     private List<Share> list = null;
@@ -120,6 +120,7 @@ public class HomeFragment extends Fragment {
         cat2 = v.findViewById(R.id.cat2);
         cat3 = v.findViewById(R.id.cat3);
         cat4 = v.findViewById(R.id.cat4);
+        btn_search = v.findViewById(R.id.ic_search);
 
         SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         String access = pref.getString("oauth.accesstoken","");
@@ -242,6 +243,14 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 ((MainActivity) getActivity()).replaceFragment(MainFragment.newInstance(3));
+
+            }
+        });
+
+        btn_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), SearchBarActivity.class));
 
             }
         });
