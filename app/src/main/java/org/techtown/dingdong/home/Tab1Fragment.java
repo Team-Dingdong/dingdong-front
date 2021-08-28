@@ -100,6 +100,7 @@ public class Tab1Fragment extends Fragment {
                         mList = res.getData().getShare();
                         //String json = new Gson().toJson(res.getData().getShare());
                         setShareListRecycler(sharelistrecycler, mList);
+                        Log.d("성공", new Gson().toJson(response.raw().request()));
 
                     }
 
