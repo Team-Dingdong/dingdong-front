@@ -1,7 +1,11 @@
 package org.techtown.dingdong.home;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,15 +20,18 @@ import com.bumptech.glide.Glide;
 import org.jetbrains.annotations.NotNull;
 import org.techtown.dingdong.R;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 public class ImageUploadAdapter extends RecyclerView.Adapter<ImageUploadAdapter.ViewHolder> {
 
-    private ArrayList<Uri> Data = null;
+    private ArrayList<String> Data = null;
+    private ArrayList<Bitmap> postData = null;
     Context context;
     private int position;
 
-    public ImageUploadAdapter(ArrayList<Uri> mData, Context mcontext) {
+    public ImageUploadAdapter(ArrayList<String> mData, Context mcontext) {
         this.Data = mData;
         this.context = mcontext;
     }
@@ -44,7 +51,7 @@ public class ImageUploadAdapter extends RecyclerView.Adapter<ImageUploadAdapter.
     @Override
     public void onBindViewHolder(@NonNull @NotNull ImageUploadAdapter.ViewHolder holder, int position) {
 
-        Uri image_uri =Data.get(position);
+        String image_uri =Data.get(position);
 
         Glide.with(context)
                 .load(image_uri)
@@ -56,6 +63,13 @@ public class ImageUploadAdapter extends RecyclerView.Adapter<ImageUploadAdapter.
                 removeItem(position);
             }
         });
+
+        /*if(image_uri != null){
+        BitmapDrawable drawable = (BitmapDrawable) holder.image.getDrawable();
+        Bitmap bitmap = drawable.getBitmap();
+        postData.add(getResize(bitmap));
+        Log.d("비트맵","리사이즈가 잘됨");
+        }*/
 
     }
 
@@ -87,6 +101,8 @@ public class ImageUploadAdapter extends RecyclerView.Adapter<ImageUploadAdapter.
         notifyItemRemoved(position);
         notifyItemRangeChanged(position,Data.size());
     }
+
+
 
 
 }

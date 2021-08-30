@@ -51,7 +51,7 @@ import retrofit2.Retrofit;
 
 public class HomeFragment extends Fragment {
 
-    private ImageButton btn_edit, cat1, cat2, cat3, cat4, btn_trans;
+    private ImageButton btn_edit, cat1, cat2, cat3, cat4, btn_trans, btn_search;
     private RecyclerView sharelistrecycler;
     ShareListAdpater shareListAdpater;
     private List<Share> list = null;
@@ -120,6 +120,7 @@ public class HomeFragment extends Fragment {
         cat2 = v.findViewById(R.id.cat2);
         cat3 = v.findViewById(R.id.cat3);
         cat4 = v.findViewById(R.id.cat4);
+        btn_search = v.findViewById(R.id.ic_search);
 
         SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         String access = pref.getString("oauth.accesstoken","");
@@ -131,18 +132,26 @@ public class HomeFragment extends Fragment {
 
         Log.d("토큰", String.valueOf(access));
 
-        btn_trans.setOnClickListener(new View.OnClickListener() {
+        setCreatedData(token);
+
+
+        tv_align.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(trans){
-                    //최신순일때
-                    setCall(token,trans);
-                    trans = false;
+                    //최신순병렬일때 마감임박순을 불러오기
+                    tv_align.setText("마감임박순");
+                    setEndTimeData(token);
+                    trans = false; //마감임박순 병렬로 바꾸기
+                }
+                else{
+                    //마감임박순병렬일때 최신순을 불러오기
+                    tv_align.setText("최신순");
+                    setCreatedData(token);
+                    trans = true; //최신순병렬로 바꾸기
                 }
             }
         });
-
-
 
 
 
@@ -190,7 +199,10 @@ public class HomeFragment extends Fragment {
         btn_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), EditActivity.class));
+                Intent intent = new Intent(getContext(), EditActivity.class);
+                intent.putExtra("id","0");
+                //intent.putExtra("id", sharelist.get(position).getId());
+                startActivity(intent);
                 //startActivity(new Intent(getActivity(), ShareDetailActivity.class));
             }
         });
@@ -235,6 +247,14 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        btn_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), SearchBarActivity.class));
+
+            }
+        });
+
         return v;
     }
 
@@ -247,11 +267,11 @@ public class HomeFragment extends Fragment {
 
     }
 
-
-    public void setCall(Token token, Boolean bool){
+    public void setCreatedData(Token token){
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
-        Call<PostResponse> call = apiinterface.getData(0);
+
+        Call<PostResponse> call = apiinterface.getCreatedData(0);
 
         call.enqueue(new Callback<PostResponse>() {
             @Override
@@ -285,6 +305,46 @@ public class HomeFragment extends Fragment {
             }
         });
 
+
+    }
+
+    public void setEndTimeData(Token token){
+
+        Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
+
+        Call<PostResponse> call = apiinterface.getEndData(0);
+
+        call.enqueue(new Callback<PostResponse>() {
+            @Override
+            public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    if(response.body().getResult().equals("POST_READ_SUCCESS")){
+                        PostResponse res = response.body();
+                        Log.d("성공", new Gson().toJson(res));
+
+                        ArrayList<Share> mList = new ArrayList<>();
+                        mList = res.getData().getShare();
+                        //String json = new Gson().toJson(res.getData().getShare());
+                        setShareListRecycler(sharelistrecycler, mList);
+
+                    }
+
+                }else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PostResponse> call, Throwable t) {
+                Log.d("외않되", String.valueOf(t));
+
+            }
+        });
 
 
     }

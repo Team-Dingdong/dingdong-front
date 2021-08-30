@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/view"
     android:layout_height="match_parent"
     tools:context=".chatting.UserListActivity">
 
@@ -46,7 +47,7 @@
 </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="29dp"
@@ -67,7 +68,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="157dp"
         android:orientation="horizontal"
-        app:layout_constraintStart_toEndOf="@+id/textView2"
+        app:layout_constraintStart_toEndOf="@+id/tv_title"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
