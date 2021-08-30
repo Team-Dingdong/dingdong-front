@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -29,6 +31,7 @@ public class SearchResultActivity extends AppCompatActivity {
 
     private TextView tv_result;
     private String searchword;
+    private ImageButton btn_back, btn_search;
     ShareListAdpater shareListAdpater;
     RecyclerView recyclerView;
 
@@ -39,6 +42,9 @@ public class SearchResultActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         searchword = intent.getStringExtra("searchword");
+
+        btn_back = findViewById(R.id.ic_back);
+        btn_search = findViewById(R.id.btn_search);
 
         tv_result = findViewById(R.id.tv_searchword);
         recyclerView = findViewById(R.id.recycler_searchres);
@@ -53,6 +59,7 @@ public class SearchResultActivity extends AppCompatActivity {
         Token token = new Token(access, refresh, expire, tokentype);
 
         //SearchRequest searchRequest = new SearchRequest(searchword);
+
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,SearchResultActivity.this);
         Call<PostResponse> call = apiinterface.getSearchData(searchword);
@@ -86,6 +93,21 @@ public class SearchResultActivity extends AppCompatActivity {
 
                 Log.d("외않되", String.valueOf(t));
 
+            }
+        });
+
+
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        btn_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
 

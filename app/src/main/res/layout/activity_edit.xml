@@ -319,18 +319,6 @@
                         tools:ignore="VectorDrawableCompat" />
 
 
-                    <ImageButton
-                        android:id="@+id/ic_more"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="20dp"
-                        android:background="@android:color/transparent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_btn_more"
-                        tools:ignore="VectorDrawableCompat" />
-
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

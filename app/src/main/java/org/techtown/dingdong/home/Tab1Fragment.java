@@ -47,6 +47,7 @@ public class Tab1Fragment extends Fragment {
     private ArrayList<Share> sharelist_data, sharelist_latest, sharelist_deadline;
     private LinearLayout btn_trans;
     private TextView tv_align;
+    private Boolean trans = true;
 
 
 
@@ -72,7 +73,7 @@ public class Tab1Fragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_tab1, container, false);
         sharelistrecycler = v.findViewById(R.id.sharelist);
         btn_trans = v.findViewById(R.id.trans);
-        tv_align = v.findViewById(R.id.align);
+        tv_align = v.findViewById(R.id.tv_align);
 
 
         SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
@@ -85,6 +86,48 @@ public class Tab1Fragment extends Fragment {
 
         Log.d("토큰", String.valueOf(access));
 
+        setCreatedData(token);
+
+        tv_align.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(trans){
+                    //최신순병렬일때 마감임박순을 불러오기
+                    tv_align.setText("마감임박순");
+                    setEndTimeData(token);
+                    trans = false; //마감임박순 병렬로 바꾸기
+                }
+                else{
+                    //마감임박순병렬일때 최신순을 불러오기
+                    tv_align.setText("최신순");
+                    setCreatedData(token);
+                    trans = true; //최신순병렬로 바꾸기
+                }
+            }
+        });
+
+
+
+
+        //setDummy();
+
+        //setShareListRecycler(sharelistrecycler, sharelist_deadline);
+
+        return v;
+    }
+
+    public void setShareListRecycler(RecyclerView sharelistrecycler, ArrayList<Share> sharelist){
+
+
+        sharelist_data = new ArrayList<>();
+        sharelist_data = sharelist;
+        sharelistrecycler.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL, false));
+        shareListAdpater = new ShareListAdpater(getActivity(), sharelist_data);
+        sharelistrecycler.setAdapter(shareListAdpater);
+
+    }
+
+    public void setEndTimeData(Token token){
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
         Call<PostResponse> call = apiinterface.getCategoryData(1);
@@ -122,21 +165,47 @@ public class Tab1Fragment extends Fragment {
             }
         });
 
-        //setDummy();
 
-        //setShareListRecycler(sharelistrecycler, sharelist_deadline);
-
-        return v;
     }
 
-    public void setShareListRecycler(RecyclerView sharelistrecycler, ArrayList<Share> sharelist){
+    public void setCreatedData(Token token){
 
+        Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
+        Call<PostResponse> call = apiinterface.getCategoryData(1);
+        call.enqueue(new Callback<PostResponse>() {
+            @Override
+            public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    if(response.body().getResult().equals("POST_READ_SUCCESS")){
+                        PostResponse res = response.body();
+                        Log.d("성공", new Gson().toJson(res));
 
-        sharelist_data = new ArrayList<>();
-        sharelist_data = sharelist;
-        sharelistrecycler.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL, false));
-        shareListAdpater = new ShareListAdpater(getActivity(), sharelist_data);
-        sharelistrecycler.setAdapter(shareListAdpater);
+                        ArrayList<Share> mList = new ArrayList<>();
+                        mList = res.getData().getShare();
+                        //String json = new Gson().toJson(res.getData().getShare());
+                        setShareListRecycler(sharelistrecycler, mList);
+                        Log.d("성공", new Gson().toJson(response.raw().request()));
+
+                    }
+
+                }else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<PostResponse> call, Throwable t) {
+                Log.d("외않되", String.valueOf(t));
+
+            }
+        });
+
 
     }
 
