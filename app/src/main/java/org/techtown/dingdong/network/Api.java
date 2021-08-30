@@ -19,6 +19,7 @@ import okhttp3.Route;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Api {
@@ -26,26 +27,10 @@ public class Api {
     public static Retrofit retrofit;
     private static Context context;
     private static Token token;
-    public static Retrofit getClient(){
-
-        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        clientBuilder.addInterceptor(interceptor);
-
-        Log.d("tag","initMyAPI : " + BASE_URL);
-
-        if(retrofit == null){
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
+    public static final String ANDROID_EMULATOR_LOCALHOST = "10.0.2.2";
+    public static final String SERVER_PORT = "8080";
 
 
-        }
-
-        return retrofit;
-    }
 
     public static <S> S createService(Class<S> serviceClass) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
@@ -106,6 +91,52 @@ public class Api {
         }
         return result;
     }
+
+
+    /*public static <S> S createClientService(Class<S> serviceClass, Token accessToken, Context c) {
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl("http://" + ANDROID_EMULATOR_LOCALHOST + ":" + SERVER_PORT + "/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create());
+
+        Log.d("토큰", "정상");
+
+        if(accessToken != null){
+            context = c;
+            token = accessToken;
+            Log.d("토큰", "if문들어감");
+            final Token token  = accessToken;
+            httpClient.addInterceptor(new Interceptor() {
+                @Override
+                public Response intercept(Chain chain) throws IOException {
+                    Request original = chain.request();
+
+                    Log.d("토큰", "토큰저장됨");
+
+                    Request.Builder requestBuilder = original.newBuilder()
+                            .header("Accept","application/json")
+                            .header("Content-type", "application/json")
+                            .header("Authorization",
+                                    token.getGrantType() + " " + token.getAccessToken())
+                            .method(original.method(), original.body());
+
+                    Request request = requestBuilder.build();
+                    return chain.proceed(request);
+                }
+            });
+
+        }
+
+        OkHttpClient client = httpClient.build();
+        Retrofit retrofit = builder.client(client).build();
+        Log.d("토큰", "리턴잘됨");
+
+
+        return retrofit.create(serviceClass);
+
+
+    }*/
 
 
 

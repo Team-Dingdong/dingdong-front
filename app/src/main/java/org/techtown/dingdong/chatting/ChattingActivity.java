@@ -10,8 +10,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -30,16 +33,44 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
 import org.techtown.dingdong.home.ImageUploadAdapter;
+import org.techtown.dingdong.login_register.Token;
+import org.techtown.dingdong.network.Api;
 
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.regex.Pattern;
+
+import io.reactivex.CompletableTransformer;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import ua.naiksoftware.stomp.Stomp;
+import ua.naiksoftware.stomp.StompClient;
+import ua.naiksoftware.stomp.dto.StompHeader;
+import ua.naiksoftware.stomp.dto.StompMessage;
+
+import static android.content.ContentValues.TAG;
+import static ua.naiksoftware.stomp.dto.LifecycleEvent.Type.CLOSED;
+import static ua.naiksoftware.stomp.dto.LifecycleEvent.Type.ERROR;
+import static ua.naiksoftware.stomp.dto.LifecycleEvent.Type.OPENED;
 
 public class ChattingActivity extends AppCompatActivity implements ChattingBottomDialogFragment.onInteractionListener{
-    private ArrayList<Chat> chats;
+    private ArrayList<Chat> chats = new ArrayList<>();
     private RecyclerView recycler_chat;
     private TextView tv_people;
     private ImageView img_people;
@@ -53,6 +84,14 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
     private String id = "1";
     private Boolean ismaster = true;
     ChattingBottomDialogFragment chattingBottomDialogFragment;
+    private Gson gson;
+    public static String WS_URL = "ws://3.38.61.13:8080/ws-stomp/websocket";
+    private Token token;
+    private StompManager stompManager;
+    StompClient stompClient;
+    CompositeDisposable compositeDisposable;
+    private static final Pattern PATTERN_HEADER = Pattern.compile("([^:\\n\\r]+)\\s*:\\s*([^:\\n\\r]+)");
+    Boolean isUnexpectedClosed;
 
 
 
@@ -61,15 +100,135 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatting);
 
+        SharedPreferences pref = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+        String access = pref.getString("oauth.accesstoken","");
+        String refresh = pref.getString("oauth.refreshtoken","");
+        String expire = pref.getString("oauth.expire","");
+        String tokentype = pref.getString("oauth.tokentype","");
 
-        setDummy();
+        token  = new Token(access,refresh,expire,tokentype);
+
+        Log.d("토큰", String.valueOf(access));
+
+        //stompManager = new StompManager("ws://3.38.61.13:8080/ws-stomp/websocket", token);
+        //stompManager.connect();
+
+
+        List<StompHeader> header = new ArrayList<>();
+        header.add(new StompHeader("Authorization","Bearer " + token.getAccessToken()));
+
+        //Map<String, String> headers = new HashMap<>();
+        //headers.put("Authorization", "Bearer " + token.getAccessToken());
+        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://3.38.61.13:8080/ws-stomp/websocket");
+        ///stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://3.38.61.13:8080/ws-stomp/websocket", headers);
+        stompClient.withClientHeartbeat(1000).withServerHeartbeat(1000);
+
+
+        resetSubscriptions();
+
+
+        Disposable disposable = stompClient.lifecycle()
+                .subscribeOn(Schedulers.io())
+                .onBackpressureBuffer()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(lifecycleEvent -> {
+                            Log.d("lifecycle",new Gson().toJson(lifecycleEvent.getHandshakeResponseHeaders()));
+                            Log.d("lifecycle",new Gson().toJson(lifecycleEvent.getType()));
+                    switch (lifecycleEvent.getType()) {
+                        case OPENED:
+                            Log.d("lifecycle","###########online");
+                            //toast("Stomp connection opened");
+                            break;
+                        case ERROR:
+                            Log.d("lifecycle", String.valueOf(lifecycleEvent.getException()));
+                            Log.e("connecterror", "Stomp connection error", lifecycleEvent.getException());
+                            if(lifecycleEvent.getException().getMessage().contains("EOF")){
+                                isUnexpectedClosed=true;
+                            }
+                            //toast("Stomp connection error");
+                            break;
+                        case CLOSED:
+                            //toast("Stomp connection closed");
+                            Log.d("lifecycle","###########offline");
+                            resetSubscriptions();
+                            break;
+                        case FAILED_SERVER_HEARTBEAT:
+                            //toast("Stomp failed server heartbeat");
+                            Log.d("lifecycle","failedserverheartbeat");
+                            break;
+                    }
+
+                },
+                        throwable -> {
+                            Log.d("stpmsgthrowinlifecycle",new Gson().toJson(throwable));
+
+                        });
+
+        Log.d("chatstomp","자니..? 왜응답이없어");
+        //stompManager.subscribeTopic();
+
+        //stompManager.subscribeTopic("/topic/greetings", stompMessage -> Log.d("greeting", "Greeting incoming: " + stompMessage));
+
+
+        gson = new GsonBuilder().create();
+
+
+        /*Disposable disTopi = stompClient.topic("/topic/chat/room/1")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(stompMessage -> {
+                    Log.d("distop", "Received " + stompMessage.getPayload());
+
+                }, throwable -> {
+                    Log.e("distop", "Error on subscribe topic", throwable);
+                });*/
+
+
+       stompClient.topic("/topic/chat/room/1", header)
+                .doOnError(throwable -> {
+                    Log.e("distop", "Error on subscribe topic", throwable);
+                })
+                .subscribe(new Subscriber<StompMessage>() {
+
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        Log.d("onsubs",s.toString());
+
+                    }
+
+                    @Override
+                    public void onNext(StompMessage stompMessage) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        Log.e("onerror", "Error on user data topic", t);
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
+        compositeDisposable.add(disposable);
+        //compositeDisposable.add(distop);
+
+        stompClient.connect(header);
+
+
+
+        //setDummy();
 
         recycler_chat = findViewById(R.id.chatting_recycler);
         LinearLayoutManager manager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         chatAdapter = new ChattingAdapter(chats);
-        recycler_chat.setLayoutManager(manager);
+        chatAdapter.setHasStableIds(true);
         recycler_chat.setAdapter(chatAdapter);
-        recycler_chat.scrollToPosition(chatAdapter.getItemCount()-1);
+        recycler_chat.setLayoutManager(manager);
+
 
 
         btn_plus = findViewById(R.id.btn_plus);
@@ -130,6 +289,12 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
 
     }
 
+    private void addItem(Chat chat){
+        chats.add(chat);
+        chatAdapter.notifyDataSetChanged();
+        recycler_chat.smoothScrollToPosition(chatAdapter.getItemCount()-1);
+
+    }
 
 
     @Override
@@ -150,6 +315,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         }
     }
     }
+
 
 
     private void setDummy(){
@@ -201,6 +367,24 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
 
         }
 
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        stompClient.disconnect();
+        stompClient = null;
+        super.onDestroy();
 
     }
+
+    private void resetSubscriptions() {
+        if (compositeDisposable != null) {
+            compositeDisposable.dispose();
+        }
+        compositeDisposable = new CompositeDisposable();
+    }
+
+
+
 }

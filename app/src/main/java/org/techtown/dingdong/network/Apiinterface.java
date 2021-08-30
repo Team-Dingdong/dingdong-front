@@ -14,6 +14,7 @@ import org.techtown.dingdong.login_register.LoginResponse;
 import java.util.ArrayList;
 import java.util.Map;
 
+import io.reactivex.Completable;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -74,6 +75,7 @@ public interface Apiinterface {
 
     @GET("/api/v1/post/search")
     Call<PostResponse> getSearchData(@Query(value = "keyword") String keyword);
+
 
 
     //@POST("/api/v1/auth")
