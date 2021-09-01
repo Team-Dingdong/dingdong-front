@@ -5,19 +5,22 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ParseException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.EditText;
@@ -33,9 +36,14 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.request.RequestOptions;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.io.JsonStringEncoder;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParser;
 
+import org.json.JSONObject;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.techtown.dingdong.BuildConfig;
@@ -184,7 +192,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                 });*/
 
 
-       stompClient.topic("/topic/chat/room/1", header)
+       stompClient.topic("/topic/chat/room/" + id, header)
                 .doOnError(throwable -> {
                     Log.e("distop", "Error on subscribe topic", throwable);
                 })
@@ -198,6 +206,10 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
 
                     @Override
                     public void onNext(StompMessage stompMessage) {
+
+                        JsonParser parser = new JsonParser();
+                        Object obj = parser.parse(stompMessage.getPayload());
+                        Log.d("onnext", (String) obj);
 
                     }
 
@@ -217,7 +229,6 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         //compositeDisposable.add(distop);
 
         stompClient.connect(header);
-
 
 
         //setDummy();
@@ -280,9 +291,16 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
             public void onClick(View v) {
                 message = et_message.getText().toString();
                 et_message.setText("");
-                Chat chat = new Chat(message,"다루","아","2021-08-24 17:00:33.822", Boolean.TRUE, ChatType.ViewType.RIGHT_CONTENT);
+                Timestamp time = new Timestamp(System.currentTimeMillis());
+                String t = time.toString();
+                Chat chat = new Chat(message,"다루","아",t, Boolean.TRUE, ChatType.ViewType.RIGHT_CONTENT);
                 chatAdapter.addItem(chat);
                 recycler_chat.scrollToPosition(chatAdapter.getItemCount()-1);
+                try {
+                    sendStomp(message);
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -363,6 +381,22 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                 break;
             case 3:
                 chattingBottomDialogFragment.dismiss();
+                AlertDialog.Builder dialog = new AlertDialog.Builder(ChattingActivity.this);
+
+                dialog.setMessage("나눔을 정말 파기하시겠어요? 무통보 파기는 신고 사유가 될 수 있습니다.")
+                        .setTitle("나눔 삭제")
+                        .setPositiveButton("아니오", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Log.i("Dialog", "아니오");
+                            }
+                        })
+                        .setNegativeButton("네", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Log.i("Dialog", "네");
+                            }
+                        }).show();
                 break;
 
         }
@@ -383,6 +417,35 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
             compositeDisposable.dispose();
         }
         compositeDisposable = new CompositeDisposable();
+    }
+
+    public void sendStomp(String message) throws JsonProcessingException {
+
+        Log.d("sendstomp","데이터센딩");
+        Map<String, Object> msg = new HashMap<>();
+        msg.put("roomId",id);
+        msg.put("type","TALK");
+        msg.put("message",message);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonstring = mapper.writeValueAsString(msg);
+
+        JsonStringEncoder encoder = JsonStringEncoder.getInstance();
+        char[] jsonres = encoder.quoteAsString(jsonstring);
+        String res = new String(jsonres);
+
+        Log.d("sendstomp",res);
+        stompClient.send("/pub/chat/message",res).subscribe();
+        Log.d("sendstomp","데이터센딩완료");
+
+    }
+
+    protected CompletableTransformer applySchedulers(){
+        return upstream -> upstream
+                .unsubscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
     }
 
 
