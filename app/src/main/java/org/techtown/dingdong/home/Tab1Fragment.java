@@ -54,7 +54,11 @@ public class Tab1Fragment extends Fragment {
     private CircularProgressIndicator pgbar;
     int page = 0;
     Boolean loading = false;
-    //ArrayList<Share> mList = new ArrayList<>();
+    ArrayList<Share> createdList = new ArrayList<>();
+    ArrayList<Share> endtimeList = new ArrayList<>();
+    Token token;
+
+//ArrayList<Share> mList = new ArrayList<>();
 
 
 
@@ -72,6 +76,21 @@ public class Tab1Fragment extends Fragment {
         return fragment;
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+        String access = pref.getString("oauth.accesstoken","");
+        String refresh = pref.getString("oauth.refreshtoken","");
+        String expire = pref.getString("oauth.expire","");
+        String tokentype = pref.getString("oauth.tokentype","");
+
+        Log.d("토큰", String.valueOf(access));
+
+        token = new Token(access,refresh,expire,tokentype);
+
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -83,18 +102,10 @@ public class Tab1Fragment extends Fragment {
         tv_align = v.findViewById(R.id.tv_align);
         pgbar = v.findViewById(R.id.progressbar);
 
-
-        SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
-        String access = pref.getString("oauth.accesstoken","");
-        String refresh = pref.getString("oauth.refreshtoken","");
-        String expire = pref.getString("oauth.expire","");
-        String tokentype = pref.getString("oauth.tokentype","");
-
-        Token token = new Token(access,refresh,expire,tokentype);
-
-        Log.d("토큰", String.valueOf(access));
-
         setCreatedData(token);
+
+
+
 
         sharelistrecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -127,6 +138,7 @@ public class Tab1Fragment extends Fragment {
 
             }
         });
+
 
 
 
@@ -185,11 +197,15 @@ public class Tab1Fragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
-                        ArrayList<Share> mList = new ArrayList<>();
-                        mList = res.getData().getShare();
-                        //String json = new Gson().toJson(res.getData().getShare());
-                        setShareListRecycler(sharelistrecycler, mList);
-                        Log.d("성공", new Gson().toJson(response.raw().request()));
+                        if(page == 0){
+                            endtimeList = res.getData().getShare();
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            setShareListRecycler(sharelistrecycler, endtimeList);}
+                        else{
+                            endtimeList.addAll(res.getData().getShare());
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            shareListAdpater.notifyDataSetChanged();
+                        }
 
                     }
 
@@ -216,6 +232,7 @@ public class Tab1Fragment extends Fragment {
 
     }
 
+
     public void setCreatedData(Token token){
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
@@ -228,11 +245,17 @@ public class Tab1Fragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
-                        ArrayList<Share> mList = new ArrayList<>();
-                        mList = res.getData().getShare();
-                        //String json = new Gson().toJson(res.getData().getShare());
-                        setShareListRecycler(sharelistrecycler, mList);
-                        Log.d("성공", new Gson().toJson(response.raw().request()));
+                        if(page == 0){
+                            createdList = res.getData().getShare();
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            setShareListRecycler(sharelistrecycler, createdList);
+                        }
+                        else{
+                            createdList.addAll(res.getData().getShare());
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            shareListAdpater.notifyDataSetChanged();
+
+                        }
 
                     }
 

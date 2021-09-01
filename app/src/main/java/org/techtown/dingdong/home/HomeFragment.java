@@ -110,6 +110,7 @@ public class HomeFragment extends Fragment {
 
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -161,12 +162,12 @@ public class HomeFragment extends Fragment {
                         if(trans){
                             //최신순 병렬일때 다음페이지 불러오기
                             loading = true;
-                            setmoreCreatedData(token);
+                            setCreatedData(token);
                         }
                         else{
                             //마감임박순병렬일때 다음페이지 불러오기
                             loading = true;
-                            setmoreEndTimeData(token);
+                            setEndTimeData(token);
                         }
                     }
 
@@ -331,9 +332,17 @@ public class HomeFragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
+                        if(page == 0){
                         createdList = res.getData().getShare();
                         //String json = new Gson().toJson(res.getData().getShare());
                         setShareListRecycler(sharelistrecycler, createdList);
+                        }
+                        else{
+                            createdList.addAll(res.getData().getShare());
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            shareListAdpater.notifyDataSetChanged();
+
+                        }
 
                     }
 
@@ -359,46 +368,6 @@ public class HomeFragment extends Fragment {
     }
 
 
-    public void setmoreCreatedData(Token token){
-
-        Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
-
-        Call<PostResponse> call = apiinterface.getCreatedData(page);
-
-        call.enqueue(new Callback<PostResponse>() {
-            @Override
-            public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
-                if(response.isSuccessful() && response.body() != null){
-                    if(response.body().getResult().equals("POST_READ_SUCCESS")){
-                        PostResponse res = response.body();
-                        Log.d("성공", new Gson().toJson(res));
-
-                        createdList.addAll(res.getData().getShare());
-                        //String json = new Gson().toJson(res.getData().getShare());
-                        shareListAdpater.notifyDataSetChanged();
-
-                    }
-
-                }else{
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<PostResponse> call, Throwable t) {
-                Log.d("외않되", String.valueOf(t));
-
-            }
-        });
-        loading = false;
-
-
-    }
 
     public void setEndTimeData(Token token){
 
@@ -414,9 +383,15 @@ public class HomeFragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
+                        if(page == 0){
                         endtimeList = res.getData().getShare();
                         //String json = new Gson().toJson(res.getData().getShare());
-                        setShareListRecycler(sharelistrecycler, endtimeList);
+                        setShareListRecycler(sharelistrecycler, endtimeList);}
+                        else{
+                            endtimeList.addAll(res.getData().getShare());
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            shareListAdpater.notifyDataSetChanged();
+                        }
 
                     }
 
@@ -442,46 +417,6 @@ public class HomeFragment extends Fragment {
     }
 
 
-    public void setmoreEndTimeData(Token token){
-
-        Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
-
-        Call<PostResponse> call = apiinterface.getEndData(page);
-
-        call.enqueue(new Callback<PostResponse>() {
-            @Override
-            public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
-                if(response.isSuccessful() && response.body() != null){
-                    if(response.body().getResult().equals("POST_READ_SUCCESS")){
-                        PostResponse res = response.body();
-                        Log.d("성공", new Gson().toJson(res));
-
-
-                        endtimeList.addAll(res.getData().getShare());
-                        //String json = new Gson().toJson(res.getData().getShare());
-                        shareListAdpater.notifyDataSetChanged();
-                    }
-
-                }else{
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<PostResponse> call, Throwable t) {
-                Log.d("외않되", String.valueOf(t));
-
-            }
-        });
-        loading = false;
-
-
-    }
 
 
 
