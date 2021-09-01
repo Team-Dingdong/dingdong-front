@@ -65,7 +65,8 @@ public class HomeFragment extends Fragment {
     private CircularProgressIndicator pgbar;
     int page = 0;
     Boolean loading = false;
-    //ArrayList<Share> mList = new ArrayList<>();
+    ArrayList<Share> createdList = new ArrayList<>();
+    ArrayList<Share> endtimeList = new ArrayList<>();
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -128,6 +129,7 @@ public class HomeFragment extends Fragment {
         btn_search = v.findViewById(R.id.ic_search);
         pgbar = v.findViewById(R.id.progressbar);
 
+
         SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         String access = pref.getString("oauth.accesstoken","");
         String refresh = pref.getString("oauth.refreshtoken","");
@@ -141,6 +143,8 @@ public class HomeFragment extends Fragment {
         setCreatedData(token);
 
 
+
+
         sharelistrecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
 
@@ -148,19 +152,21 @@ public class HomeFragment extends Fragment {
             public void onScrollStateChanged(@NonNull @NotNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
 
-                if(recyclerView.getAdapter().getItemCount() == 5 && newState == recyclerView.SCROLL_STATE_IDLE && !recyclerView.canScrollVertically(1)){
-                    page ++;
+                if((recyclerView.getAdapter().getItemCount() %5) == 0 && newState == recyclerView.SCROLL_STATE_IDLE && !recyclerView.canScrollVertically(1)){
                     if(!loading){ //로딩중이 아닐때만
+                        //pgbar.setVisibility(v.VISIBLE);
+                        page ++;
                         pgbar.setVisibility(v.VISIBLE);
+                        pgbar.setActivated(true);
                         if(trans){
                             //최신순 병렬일때 다음페이지 불러오기
                             loading = true;
-                            setCreatedData(token);
+                            setmoreCreatedData(token);
                         }
                         else{
                             //마감임박순병렬일때 다음페이지 불러오기
                             loading = true;
-                            setEndTimeData(token);
+                            setmoreEndTimeData(token);
                         }
                     }
 
@@ -325,10 +331,51 @@ public class HomeFragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
-                        ArrayList<Share> mList = new ArrayList<>();
-                        mList = res.getData().getShare();
+                        createdList = res.getData().getShare();
                         //String json = new Gson().toJson(res.getData().getShare());
-                        setShareListRecycler(sharelistrecycler, mList);
+                        setShareListRecycler(sharelistrecycler, createdList);
+
+                    }
+
+                }else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PostResponse> call, Throwable t) {
+                Log.d("외않되", String.valueOf(t));
+
+            }
+        });
+        loading = false;
+
+
+    }
+
+
+    public void setmoreCreatedData(Token token){
+
+        Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
+
+        Call<PostResponse> call = apiinterface.getCreatedData(page);
+
+        call.enqueue(new Callback<PostResponse>() {
+            @Override
+            public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    if(response.body().getResult().equals("POST_READ_SUCCESS")){
+                        PostResponse res = response.body();
+                        Log.d("성공", new Gson().toJson(res));
+
+                        createdList.addAll(res.getData().getShare());
+                        //String json = new Gson().toJson(res.getData().getShare());
+                        shareListAdpater.notifyDataSetChanged();
 
                     }
 
@@ -367,11 +414,52 @@ public class HomeFragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
-                        ArrayList<Share> mList = new ArrayList<>();
-                        mList = res.getData().getShare();
+                        endtimeList = res.getData().getShare();
                         //String json = new Gson().toJson(res.getData().getShare());
-                        setShareListRecycler(sharelistrecycler, mList);
+                        setShareListRecycler(sharelistrecycler, endtimeList);
 
+                    }
+
+                }else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PostResponse> call, Throwable t) {
+                Log.d("외않되", String.valueOf(t));
+
+            }
+        });
+        loading = false;
+
+
+    }
+
+
+    public void setmoreEndTimeData(Token token){
+
+        Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
+
+        Call<PostResponse> call = apiinterface.getEndData(page);
+
+        call.enqueue(new Callback<PostResponse>() {
+            @Override
+            public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    if(response.body().getResult().equals("POST_READ_SUCCESS")){
+                        PostResponse res = response.body();
+                        Log.d("성공", new Gson().toJson(res));
+
+
+                        endtimeList.addAll(res.getData().getShare());
+                        //String json = new Gson().toJson(res.getData().getShare());
+                        shareListAdpater.notifyDataSetChanged();
                     }
 
                 }else{

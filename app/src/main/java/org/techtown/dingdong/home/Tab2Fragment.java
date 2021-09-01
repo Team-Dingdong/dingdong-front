@@ -118,10 +118,11 @@ public class Tab2Fragment extends Fragment {
             public void onScrollStateChanged(@NonNull @NotNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
 
-                if(recyclerView.getAdapter().getItemCount() == 5 && newState == recyclerView.SCROLL_STATE_IDLE && !recyclerView.canScrollVertically(1)){
-                    page ++;
+                if((recyclerView.getAdapter().getItemCount() %5) == 0 && newState == recyclerView.SCROLL_STATE_IDLE && !recyclerView.canScrollVertically(1)){
                     if(!loading){ //로딩중이 아닐때만
                         pgbar.setVisibility(v.VISIBLE);
+                        page ++;
+                        pgbar.show();
                         if(trans){
                             //최신순 병렬일때 다음페이지 불러오기
                             loading = true;
