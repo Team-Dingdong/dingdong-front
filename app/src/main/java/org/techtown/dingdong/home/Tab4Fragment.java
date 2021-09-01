@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -54,6 +55,9 @@ public class Tab4Fragment extends Fragment {
     private ArrayList<Share> mList = new ArrayList<>();
     int page = 0;
     Boolean loading = false;
+    ArrayList<Share> createdList = new ArrayList<>();
+    ArrayList<Share> endtimeList = new ArrayList<>();
+    Token token;
 
     public Tab4Fragment() {
         // Required empty public constructor
@@ -80,10 +84,22 @@ public class Tab4Fragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
+        SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+        String access = pref.getString("oauth.accesstoken","");
+        String refresh = pref.getString("oauth.refreshtoken","");
+        String expire = pref.getString("oauth.expire","");
+        String tokentype = pref.getString("oauth.tokentype","");
+
+        Log.d("토큰", String.valueOf(access));
+
+        token = new Token(access,refresh,expire,tokentype);
+
+    }
+
+    @Override
+    public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
@@ -96,18 +112,8 @@ public class Tab4Fragment extends Fragment {
         tv_align = v.findViewById(R.id.tv_align);
         pgbar = v.findViewById(R.id.progressbar);
 
-        SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
-        String access = pref.getString("oauth.accesstoken","");
-        String refresh = pref.getString("oauth.refreshtoken","");
-        String expire = pref.getString("oauth.expire","");
-        String tokentype = pref.getString("oauth.tokentype","");
-
-        Token token = new Token(access,refresh,expire,tokentype);
-
-        Log.d("토큰", String.valueOf(access));
-
-
         setCreatedData(token);
+
 
 
         sharelistrecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -115,10 +121,11 @@ public class Tab4Fragment extends Fragment {
             public void onScrollStateChanged(@NonNull @NotNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
 
-                if(recyclerView.getAdapter().getItemCount() == 5 && newState == recyclerView.SCROLL_STATE_IDLE && !recyclerView.canScrollVertically(1)){
-                    page ++;
+                if((recyclerView.getAdapter().getItemCount() %5) == 0 && newState == recyclerView.SCROLL_STATE_IDLE && !recyclerView.canScrollVertically(1)){
                     if(!loading){ //로딩중이 아닐때만
                         pgbar.setVisibility(v.VISIBLE);
+                        page ++;
+                        pgbar.show();
                         if(trans){
                             //최신순 병렬일때 다음페이지 불러오기
                             loading = true;
@@ -141,13 +148,13 @@ public class Tab4Fragment extends Fragment {
             }
         });
 
+
         tv_align.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(trans){
                     //최신순병렬일때 마감임박순을 불러오기
                     page = 0;
-                    ArrayList<Share> mList = null;
                     tv_align.setText("마감임박순");
                     setEndTimeData(token);
                     trans = false; //마감임박순 병렬로 바꾸기
@@ -155,7 +162,6 @@ public class Tab4Fragment extends Fragment {
                 else{
                     //마감임박순병렬일때 최신순을 불러오기
                     page = 0;
-                    ArrayList<Share> mList = null;
                     tv_align.setText("최신순");
                     setCreatedData(token);
                     trans = true; //최신순병렬로 바꾸기
@@ -193,10 +199,15 @@ public class Tab4Fragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
-                        mList.addAll(res.getData().getShare());
-                        //String json = new Gson().toJson(res.getData().getShare());
-                        setShareListRecycler(sharelistrecycler, mList);
-                        Log.d("성공", new Gson().toJson(response.raw().request()));
+                        if(page == 0){
+                            endtimeList = res.getData().getShare();
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            setShareListRecycler(sharelistrecycler, endtimeList);}
+                        else{
+                            endtimeList.addAll(res.getData().getShare());
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            shareListAdpater.notifyDataSetChanged();
+                        }
 
                     }
 
@@ -235,11 +246,17 @@ public class Tab4Fragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
-                        //ArrayList<Share> mList = new ArrayList<>();
-                        mList.addAll(res.getData().getShare());
-                        //String json = new Gson().toJson(res.getData().getShare());
-                        setShareListRecycler(sharelistrecycler, mList);
-                        Log.d("성공", new Gson().toJson(response.raw().request()));
+                        if(page == 0){
+                            createdList = res.getData().getShare();
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            setShareListRecycler(sharelistrecycler, createdList);
+                        }
+                        else{
+                            createdList.addAll(res.getData().getShare());
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            shareListAdpater.notifyDataSetChanged();
+
+                        }
 
                     }
 

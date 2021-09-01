@@ -23,7 +23,7 @@ public class PostRequest {
     private Integer categoryId;
 
     @SerializedName("postTag")
-    private String hashtag;
+    private String hashtag = null;
 
     public PostRequest(String title, Integer people, Integer cost, String bio, String local, Integer categoryId, String hashtag) {
         this.title = title;

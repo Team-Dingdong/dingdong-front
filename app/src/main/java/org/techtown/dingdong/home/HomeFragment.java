@@ -65,7 +65,8 @@ public class HomeFragment extends Fragment {
     private CircularProgressIndicator pgbar;
     int page = 0;
     Boolean loading = false;
-    //ArrayList<Share> mList = new ArrayList<>();
+    ArrayList<Share> createdList = new ArrayList<>();
+    ArrayList<Share> endtimeList = new ArrayList<>();
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -109,6 +110,7 @@ public class HomeFragment extends Fragment {
 
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -128,6 +130,7 @@ public class HomeFragment extends Fragment {
         btn_search = v.findViewById(R.id.ic_search);
         pgbar = v.findViewById(R.id.progressbar);
 
+
         SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         String access = pref.getString("oauth.accesstoken","");
         String refresh = pref.getString("oauth.refreshtoken","");
@@ -141,6 +144,8 @@ public class HomeFragment extends Fragment {
         setCreatedData(token);
 
 
+
+
         sharelistrecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
 
@@ -148,10 +153,12 @@ public class HomeFragment extends Fragment {
             public void onScrollStateChanged(@NonNull @NotNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
 
-                if(recyclerView.getAdapter().getItemCount() == 5 && newState == recyclerView.SCROLL_STATE_IDLE && !recyclerView.canScrollVertically(1)){
-                    page ++;
+                if((recyclerView.getAdapter().getItemCount() %5) == 0 && newState == recyclerView.SCROLL_STATE_IDLE && !recyclerView.canScrollVertically(1)){
                     if(!loading){ //로딩중이 아닐때만
+                        //pgbar.setVisibility(v.VISIBLE);
+                        page ++;
                         pgbar.setVisibility(v.VISIBLE);
+                        pgbar.setActivated(true);
                         if(trans){
                             //최신순 병렬일때 다음페이지 불러오기
                             loading = true;
@@ -325,10 +332,17 @@ public class HomeFragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
-                        ArrayList<Share> mList = new ArrayList<>();
-                        mList = res.getData().getShare();
+                        if(page == 0){
+                        createdList = res.getData().getShare();
                         //String json = new Gson().toJson(res.getData().getShare());
-                        setShareListRecycler(sharelistrecycler, mList);
+                        setShareListRecycler(sharelistrecycler, createdList);
+                        }
+                        else{
+                            createdList.addAll(res.getData().getShare());
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            shareListAdpater.notifyDataSetChanged();
+
+                        }
 
                     }
 
@@ -352,6 +366,8 @@ public class HomeFragment extends Fragment {
 
 
     }
+
+
 
     public void setEndTimeData(Token token){
 
@@ -367,10 +383,15 @@ public class HomeFragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
-                        ArrayList<Share> mList = new ArrayList<>();
-                        mList = res.getData().getShare();
+                        if(page == 0){
+                        endtimeList = res.getData().getShare();
                         //String json = new Gson().toJson(res.getData().getShare());
-                        setShareListRecycler(sharelistrecycler, mList);
+                        setShareListRecycler(sharelistrecycler, endtimeList);}
+                        else{
+                            endtimeList.addAll(res.getData().getShare());
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            shareListAdpater.notifyDataSetChanged();
+                        }
 
                     }
 
@@ -394,6 +415,8 @@ public class HomeFragment extends Fragment {
 
 
     }
+
+
 
 
 

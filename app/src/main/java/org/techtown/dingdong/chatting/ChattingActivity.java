@@ -43,6 +43,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -55,6 +56,7 @@ import org.techtown.dingdong.network.Api;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,6 +71,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import ua.naiksoftware.stomp.Stomp;
 import ua.naiksoftware.stomp.StompClient;
+import ua.naiksoftware.stomp.dto.StompCommand;
 import ua.naiksoftware.stomp.dto.StompHeader;
 import ua.naiksoftware.stomp.dto.StompMessage;
 
@@ -207,9 +210,15 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                     @Override
                     public void onNext(StompMessage stompMessage) {
 
-                        JsonParser parser = new JsonParser();
-                        Object obj = parser.parse(stompMessage.getPayload());
-                        Log.d("onnext", (String) obj);
+                        JSONObject jsonObject = null;
+                        try {
+                            jsonObject = new JSONObject(stompMessage.getPayload());
+                            Chat chat = new Chat(jsonObject.getString("message"),"다루","아",new Timestamp(System.currentTimeMillis()).toString(), Boolean.TRUE, ChatType.ViewType.LEFT_CONTENT);
+                            addItem(chat);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
 
                     }
 
@@ -291,14 +300,10 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
             public void onClick(View v) {
                 message = et_message.getText().toString();
                 et_message.setText("");
-                Timestamp time = new Timestamp(System.currentTimeMillis());
-                String t = time.toString();
-                Chat chat = new Chat(message,"다루","아",t, Boolean.TRUE, ChatType.ViewType.RIGHT_CONTENT);
-                chatAdapter.addItem(chat);
                 recycler_chat.scrollToPosition(chatAdapter.getItemCount()-1);
                 try {
                     sendStomp(message);
-                } catch (JsonProcessingException e) {
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
@@ -419,23 +424,23 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         compositeDisposable = new CompositeDisposable();
     }
 
-    public void sendStomp(String message) throws JsonProcessingException {
+    public void sendStomp(String message) throws JSONException {
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("roomId",id);
+        jsonObject.put("type","TALK");
+        jsonObject.put("message",message);
 
         Log.d("sendstomp","데이터센딩");
-        Map<String, Object> msg = new HashMap<>();
-        msg.put("roomId",id);
-        msg.put("type","TALK");
-        msg.put("message",message);
 
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonstring = mapper.writeValueAsString(msg);
+        stompClient.send(new StompMessage(StompCommand.SEND, Arrays.asList(new StompHeader(StompHeader.DESTINATION, "/pub/chat/message"),
+                new StompHeader("Authorization","Bearer " + token.getAccessToken())), jsonObject.toString())).subscribe();
 
-        JsonStringEncoder encoder = JsonStringEncoder.getInstance();
-        char[] jsonres = encoder.quoteAsString(jsonstring);
-        String res = new String(jsonres);
+        Chat chat = new Chat(message,"다루","아",new Timestamp(System.currentTimeMillis()).toString(), Boolean.TRUE, ChatType.ViewType.RIGHT_CONTENT);
+        addItem(chat);
 
-        Log.d("sendstomp",res);
-        stompClient.send("/pub/chat/message",res).subscribe();
+        //new StompHeader("Authorization","Bearer " + token.getAccessToken())
+
         Log.d("sendstomp","데이터센딩완료");
 
     }
@@ -445,7 +450,6 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                 .unsubscribeOn(Schedulers.newThread())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
-
     }
 
 

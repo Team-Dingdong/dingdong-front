@@ -52,6 +52,9 @@ public class Tab3Fragment extends Fragment {
     private CircularProgressIndicator pgbar;
     int page = 0;
     Boolean loading = false;
+    ArrayList<Share> createdList = new ArrayList<>();
+    ArrayList<Share> endtimeList = new ArrayList<>();
+    Token token;
     //ArrayList<Share> mList = new ArrayList<>();
 
 
@@ -80,10 +83,17 @@ public class Tab3Fragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+        String access = pref.getString("oauth.accesstoken","");
+        String refresh = pref.getString("oauth.refreshtoken","");
+        String expire = pref.getString("oauth.expire","");
+        String tokentype = pref.getString("oauth.tokentype","");
+
+
+        Log.d("토큰", String.valueOf(access));
+
+        token = new Token(access,refresh,expire,tokentype);
+
     }
 
     @Override
@@ -96,29 +106,19 @@ public class Tab3Fragment extends Fragment {
         tv_align = v.findViewById(R.id.tv_align);
         pgbar = v.findViewById(R.id.progressbar);
 
-
-        SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
-        String access = pref.getString("oauth.accesstoken","");
-        String refresh = pref.getString("oauth.refreshtoken","");
-        String expire = pref.getString("oauth.expire","");
-        String tokentype = pref.getString("oauth.tokentype","");
-
-        Token token = new Token(access,refresh,expire,tokentype);
-
-        Log.d("토큰", String.valueOf(access));
-
-
         setCreatedData(token);
+
 
         sharelistrecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull @NotNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
 
-                if(recyclerView.getAdapter().getItemCount() == 5 && newState == recyclerView.SCROLL_STATE_IDLE && !recyclerView.canScrollVertically(1)){
-                    page ++;
+                if((recyclerView.getAdapter().getItemCount() %5) == 0 && newState == recyclerView.SCROLL_STATE_IDLE && !recyclerView.canScrollVertically(1)){
                     if(!loading){ //로딩중이 아닐때만
                         pgbar.setVisibility(v.VISIBLE);
+                        page ++;
+                        pgbar.show();
                         if(trans){
                             //최신순 병렬일때 다음페이지 불러오기
                             loading = true;
@@ -140,6 +140,7 @@ public class Tab3Fragment extends Fragment {
 
             }
         });
+
 
 
         tv_align.setOnClickListener(new View.OnClickListener() {
@@ -193,11 +194,15 @@ public class Tab3Fragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
-                        ArrayList<Share> mList = new ArrayList<>();
-                        mList = res.getData().getShare();
-                        //String json = new Gson().toJson(res.getData().getShare());
-                        setShareListRecycler(sharelistrecycler, mList);
-                        Log.d("성공", new Gson().toJson(response.raw().request()));
+                        if(page == 0){
+                            endtimeList = res.getData().getShare();
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            setShareListRecycler(sharelistrecycler, endtimeList);}
+                        else{
+                            endtimeList.addAll(res.getData().getShare());
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            shareListAdpater.notifyDataSetChanged();
+                        }
 
                     }
 
@@ -236,11 +241,17 @@ public class Tab3Fragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
-                        ArrayList<Share> mList = new ArrayList<>();
-                        mList = res.getData().getShare();
-                        //String json = new Gson().toJson(res.getData().getShare());
-                        setShareListRecycler(sharelistrecycler, mList);
-                        Log.d("성공", new Gson().toJson(response.raw().request()));
+                        if(page == 0){
+                            createdList = res.getData().getShare();
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            setShareListRecycler(sharelistrecycler, createdList);
+                        }
+                        else{
+                            createdList.addAll(res.getData().getShare());
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            shareListAdpater.notifyDataSetChanged();
+
+                        }
 
                     }
 
