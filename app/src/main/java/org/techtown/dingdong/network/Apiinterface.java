@@ -5,8 +5,6 @@ import org.techtown.dingdong.login_register.AuthRequest;
 import org.techtown.dingdong.login_register.AuthResponse;
 import org.techtown.dingdong.login_register.LoginRequest;
 import org.techtown.dingdong.login_register.LoginResponse;
-import org.techtown.dingdong.profile.MyLatingResponse;
-import org.techtown.dingdong.profile.ProfileResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -31,11 +29,5 @@ public interface Apiinterface {
 
     //@POST("/api/v1/auth")
     //Call<LoginResponse> LoginRequest(@Body LoginRequest loginRequest);
-
-    @GET("/api/v1/profile")
-    Call<ProfileResponse> getData();
-
-    @GET("/api/v1/rating")
-    Call<MyLatingResponse> getLating();
 
 }

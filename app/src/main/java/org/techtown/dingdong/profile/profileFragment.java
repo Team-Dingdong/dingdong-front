@@ -1,41 +1,18 @@
 package org.techtown.dingdong.profile;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
-import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
-import org.techtown.dingdong.home.PostResponse;
 import org.techtown.dingdong.login_register.LoginActivity;
 import org.techtown.dingdong.login_register.LoginOrRegisterActivity;
-import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.mytown.changetownActivity;
-import org.techtown.dingdong.network.Api;
-import org.techtown.dingdong.network.Apiinterface;
-
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class profileFragment extends Fragment {
 
@@ -49,11 +26,6 @@ public class profileFragment extends Fragment {
     private String mParam2;
     Button startbtn;
     Button townbtn;
-    TextView name, number_good, number_bad;
-    ImageView profile_img;
-    private String TAG;
-    String nickname, img, bio;
-    int good, bad;
     public profileFragment() {
         // Required empty public constructor
     }
@@ -111,98 +83,8 @@ public class profileFragment extends Fragment {
                 startActivity(new Intent(getActivity(), changetownActivity.class));
             }
         });
-        //본인 프로필 조회
-        name = (TextView) getView().findViewById(R.id.name);
-        profile_img = (ImageView)getView().findViewById(R.id.profile_img);
-        number_good = (TextView)getView().findViewById(R.id.number_good);
-        number_bad = (TextView)getView().findViewById(R.id.number_bad);
 
-        SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
-        String access = pref.getString("oauth.accesstoken","");
-        String refresh = pref.getString("oauth.refreshtoken","");
-        String expire = pref.getString("oauth.expire","");
-        String tokentype = pref.getString("oauth.tokentype","");
-
-        Token token = new Token(access,refresh,expire,tokentype);
-        Log.d("토큰", String.valueOf(access));
-
-        Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
-        Call<ProfileResponse> call = apiinterface.getData();
-        call.enqueue(new Callback<ProfileResponse>() {
-            @Override
-            public void onResponse(Call<ProfileResponse> call, Response<ProfileResponse> response) {
-               if(response.body().getCode().equals("PROFILE_READ_SUCCESS")) {
-                   Log.d(TAG, "프로필 조회 성공");
-                   nickname = response.body().getData().nickname;
-                   img = response.body().getData().profileImageUrl;
-                   bio = response.body().getData().profile_bio;
-               }
-               else{Log.d(TAG, "프로필 조회 실패");}
-            }
-
-            @Override
-            public void onFailure(Call<ProfileResponse> call, Throwable t) {
-
-            }
-        });
-
-        name.setText(nickname);
-
-        new DownloadFilesTask().execute("img");
-
-        Call<MyLatingResponse> callLate = apiinterface.getLating();
-        callLate.enqueue(new Callback<MyLatingResponse>() {
-            @Override
-            public void onResponse(Call<MyLatingResponse> call, Response<MyLatingResponse> response) {
-                if(response.body().getCode().equals("RATING_READ_SUCCESS")) {
-                    Log.d(TAG, "평가 조회 성공");
-                    good = response.body().getData().good;
-                    bad = response.body().getData().bad;
-
-                }
-                else{Log.d(TAG, "평가 조회 실패");}
-            }
-
-            @Override
-            public void onFailure(Call<MyLatingResponse> call, Throwable t) {
-
-            }
-        });
-        number_good.setText(good);
-        number_bad.setText(bad);
 
         return v;
     }
-
-
-        private class DownloadFilesTask extends AsyncTask<String,Void, Bitmap> {
-            @Override
-            protected Bitmap doInBackground(String... strings) {
-                Bitmap bmp = null;
-                try {
-                    String img_url = strings[0]; //url of the image
-                    URL url = new URL(img_url);
-                    bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return bmp;
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-
-            @Override
-            protected void onPostExecute(Bitmap result) {
-                // doInBackground 에서 받아온 total 값 사용 장소
-                profile_img.setImageBitmap(result);
-            }
-        }
-
-
 }
