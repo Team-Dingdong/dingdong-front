@@ -1,6 +1,7 @@
 package org.techtown.dingdong.home;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -29,7 +30,7 @@ public class MainFragment extends Fragment {
     ViewPager2 viewPager;
     Context context;
     PagerAdapter pagerAdapter;
-    private ImageButton btn_back;
+    private ImageButton btn_back, btn_search;
     int pos;
     private String[] tabs = new String[]{"과일·채소", "육류·계란", "간식", "생필품", "기타"};
 
@@ -59,11 +60,11 @@ public class MainFragment extends Fragment {
         Fragment fragment4 = new Tab4Fragment().newInstance("", "");
         //Fragment fragment5 = new Tab5Fragment().newInstance("", "");
 
+
         TabLayout tabLayout = view.findViewById(R.id.tablayout);
         viewPager = view.findViewById(R.id.pager);
         btn_back = view.findViewById(R.id.btn_back);
-
-
+        btn_search = view.findViewById(R.id.btn_search);
 
         pagerAdapter = new PagerAdapter(this);
         pagerAdapter.addFrag(fragment1);
@@ -82,6 +83,14 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 ((MainActivity) getActivity()).replaceFragment(HomeFragment.newInstance("",""));
+            }
+        });
+
+        btn_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), SearchBarActivity.class));
+
             }
         });
 

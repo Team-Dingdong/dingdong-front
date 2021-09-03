@@ -32,6 +32,10 @@ public class ChatRoomListAdapter extends RecyclerView.Adapter<ChatRoomListAdapte
         this.chatRooms = chatRooms;
     }
 
+    public ArrayList<ChatRoom> getChatRooms() {
+        return chatRooms;
+    }
+
     @NonNull
     @NotNull
     @Override
@@ -60,6 +64,16 @@ public class ChatRoomListAdapter extends RecyclerView.Adapter<ChatRoomListAdapte
     @Override
     public int getItemCount() {
         return chatRooms.size();
+    }
+
+    public void removeItem(int position) {
+        chatRooms.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public void restoreItem(ChatRoom item, int position) {
+        chatRooms.add(position,item);
+        notifyItemInserted(position);
     }
 
     public class chatRoomListViewHolder extends RecyclerView.ViewHolder {
