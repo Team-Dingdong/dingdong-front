@@ -164,33 +164,12 @@
     </LinearLayout>
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_marginTop="200dp"
-        android:orientation="vertical"
-        android:layout_height="match_parent">
-
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/sharelist"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
-
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:id="@+id/progressbar"
-            android:visibility="gone"
-            android:indeterminateTint="@color/mint"
-            android:layout_width="1dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_height="1dp">
-
-        </com.google.android.material.progressindicator.CircularProgressIndicator>
-
-
-
-
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:layout_marginBottom="30dp"/>
 
     <ImageButton
         android:id="@+id/btn_edit"
