@@ -47,8 +47,9 @@ public class profileFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    Button startbtn;
-    Button townbtn;
+    Button startbtn, townbtn;
+
+    Button btn_img;
     TextView name, number_good, number_bad;
     ImageView profile_img;
     private String TAG;
@@ -103,7 +104,7 @@ public class profileFragment extends Fragment {
         });
 
         townbtn= v.findViewById(R.id.changetown);
-
+        btn_img= v.findViewById(R.id.btn_img);
         townbtn.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -171,6 +172,12 @@ public class profileFragment extends Fragment {
         number_good.setText(good);
         number_bad.setText(bad);
 
+        btn_img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
         return v;
     }
 
@@ -203,6 +210,13 @@ public class profileFragment extends Fragment {
                 profile_img.setImageBitmap(result);
             }
         }
+
+
+
+
+
+
+
 
 
 }

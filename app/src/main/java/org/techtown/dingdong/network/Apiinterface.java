@@ -38,4 +38,6 @@ public interface Apiinterface {
     @GET("/api/v1/rating")
     Call<MyLatingResponse> getLating();
 
+
+
 }
