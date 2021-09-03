@@ -11,6 +11,7 @@ import org.techtown.dingdong.profile.ProfileResponse;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
@@ -38,6 +39,7 @@ public interface Apiinterface {
     @GET("/api/v1/rating")
     Call<MyLatingResponse> getLating();
 
-
+    @PATCH("/api/v1/upload/profile/:id")
+    Call<ProfileImgResponse>
 
 }
