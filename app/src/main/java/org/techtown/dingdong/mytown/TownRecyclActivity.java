@@ -53,11 +53,13 @@ import java.util.Locale;
 public class TownRecyclActivity extends AppCompatActivity
                                 implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback {
     //문자열 배열 만들기
-    String [] townname = new String[2];
+    String [] townname;
     int validation=0;
 
     private GoogleMap mMap;
     private Marker currentMarker = null;
+
+    public static final int sub = 1001;
 
     private static final String TAG = "googlemap_example";
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
@@ -125,55 +127,17 @@ public class TownRecyclActivity extends AppCompatActivity
         recyclerView.setLayoutManager(layoutManager);
 
         TownAdapter adapter = new TownAdapter();
-        //adapter.addItem(new Town("돈암동");, 버튼 클릭시 데이터 전달되도록 !
-
+        adapter.addItem(new Town("돈암동")); //버튼 클릭시 데이터 전달되도록 !
+        /*for(int i=0;i<townname.length;i++){
+            adapter.addItem(new Town(townname[i]));
+        }*/
         recyclerView.setAdapter(adapter);
 
-        adapter.setOnItemClickListener(new OnTownItemClickListener() {
-            @Override
-            public void onItemClick(TownAdapter.ViewHoldder holder, View view, int position) {
-                Town item = adapter.getItem(position); //아이템 글릭 시 어댑터에서 해당 아이템의 town 객체 가져오기
-                if(townname.length == 2){
-                    Toast.makeText(getApplicationContext(),"동은 최대 두 개까지만 선택할 수 있습니다",Toast.LENGTH_SHORT);
-                }
-                else{
-                    //중복검사하고 비워주기
-                    for(int i=0; i<2; i++){
-                        if(item.name == townname[i]){
-                                validation =1;
-                            if(i==0 && townname[1] != null){
-                                townname[0] = null;
-                                townname[0] = townname[1];
-                                townname[1] = null;
-                            }
-                            else {
-                                townname[i] = null;
-                            }
-                        }
-
-                    }
-                    //중복검사 끝낸 배열에서 빈자리에 추가해주기
-                    for(int i=0; i<2; i++){
-
-                        if(townname[i] == null){
-                            townname[i] = item.name;
-                        }
-                    }
-
-            }
-        };
 
 
 
+    };
 
-
-
-
-
-
-
-    });
-}
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
@@ -242,15 +206,8 @@ public class TownRecyclActivity extends AppCompatActivity
 
             @Override
             public void onMapClick(LatLng latLng) {
-
+                clickposition = latLng;
                 Log.d(TAG, "onMapClick :");
-
-            }
-        });
-
-        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-            @Override
-            public void onMapLongClick(@NonNull @NotNull LatLng latLng) {
                 MarkerOptions markerOptions = new MarkerOptions();
 
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
@@ -264,7 +221,52 @@ public class TownRecyclActivity extends AppCompatActivity
 
                 mMap.addMarker(markerOptions); //마커 생성
 
-                clickposition = latLng;
+
+
+                for(int i=0; i<30; i++){
+                    double lat = (clickposition.latitude+(i*0.003));
+                    double log = (clickposition.longitude+(i*0.003));
+                    LatLng town = new LatLng(lat, log);
+
+                    String check =  getCurrentAddress(town);
+                    String [] split = check.split("\\s+ ");
+                    if(split.length < 3) break;
+
+                    townname[i]= split[3];
+
+                }
+                RecyclerView recyclerView = findViewById(R.id.recyclerView);
+
+                TownAdapter adapter = new TownAdapter();
+
+                for(int i=0; i<townname.length; i++){
+                    adapter.addItem(new Town(townname[i]));
+                }
+                recyclerView.setAdapter(adapter);
+
+                adapter.setOnItemClickListener(new OnTownItemClickListener() {
+                    @Override
+                    public void onItemClick(TownAdapter.ViewHoldder holder, View view, int position) {
+
+                        Log.d(TAG, "아이템선택됨");
+
+                        Town item = adapter.getItem(position); //아이템 글릭 시 어댑터에서 해당 아이템의 town 객체 가져오기
+                        String town = item.getName();
+                        Intent intent = new Intent(TownRecyclActivity.this,changetownActivity.class);
+                        intent.putExtra("town", town);
+
+                        startActivityForResult(intent, sub);
+
+
+                    }
+                });
+
+            }
+        });
+
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(@NonNull @NotNull LatLng latLng) {
 
 
             }
@@ -294,7 +296,7 @@ public class TownRecyclActivity extends AppCompatActivity
 
 
                 //현재 위치에 마커 생성하고 이동
-                setCurrentLocation(location, markerTitle, markerSnippet);
+                //setCurrentLocation(location, markerTitle, markerSnippet);
 
                 mCurrentLocatiion = location;
             }
@@ -354,7 +356,30 @@ public class TownRecyclActivity extends AppCompatActivity
                 mMap.setMyLocationEnabled(true);
 
         }
+       /* RecyclerView recyclerView = findViewById(R.id.recyclerView);
 
+        TownAdapter adapter = new TownAdapter();
+        for(int i=0;i<townname.length;i++){
+            adapter.addItem(new Town(townname[i]));
+        }
+        recyclerView.setAdapter(adapter);
+
+        adapter.setOnItemClickListener(new OnTownItemClickListener() {
+            @Override
+            public void onItemClick(TownAdapter.ViewHoldder holder, View view, int position) {
+
+                Log.d(TAG, "아이템선택됨");
+
+                Town item = adapter.getItem(position); //아이템 글릭 시 어댑터에서 해당 아이템의 town 객체 가져오기
+                String town = item.getName();
+                Intent intent = new Intent(TownRecyclActivity.this,changetownActivity.class);
+                intent.putExtra("town", town);
+
+                startActivityForResult(intent, sub);
+
+
+            }
+        });*/
 
     }
 
@@ -417,7 +442,7 @@ public class TownRecyclActivity extends AppCompatActivity
     }
 
 
-    public void setCurrentLocation(Location location, String markerTitle, String markerSnippet) {
+   /* public void setCurrentLocation(Location location, String markerTitle, String markerSnippet) {
 
 
         if (currentMarker != null) currentMarker.remove();
@@ -437,7 +462,7 @@ public class TownRecyclActivity extends AppCompatActivity
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(currentLatLng);
         mMap.moveCamera(cameraUpdate);
 
-    }
+    }*/
 
 
     public void setDefaultLocation() {
