@@ -38,8 +38,11 @@ public class Share {
     @SerializedName("id")
     @Expose
     private String id;
+    @SerializedName("gatheredPeople")
+    @Expose
+    private String gatheredPeople;
 
-    public Share(String title, String image1, String image2, String image3, String maintext, String date, String price, String place, String personnelcapacity, String id) {
+    public Share(String title, String image1, String image2, String image3, String maintext, String date, String price, String place, String personnelcapacity, String id, String gatheredPeople) {
         this.title = title;
         this.image1 = image1;
         this.image2 = image2;
@@ -50,14 +53,7 @@ public class Share {
         this.place = place;
         this.personnelcapacity = personnelcapacity;
         this.id = id;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+        this.gatheredPeople = gatheredPeople;
     }
 
     public String getTitle() {
@@ -132,4 +128,19 @@ public class Share {
         this.personnelcapacity = personnelcapacity;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getGatheredPeople() {
+        return gatheredPeople;
+    }
+
+    public void setGatheredPeople(String gatheredPeople) {
+        this.gatheredPeople = gatheredPeople;
+    }
 }

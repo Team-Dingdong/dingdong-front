@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,8 +16,10 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.gson.Gson;
 
+import org.jetbrains.annotations.NotNull;
 import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
 import org.techtown.dingdong.login_register.Token;
@@ -48,6 +51,13 @@ public class Tab2Fragment extends Fragment {
     private LinearLayout btn_trans;
     private TextView tv_align;
     private Boolean trans = true;
+    private CircularProgressIndicator pgbar;
+    int page = 0;
+    Boolean loading = false;
+    ArrayList<Share> createdList = new ArrayList<>();
+    ArrayList<Share> endtimeList = new ArrayList<>();
+    Token token;
+   // ArrayList<Share> mList = new ArrayList<>();
 
 
     public Tab2Fragment() {
@@ -75,10 +85,16 @@ public class Tab2Fragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+        String access = pref.getString("oauth.accesstoken","");
+        String refresh = pref.getString("oauth.refreshtoken","");
+        String expire = pref.getString("oauth.expire","");
+        String tokentype = pref.getString("oauth.tokentype","");
+
+        Log.d("토큰", String.valueOf(access));
+
+        token = new Token(access,refresh,expire,tokentype);
+
     }
 
     @Override
@@ -89,39 +105,64 @@ public class Tab2Fragment extends Fragment {
         sharelistrecycler = v.findViewById(R.id.sharelist);
         btn_trans = v.findViewById(R.id.trans);
         tv_align = v.findViewById(R.id.tv_align);
-
-        SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
-        String access = pref.getString("oauth.accesstoken","");
-        String refresh = pref.getString("oauth.refreshtoken","");
-        String expire = pref.getString("oauth.expire","");
-        String tokentype = pref.getString("oauth.tokentype","");
-
-        Token token = new Token(access,refresh,expire,tokentype);
-
-        Log.d("토큰", String.valueOf(access));
-
+        pgbar = v.findViewById(R.id.progressbar);
 
         setCreatedData(token);
+
+        sharelistrecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(@NonNull @NotNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                if((recyclerView.getAdapter().getItemCount() %5) == 0 && newState == recyclerView.SCROLL_STATE_IDLE && !recyclerView.canScrollVertically(1)){
+                    if(!loading){ //로딩중이 아닐때만
+                        pgbar.setVisibility(v.VISIBLE);
+                        page ++;
+                        pgbar.show();
+                        if(trans){
+                            //최신순 병렬일때 다음페이지 불러오기
+                            loading = true;
+                            setCreatedData(token);
+                        }
+                        else{
+                            //마감임박순병렬일때 다음페이지 불러오기
+                            loading = true;
+                            setEndTimeData(token);
+                        }
+                    }
+
+                }
+            }
+
+            @Override
+            public void onScrolled(@NonNull @NotNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+            }
+        });
 
         tv_align.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(trans){
                     //최신순병렬일때 마감임박순을 불러오기
+                    page = 0;
+                    //ArrayList<Share> mList = new ArrayList<>();
                     tv_align.setText("마감임박순");
                     setEndTimeData(token);
                     trans = false; //마감임박순 병렬로 바꾸기
                 }
                 else{
                     //마감임박순병렬일때 최신순을 불러오기
+                    page = 0;
+                    //ArrayList<Share> mList = new ArrayList<>();
                     tv_align.setText("최신순");
                     setCreatedData(token);
                     trans = true; //최신순병렬로 바꾸기
                 }
             }
         });
-
-
 
 
 
@@ -146,7 +187,7 @@ public class Tab2Fragment extends Fragment {
     public void setEndTimeData(Token token){
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
-        Call<PostResponse> call = apiinterface.getCategoryData(2);
+        Call<PostResponse> call = apiinterface.getEndCategoryData(2);
         call.enqueue(new Callback<PostResponse>() {
             @Override
             public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
@@ -155,11 +196,15 @@ public class Tab2Fragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
-                        ArrayList<Share> mList = new ArrayList<>();
-                        mList = res.getData().getShare();
-                        //String json = new Gson().toJson(res.getData().getShare());
-                        setShareListRecycler(sharelistrecycler, mList);
-                        Log.d("성공", new Gson().toJson(response.raw().request()));
+                        if(page == 0){
+                            endtimeList = res.getData().getShare();
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            setShareListRecycler(sharelistrecycler, endtimeList);}
+                        else{
+                            endtimeList.addAll(res.getData().getShare());
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            shareListAdpater.notifyDataSetChanged();
+                        }
 
                     }
 
@@ -180,6 +225,7 @@ public class Tab2Fragment extends Fragment {
 
             }
         });
+        loading = false;
 
 
     }
@@ -187,7 +233,7 @@ public class Tab2Fragment extends Fragment {
     public void setCreatedData(Token token){
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
-        Call<PostResponse> call = apiinterface.getCategoryData(2);
+        Call<PostResponse> call = apiinterface.getCreatedCategoryData(2);
         call.enqueue(new Callback<PostResponse>() {
             @Override
             public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
@@ -196,11 +242,17 @@ public class Tab2Fragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
-                        ArrayList<Share> mList = new ArrayList<>();
-                        mList = res.getData().getShare();
-                        //String json = new Gson().toJson(res.getData().getShare());
-                        setShareListRecycler(sharelistrecycler, mList);
-                        Log.d("성공", new Gson().toJson(response.raw().request()));
+                        if(page == 0){
+                            createdList = res.getData().getShare();
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            setShareListRecycler(sharelistrecycler, createdList);
+                        }
+                        else{
+                            createdList.addAll(res.getData().getShare());
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            shareListAdpater.notifyDataSetChanged();
+
+                        }
 
                     }
 
@@ -221,6 +273,8 @@ public class Tab2Fragment extends Fragment {
 
             }
         });
+
+        loading = false;
 
 
     }
