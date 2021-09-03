@@ -136,10 +136,10 @@ public class profileFragment extends Fragment implements View.OnClickListener {
             }
         });
         //본인 프로필 조회
-        name = (TextView) getView().findViewById(R.id.name);
-        profile_img = (ImageView)getView().findViewById(R.id.profile_img);
-        number_good = (TextView)getView().findViewById(R.id.number_good);
-        number_bad = (TextView)getView().findViewById(R.id.number_bad);
+        name = v.findViewById(R.id.name);
+        profile_img = v.findViewById(R.id.profile_img);
+        number_good = v.findViewById(R.id.number_good);
+        number_bad = v.findViewById(R.id.number_bad);
 
         SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         String access = pref.getString("oauth.accesstoken","");
@@ -192,8 +192,8 @@ public class profileFragment extends Fragment implements View.OnClickListener {
 
                 }
             });
-            number_good.setText(good);
-            number_bad.setText(bad);
+            number_good.setText(String.valueOf(good));
+            number_bad.setText(String.valueOf(bad));
 
             btn_img.setOnClickListener(this);
             return v;

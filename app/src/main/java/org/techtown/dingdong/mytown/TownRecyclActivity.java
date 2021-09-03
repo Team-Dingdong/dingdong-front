@@ -224,12 +224,13 @@ public class TownRecyclActivity extends AppCompatActivity
 
 
                 for(int i=0; i<30; i++){
+                    Log.d(TAG,"동 탐색중");
                     double lat = (clickposition.latitude+(i*0.003));
                     double log = (clickposition.longitude+(i*0.003));
                     LatLng town = new LatLng(lat, log);
 
                     String check =  getCurrentAddress(town);
-                    String [] split = check.split("\\s+ ");
+                    String [] split = check.split(" ");
                     if(split.length < 3) break;
 
                     townname[i]= split[3];

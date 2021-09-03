@@ -39,7 +39,7 @@ public interface Apiinterface {
     @GET("/api/v1/rating")
     Call<MyLatingResponse> getLating();
 
-    @PATCH("/api/v1/upload/profile/:id")
-    Call<ProfileImgResponse>
+   // @PATCH("/api/v1/upload/profile/:id")
+    //Call<ProfileImgResponse>
 
 }
