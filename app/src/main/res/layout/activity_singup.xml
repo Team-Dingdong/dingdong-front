@@ -9,17 +9,17 @@
 
     <ImageView
         android:id="@+id/iv_profile"
-        android:layout_width="145dp"
-        android:layout_height="138dp"
+        android:layout_width="149dp"
+        android:layout_height="137dp"
         android:layout_marginTop="88dp"
         android:layout_marginEnd="27dp"
         android:layout_marginRight="27dp"
-        app:tint="#D3D2D2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.556"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/bg_indicator_inactive" />
+        app:srcCompat="@drawable/bg_indicator_inactive"
+        app:tint="#D3D2D2" />
 
     <ImageButton
         android:id="@+id/imgbtn_profile"
