@@ -5,11 +5,11 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -19,13 +19,11 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
-import android.text.Layout;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -46,19 +44,17 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.jetbrains.annotations.NotNull;
-import org.techtown.dingdong.MainActivity;
 import org.techtown.dingdong.R;
-
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-
-public class changetownActivity extends AppCompatActivity
-        implements OnMapReadyCallback,
-        ActivityCompat.OnRequestPermissionsResultCallback {
-
+public class TownRecyclActivity extends AppCompatActivity
+                                implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback {
+    //문자열 배열 만들기
+    String [] townname = new String[2];
+    int validation=0;
 
     private GoogleMap mMap;
     private Marker currentMarker = null;
@@ -75,7 +71,7 @@ public class changetownActivity extends AppCompatActivity
 
 
     // 앱을 실행하기 위해 필요한 퍼미션을 정의합니다.
-    String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};  // 외부 저장소
+    String[] REQUIRED_PERMISSIONS  = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};  // 외부 저장소
 
 
     Location mCurrentLocatiion;
@@ -86,29 +82,21 @@ public class changetownActivity extends AppCompatActivity
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationRequest locationRequest;
     private Location location;
-    Button list_btn;
     Button change_btn;
 
-    private View mLayout;  // Snackbar 사용하기 위해서는 View가 필요합니다.
-    // (참고로 Toast에서는 Context가 필요했습니다.)
+    private View mLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        list_btn = (Button) findViewById(R.id.list_btn);
-        change_btn = (Button) findViewById(R.id.change_btn);
+        setContentView(R.layout.activity_town_recycl);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        setContentView(R.layout.activity_changetown);
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
 
-
-        /*binding = ActivityMapsBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());*/
-
-        mLayout = findViewById(R.id.layout_changetown);
+        mLayout = findViewById(R.id.layout_town_recycle);
 
         locationRequest = new LocationRequest()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -133,26 +121,59 @@ public class changetownActivity extends AppCompatActivity
         }*/
 
 
-        //동네변경하기 버튼튼
-        list_btn.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //현재위치 리스트로 보여주기
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+        recyclerView.setLayoutManager(layoutManager);
 
-                //api로
+        TownAdapter adapter = new TownAdapter();
+        //adapter.addItem(new Town("돈암동");, 버튼 클릭시 데이터 전달되도록 !
+
+        recyclerView.setAdapter(adapter);
+
+        adapter.setOnItemClickListener(new OnTownItemClickListener() {
+            @Override
+            public void onItemClick(TownAdapter.ViewHoldder holder, View view, int position) {
+                Town item = adapter.getItem(position); //아이템 글릭 시 어댑터에서 해당 아이템의 town 객체 가져오기
+                if(townname.length == 2){
+                    Toast.makeText(getApplicationContext(),"동은 최대 두 개까지만 선택할 수 있습니다",Toast.LENGTH_SHORT);
+                }
+                else{
+                    //중복검사하고 비워주기
+                    for(int i=0; i<2; i++){
+                        if(item.name == townname[i]){
+                                validation =1;
+                            if(i==0 && townname[1] != null){
+                                townname[0] = null;
+                                townname[0] = townname[1];
+                                townname[1] = null;
+                            }
+                            else {
+                                townname[i] = null;
+                            }
+                        }
+
+                    }
+                    //중복검사 끝낸 배열에서 빈자리에 추가해주기
+                    for(int i=0; i<2; i++){
+
+                        if(townname[i] == null){
+                            townname[i] = item.name;
+                        }
+                    }
 
             }
-        });
+        };
 
-        //동네 선택하고 확인누르면 알림창 띄우고, 데이터 저장하고 있다가 로그인/회원가입하고 서버로 전달
-        change_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-            }
-        });
-    }
 
+
+
+
+
+
+
+
+    });
+}
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
@@ -197,7 +218,7 @@ public class changetownActivity extends AppCompatActivity
                     public void onClick(View view) {
 
                         // 3-3. 사용자게에 퍼미션 요청을 합니다. 요청 결과는 onRequestPermissionResult에서 수신됩니다.
-                        ActivityCompat.requestPermissions(changetownActivity.this, REQUIRED_PERMISSIONS,
+                        ActivityCompat.requestPermissions(TownRecyclActivity.this, REQUIRED_PERMISSIONS,
                                 PERMISSIONS_REQUEST_CODE);
                     }
                 }).show();
@@ -227,7 +248,27 @@ public class changetownActivity extends AppCompatActivity
             }
         });
 
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(@NonNull @NotNull LatLng latLng) {
+                MarkerOptions markerOptions = new MarkerOptions();
 
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+
+                markerOptions.position(latLng); //마커위치설정
+
+                String markerTitle = getCurrentAddress(clickposition);
+                markerOptions.title(markerTitle); //마커이름설정
+
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));   // 마커생성위치로 이동
+
+                mMap.addMarker(markerOptions); //마커 생성
+
+                clickposition = latLng;
+
+
+            }
+        });
     }
 
     LocationCallback locationCallback = new LocationCallback() {
@@ -514,7 +555,7 @@ public class changetownActivity extends AppCompatActivity
     //여기부터는 GPS 활성화를 위한 메소드들
     private void showDialogForLocationServiceSetting() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(changetownActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(TownRecyclActivity.this);
         builder.setTitle("위치 서비스 비활성화");
         builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n"
                 + "위치 설정을 수정하실래요?");
@@ -560,7 +601,4 @@ public class changetownActivity extends AppCompatActivity
 
                 break;
         }
-    }
-
-
-}
+    }}
