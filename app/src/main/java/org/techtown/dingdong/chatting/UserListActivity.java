@@ -7,7 +7,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,11 +19,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
+import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.login_register.Token;
+import org.techtown.dingdong.network.Api;
+import org.techtown.dingdong.network.Apiinterface;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class UserListActivity extends AppCompatActivity {
 
@@ -28,6 +40,7 @@ public class UserListActivity extends AppCompatActivity {
     private ArrayList<ChatUser> chatUsers;
     private RecyclerView recyclerView;
     ChatUserAdapter chatUserAdapter;
+    private String id;
     Boolean ismaster = true;
 
     @Override
@@ -35,14 +48,59 @@ public class UserListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_list);
 
-        setDummy();
+        SharedPreferences pref = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+        String access = pref.getString("oauth.accesstoken","");
+        String refresh = pref.getString("oauth.refreshtoken","");
+        String expire = pref.getString("oauth.expire","");
+        String tokentype = pref.getString("oauth.tokentype","");
 
-        btn_back = findViewById(R.id.ic_back);
+        Token token  = new Token(access,refresh,expire,tokentype);
+
+        Intent intent = getIntent();
+        id = intent.getStringExtra("id");
+        Log.d("토큰", id);
+
+
         recyclerView = findViewById(R.id.recycler_user);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        chatUserAdapter = new ChatUserAdapter(chatUsers, this);
-        recyclerView.setAdapter(chatUserAdapter);
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, UserListActivity.this);
+        Call<ChatUserResponse> call = apiinterface.getChatUser(Integer.parseInt(id));
+        call.enqueue(new Callback<ChatUserResponse>() {
+            @Override
+            public void onResponse(Call<ChatUserResponse> call, Response<ChatUserResponse> response) {
+                if(response.isSuccessful() && response.body() != null) {
+                    if (response.body().getResult().equals("CHAT_ROOM_USER_READ_SUCCESS")) {
+                        ChatUserResponse res = response.body();
+                        Log.d("성공", new Gson().toJson(res));
+                        chatUsers = res.getChatUsers();
+
+                        recyclerView.setLayoutManager(new LinearLayoutManager(UserListActivity.this, LinearLayoutManager.VERTICAL, false));
+                        chatUserAdapter = new ChatUserAdapter(chatUsers, UserListActivity.this);
+                        recyclerView.setAdapter(chatUserAdapter);
+
+
+                    }
+                }else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ChatUserResponse> call, Throwable t) {
+
+            }
+        });
+
+
+
+
+        btn_back = findViewById(R.id.ic_back);
+
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(this) {
             @Override
@@ -66,7 +124,7 @@ public class UserListActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     Log.i("Dialog", "네");
-                                    if(chatUser.getIsmaster() == false){
+                                    if(chatUser.getIsmaster() == "fasle"){
                                     chatUserAdapter.removeItem(position);
                                     Toast.makeText(UserListActivity.this,"퇴장되었습니다.",Toast.LENGTH_LONG).show();}
                                     else{
@@ -112,13 +170,15 @@ public class UserListActivity extends AppCompatActivity {
 
     private void setDummy(){
 
+        /*
        chatUsers = new ArrayList<>();
-       chatUsers.add(new ChatUser("젤리","https://cdn.pixabay.com/photo/2016/08/24/21/33/gummybears-1618073_1280.jpg",true));
-       chatUsers.add(new ChatUser("원선","https://cdn.pixabay.com/photo/2019/10/15/21/34/cat-4552983_1280.jpg",false));
-       chatUsers.add(new ChatUser("김나나","https://cdn.pixabay.com/photo/2016/08/24/21/33/gummybears-1618073_1280.jpg",false));
-       chatUsers.add(new ChatUser("다루","https://cdn.pixabay.com/photo/2019/10/15/21/34/cat-4552983_1280.jpg",false));
+       chatUsers.add(new ChatUser("젤리","https://cdn.pixabay.com/photo/2016/08/24/21/33/gummybears-1618073_1280.jpg","true"));
+       chatUsers.add(new ChatUser("원선","https://cdn.pixabay.com/photo/2019/10/15/21/34/cat-4552983_1280.jpg","false"));
+       chatUsers.add(new ChatUser("김나나","https://cdn.pixabay.com/photo/2016/08/24/21/33/gummybears-1618073_1280.jpg","false"));
+       chatUsers.add(new ChatUser("다루","https://cdn.pixabay.com/photo/2019/10/15/21/34/cat-4552983_1280.jpg","false"));
 
-
+         */
 
     }
+
 }

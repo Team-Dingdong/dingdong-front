@@ -1,17 +1,37 @@
 package org.techtown.dingdong.chatting;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class ChatUser {
 
-    private String username;
-    private String imgUrl;
-    private Boolean ismaster;
 
-    public ChatUser(String username, String imgUrl, Boolean ismaster) {
+    @SerializedName("nickname")
+    @Expose
+    private String username;
+    @SerializedName("profileImageUrl")
+    @Expose
+    private String imgUrl;
+    @SerializedName("owner")
+    @Expose
+    private String ismaster;
+    @SerializedName("userId")
+    @Expose
+    private String id;
+
+    public ChatUser(String username, String imgUrl, String ismaster) {
         this.username = username;
         this.imgUrl = imgUrl;
         this.ismaster = ismaster;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
     public String getUsername() {
         return username;
     }
@@ -28,11 +48,11 @@ public class ChatUser {
         this.imgUrl = imgUrl;
     }
 
-    public Boolean getIsmaster() {
+    public String getIsmaster() {
         return ismaster;
     }
 
-    public void setIsmaster(Boolean ismaster) {
+    public void setIsmaster(String ismaster) {
         this.ismaster = ismaster;
     }
 }

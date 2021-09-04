@@ -1,5 +1,6 @@
 package org.techtown.dingdong.home;
 
+import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,12 +9,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
+import androidx.viewpager2.widget.CompositePageTransformer;
+import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Switch;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -21,6 +25,10 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import org.jetbrains.annotations.NotNull;
 import org.techtown.dingdong.MainActivity;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.databinding.FragmentTab1Binding;
+import org.techtown.dingdong.databinding.FragmentTab2Binding;
+import org.techtown.dingdong.databinding.FragmentTab3Binding;
+import org.techtown.dingdong.databinding.FragmentTab4Binding;
 
 import java.util.ArrayList;
 
@@ -73,7 +81,10 @@ public class MainFragment extends Fragment {
         pagerAdapter.addFrag(fragment4);
         //pagerAdapter.addFrag(fragment5);
 
+        //pagerAdapter.createFragment(pos).onViewCreated(viewPager,savedInstanceState);
+
         viewPager.setAdapter(pagerAdapter);
+
 
 
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> tab.setText(tabs[position])).attach();

@@ -1,5 +1,8 @@
 package org.techtown.dingdong.network;
 
+import org.techtown.dingdong.chatting.ChatResponse;
+import org.techtown.dingdong.chatting.ChatRoomResponse;
+import org.techtown.dingdong.chatting.ChatUserResponse;
 import org.techtown.dingdong.home.EditResponse;
 import org.techtown.dingdong.home.PostRequest;
 import org.techtown.dingdong.home.PostResponse;
@@ -77,6 +80,22 @@ public interface Apiinterface {
 
     @GET("/api/v1/post/search")
     Call<PostResponse> getSearchData(@Query(value = "keyword") String keyword);
+
+
+    @GET("/api/v1/chat/room")
+    Call<ChatRoomResponse> getChatRoomList();
+
+    @GET("/api/v1/chat/message/{roomId}")
+    Call<ChatResponse> getChats(@Path("roomId") int id);
+
+    @DELETE("/api/v1/chat/room/{roomId}")
+    Call<ResponseBody> exitChatRoom(@Path("roomId") int id);
+
+    @GET("/api/v1/chat/user/{roomId}")
+    Call<ChatUserResponse> getChatUser(@Path("roomId") int id);
+
+
+
 
 
 

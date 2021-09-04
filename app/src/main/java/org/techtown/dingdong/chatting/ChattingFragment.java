@@ -2,8 +2,10 @@ package org.techtown.dingdong.chatting;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,17 +25,26 @@ import androidx.recyclerview.widget.SnapHelper;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
+import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.login_register.Token;
+import org.techtown.dingdong.network.Api;
+import org.techtown.dingdong.network.Apiinterface;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ChattingFragment extends Fragment {
 
 
-    private ArrayList<Chat> chats;
-    private ArrayList<ChatRoom> chatRooms;
+    //private ArrayList<Chat> chats;
+    private ArrayList<ChatRoom> chatRooms = new ArrayList<>();
     private RecyclerView recyclerView;
     ChatRoomListAdapter chatRoomListAdapter;
     Boolean ismaster = true;
@@ -49,12 +60,23 @@ public class ChattingFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_chatting, container, false);
 
-        setDummy();
+        SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+        String access = pref.getString("oauth.accesstoken","");
+        String refresh = pref.getString("oauth.refreshtoken","");
+        String expire = pref.getString("oauth.expire","");
+        String tokentype = pref.getString("oauth.tokentype","");
+
+        Token token = new Token(access,refresh,expire,tokentype);
+
+        Log.d("토큰", String.valueOf(access));
+
+
+
+        //setDummy();
 
         recyclerView = v.findViewById(R.id.recycler_chathome);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        chatRoomListAdapter = new ChatRoomListAdapter(getActivity(), chatRooms);
-        recyclerView.setAdapter(chatRoomListAdapter);
+
+        setChatRooms(token);
 
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(getActivity()) {
@@ -117,7 +139,7 @@ public class ChattingFragment extends Fragment {
     }
 
     public void setDummy(){
-        chats = new ArrayList<>();
+        /*chats = new ArrayList<>();
         chats.add(new Chat("안녕하세요 여러분","원선","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
                 "오후 1:30",Boolean.TRUE,ChatType.ViewType.LEFT_CONTENT ));
         chats.add(new Chat("넵 안녕하세요","다루","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
@@ -134,6 +156,60 @@ public class ChattingFragment extends Fragment {
         chatRooms.add(new ChatRoom("https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510_1280.jpg",chats,"양파를 나누고 싶어요","2"));
         chatRooms.add(new ChatRoom("https://cdn.pixabay.com/photo/2021/08/08/10/34/ocean-6530523__480.jpg",chats,"물을 나누고 싶어요","3"));
         chatRooms.add(new ChatRoom("https://cdn.pixabay.com/photo/2016/08/11/08/43/potatoes-1585060__480.jpg",chats,"뭐든 나누고 싶어요","2"));
+
+*/
+    }
+
+    public void setChatRecycler(RecyclerView recyclerView, ArrayList<ChatRoom> chatRooms){
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        chatRoomListAdapter = new ChatRoomListAdapter(getActivity(), chatRooms);
+        recyclerView.setAdapter(chatRoomListAdapter);
+
+    }
+
+
+    public void setChatRooms(Token token){
+
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, getActivity());
+        Call<ChatRoomResponse> call = apiinterface.getChatRoomList();
+
+        call.enqueue(new Callback<ChatRoomResponse>() {
+            @Override
+            public void onResponse(Call<ChatRoomResponse> call, Response<ChatRoomResponse> response) {
+
+                if(response.isSuccessful() && response.body() != null){
+                    if(response.body().getResult().equals("CHAT_ROOM_READ_ALL_SUCCESS")){
+
+                        ChatRoomResponse res = response.body();
+
+                        Log.d("성공", new Gson().toJson(res));
+
+                        chatRooms = res.getChatRooms();
+                        setChatRecycler(recyclerView, chatRooms);
+
+                    }
+                }
+                else{
+
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ChatRoomResponse> call, Throwable t) {
+
+                Log.d("외않되", String.valueOf(t));
+
+            }
+        });
 
 
     }

@@ -101,7 +101,7 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
             Glide.with(((ChattingAdapter.LeftViewHolder) holder).profile.getContext())
                     .load(myChatList.get(position).getProfile())
                     .into(((ChattingAdapter.LeftViewHolder) holder).profile);
-            if(myChatList.get(position).getMaster() == Boolean.TRUE){
+            if(myChatList.get(position).getOwner().equals("TRUE")){
                 ((ChattingAdapter.LeftViewHolder)holder).master.setVisibility(View.VISIBLE);
             }
 
@@ -123,7 +123,11 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
                 ((ChattingAdapter.CenterViewHolder)holder).tv_date.setText(mydate);
             }
             ((ChattingAdapter.CenterViewHolder)holder).tv_content.setText(myChatList.get(position).getContent());
-            ((ChattingAdapter.CenterViewHolder)holder).tv_time.setText(mytime);
+            if(myChatList.get(position).getType().equals("ENTER")){
+                ((ChattingAdapter.CenterViewHolder)holder).tv_time.setVisibility(View.GONE);
+            }
+            else{
+            ((ChattingAdapter.CenterViewHolder)holder).tv_time.setText(mytime);}
         }
         else if(holder instanceof ChattingAdapter.LeftIMGViewHolder){
             if(!cur.equals(prev)){
@@ -139,7 +143,7 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
             Glide.with(((ChattingAdapter.LeftIMGViewHolder) holder).profile.getContext())
                     .load(myChatList.get(position).getProfile())
                     .into(((ChattingAdapter.LeftIMGViewHolder) holder).profile);
-            if(myChatList.get(position).getMaster() == Boolean.TRUE){
+            if(myChatList.get(position).getOwner().equals("TRUE")){
                 ((ChattingAdapter.LeftIMGViewHolder)holder).master.setVisibility(View.VISIBLE);
             }
         }
@@ -167,7 +171,7 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
                     .load(myChatList.get(position).getProfile())
                     .into(((ChattingAdapter.LeftPLANViewHolder) holder).profile);
             ((ChattingAdapter.LeftPLANViewHolder)holder).tv_info.setText(myChatList.get(position).getContent());
-            if(myChatList.get(position).getMaster() == Boolean.TRUE){
+            if(myChatList.get(position).getOwner().equals("TRUE")){
                 ((ChattingAdapter.LeftPLANViewHolder)holder).master.setVisibility(View.VISIBLE);
         } }
         else{
@@ -190,6 +194,9 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
 
     @Override
     public int getItemViewType(int position) {
+        if(myChatList.get(position).getType().equals("ENTER")){
+            return ChatType.ViewType.CENTER_CONTENT;
+        }
         return myChatList.get(position).getViewType();
     }
 

@@ -1,22 +1,42 @@
 package org.techtown.dingdong.chatting;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class ChatRoom {
+    @SerializedName("imageUrl")
+    @Expose
     private String image;
-    private ArrayList<Chat> chats;
+    //private ArrayList<Chat> chats;
+    @SerializedName("title")
+    @Expose
     private String title;
+    @SerializedName("userCount")
+    @Expose
     private String personnel;
-    private String master;
+    //private String master;
+    @SerializedName("lastChatMessage")
+    @Expose
+    private String lastMsg;
+    @SerializedName("id")
+    @Expose
+    private String id;
+    @SerializedName("lastChatTime")
+    @Expose
+    private String lastChatTime;
     //private ArrayList<User> users;
 
-    public ChatRoom(String image, ArrayList<Chat> chats, String title, String personnel) {
+
+    public ChatRoom(String image, String title, String personnel, String lastMsg, String id, String lastChatTime) {
         this.image = image;
-        this.chats = chats;
         this.title = title;
         this.personnel = personnel;
+        this.lastMsg = lastMsg;
+        this.id = id;
+        this.lastChatTime = lastChatTime;
     }
-
 
     public String getImage() {
         return image;
@@ -24,14 +44,6 @@ public class ChatRoom {
 
     public void setImage(String image) {
         this.image = image;
-    }
-
-    public ArrayList<Chat> getChats() {
-        return chats;
-    }
-
-    public void setChats(ArrayList<Chat> chats) {
-        this.chats = chats;
     }
 
     public String getTitle() {
@@ -48,5 +60,29 @@ public class ChatRoom {
 
     public void setPersonnel(String personnel) {
         this.personnel = personnel;
+    }
+
+    public String getLastMsg() {
+        return lastMsg;
+    }
+
+    public void setLastMsg(String lastMsg) {
+        this.lastMsg = lastMsg;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getLastChatTime() {
+        return lastChatTime;
+    }
+
+    public void setLastChatTime(String lastChatTime) {
+        this.lastChatTime = lastChatTime;
     }
 }

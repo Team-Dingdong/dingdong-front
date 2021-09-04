@@ -448,21 +448,6 @@ public class EditActivity extends AppCompatActivity {
 
                    uploadImage(token, Integer.parseInt(resId));
 
-                    if(status == 1) {
-
-                        Toast.makeText(EditActivity.this, "수정이 완료되었습니다.", Toast.LENGTH_LONG).show();
-
-                        //핸들러를 통한 액티비티 종료 시점 조절
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                finish();
-                            }
-                        }, 1000);
-
-                    }
-
                 }else{
                     Log.d("실패", new Gson().toJson(response.errorBody()));
                     Log.d("실패", response.toString());
@@ -510,7 +495,8 @@ public class EditActivity extends AppCompatActivity {
                         et_title.setText(share.getTitle());
                         et_price.setText(share.getPrice());
                         et_place.setText(share.getPlace());
-                        select_personnel.setSelection(3);
+                        int capa = Integer.parseInt(share.getPersonnelcapacity()) -1;
+                        select_personnel.setSelection(capa);
                         select_category.setSelection(2);
                         //String json = new Gson().toJson(res.getData().getShare());
 
@@ -570,7 +556,7 @@ public class EditActivity extends AppCompatActivity {
             if(data.getClipData() == null){
                 Log.e("single choice", String.valueOf(data.getData()));
                 Uri imageUri = data.getData();
-                uriList.add(imageUri);
+                //uriList.add(imageUri);
                 imgList.add(imageUri.toString());
 
                 imageUploadAdapter = new ImageUploadAdapter(imgList, getApplicationContext());
@@ -593,7 +579,7 @@ public class EditActivity extends AppCompatActivity {
                         Uri imageUri = clipData.getItemAt(i).getUri();
 
                         try{
-                            uriList.add(imageUri);
+                            //uriList.add(imageUri);
                             imgList.add(imageUri.toString());
                         } catch (Exception e){
                             Log.e("MultiImageActivity", "File select error", e);
@@ -628,6 +614,13 @@ public class EditActivity extends AppCompatActivity {
 
     private void uploadImage(Token token, int id) {
 
+        imgList = imageUploadAdapter.getData();
+        uriList = new ArrayList<>();
+        for (int i=0; i<imgList.size(); i++){
+            Uri uri = Uri.parse(imgList.get(i));
+            uriList.add(uri);
+        }
+
         if(uriList.size() != 0) {
             ArrayList<MultipartBody.Part> uplist = new ArrayList<>();
             //ArrayList<File> files = new ArrayList<>();
@@ -659,7 +652,8 @@ public class EditActivity extends AppCompatActivity {
                         if (response.code() == 200) {
                             Log.d("이미지등록성공", new Gson().toJson(response.code()));
 
-                            status = 1;
+                            onfinish(1);
+
                         }
 
 
@@ -672,7 +666,7 @@ public class EditActivity extends AppCompatActivity {
                         Log.d("실패", String.valueOf(response.raw().request().url().url()));
                         Log.d("실패", new Gson().toJson(response.raw().request()));
 
-                        status = 0;
+                        onfinish(1);
 
 
                     }
@@ -683,16 +677,31 @@ public class EditActivity extends AppCompatActivity {
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
 
                     Log.d("외않되", String.valueOf(t));
-                    status = 0;
+                    onfinish(1);
 
                 }
             });
 
 
         }
-        else{status = 1;}
+        else{onfinish(1);}
 
 
+    }
+
+    public void onfinish(int status){
+        if(status == 1){
+        Toast.makeText(EditActivity.this, "수정이 완료되었습니다.", Toast.LENGTH_LONG).show();
+        //핸들러를 통한 액티비티 종료 시점 조절
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                finish();
+            }
+        }, 1000);
+
+    }
     }
 
 }
