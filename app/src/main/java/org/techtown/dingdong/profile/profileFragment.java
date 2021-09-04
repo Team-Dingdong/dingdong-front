@@ -155,13 +155,19 @@ public class profileFragment extends Fragment implements View.OnClickListener {
         call.enqueue(new Callback<ProfileResponse>() {
                 @Override
                 public void onResponse(Call<ProfileResponse> call, Response<ProfileResponse> response) {
-                   if(response.body().getCode().equals("PROFILE_READ_SUCCESS")) {
-                       Log.d(TAG, "프로필 조회 성공");
-                       nickname = response.body().getData().nickname;
-                       img = response.body().getData().profileImageUrl;
-                       bio = response.body().getData().profile_bio;
-                   }
-                   else{Log.d(TAG, "프로필 조회 실패");}
+                    if (response.isSuccessful()) {
+                        if (response.body().getCode().equals("PROFILE_READ_SUCCESS")) {
+                            Log.d(TAG, "프로필 조회 성공");
+                            nickname = response.body().getData().nickname;
+                            img = response.body().getData().profileImageUrl;
+                            bio = response.body().getData().profile_bio;
+                        } else {
+                            Log.d(TAG, "프로필 조회 실패");
+                        }
+                    }
+                    else{
+                        Log.d(TAG,"profilereponse실패");
+                    }
                 }
 
                 @Override
@@ -178,6 +184,7 @@ public class profileFragment extends Fragment implements View.OnClickListener {
             callLate.enqueue(new Callback<MyLatingResponse>() {
                 @Override
                 public void onResponse(Call<MyLatingResponse> call, Response<MyLatingResponse> response) {
+                    if(response.isSuccessful()){
                     if(response.body().getCode().equals("RATING_READ_SUCCESS")) {
                         Log.d(TAG, "평가 조회 성공");
                         good = response.body().getData().good;
@@ -185,6 +192,7 @@ public class profileFragment extends Fragment implements View.OnClickListener {
 
                     }
                     else{Log.d(TAG, "평가 조회 실패");}
+                }
                 }
 
                 @Override

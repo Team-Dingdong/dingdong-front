@@ -1,6 +1,7 @@
 package org.techtown.dingdong.mytown;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -17,6 +18,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
@@ -47,8 +49,13 @@ import org.jetbrains.annotations.NotNull;
 import org.techtown.dingdong.R;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class TownRecyclActivity extends AppCompatActivity
                                 implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -58,6 +65,8 @@ public class TownRecyclActivity extends AppCompatActivity
 
     private GoogleMap mMap;
     private Marker currentMarker = null;
+
+    String [] result;
 
     public static final int sub = 1001;
 
@@ -204,6 +213,7 @@ public class TownRecyclActivity extends AppCompatActivity
         //mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
+            @RequiresApi(api = Build.VERSION_CODES.R)
             @Override
             public void onMapClick(LatLng latLng) {
                 clickposition = latLng;
@@ -230,18 +240,27 @@ public class TownRecyclActivity extends AppCompatActivity
                     LatLng town = new LatLng(lat, log);
 
                     String check =  getCurrentAddress(town);
-                    String [] split = check.split(" ");
-                    if(split.length < 3) break;
+                    String [] split = check.split("\\s ");
+                    //중복처리 해야함
+                   if(split.length> 3){
+                       townname[i]= split[2];
 
-                    townname[i]= split[3];
+                   }
+                   else{
+                       break;
+                   }
+
 
                 }
+                result  = Arrays.stream(townname).distinct().toArray(String[]::new);
                 RecyclerView recyclerView = findViewById(R.id.recyclerView);
 
                 TownAdapter adapter = new TownAdapter();
 
-                for(int i=0; i<townname.length; i++){
-                    adapter.addItem(new Town(townname[i]));
+                for(int i=0; i<result.length; i++){
+
+                    adapter.addItem(new Town(result[i]));
+
                 }
                 recyclerView.setAdapter(adapter);
 
