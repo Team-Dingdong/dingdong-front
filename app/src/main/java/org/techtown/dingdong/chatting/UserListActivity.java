@@ -97,8 +97,6 @@ public class UserListActivity extends AppCompatActivity {
         });
 
 
-
-
         btn_back = findViewById(R.id.ic_back);
 
 
