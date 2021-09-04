@@ -1,5 +1,7 @@
 package org.techtown.dingdong.network;
 
+import org.techtown.dingdong.login_register.AuthNickRequset;
+import org.techtown.dingdong.login_register.AuthNickResponse;
 import org.techtown.dingdong.login_register.AuthRequest;
 import org.techtown.dingdong.login_register.AuthResponse;
 import org.techtown.dingdong.login_register.LoginRequest;
@@ -27,4 +29,6 @@ public interface Apiinterface {
     //@POST("/api/v1/auth")
     //Call<LoginResponse> LoginRequest(@Body LoginRequest loginRequest);
 
+    @POST("/api/v1/auth/nickname")
+    Call<AuthNickResponse> AuthNickRequest(@Body AuthNickRequset authNickRequset);
 }

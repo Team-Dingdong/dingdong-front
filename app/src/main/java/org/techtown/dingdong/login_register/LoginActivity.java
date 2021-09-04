@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.home.HomeFragment;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
 
@@ -42,7 +43,8 @@ public class LoginActivity extends AppCompatActivity {
     private int count = 300;
     public CountDownTimer countDownTimer;
     String time = "2021-08-21T12:23:19.883418";
-    String str;
+    String str, token;
+    String whereintent;
 
 
     @Override
@@ -133,7 +135,8 @@ public class LoginActivity extends AppCompatActivity {
                             if(response.body().result.equals("SIGNUP_SUCCESS")){
 
                                 Log.d("회원가입성공", String.valueOf(response));
-                                String token = response.body().data.accessToken;
+                                token = response.body().data.accessToken;
+                                whereintent = "singup";
 
                             }
                             else if(response.body().result.equals("LOGIN_SUCCESS")){
@@ -151,6 +154,7 @@ public class LoginActivity extends AppCompatActivity {
                                 preferences.edit().putString("oauth.expire", token.getExpireIn()).apply();
                                 preferences.edit().putString("oauth.tokentype", token.getGrantType()).apply();
 
+                                whereintent = "login";
                             }
                             
                         }else{
@@ -165,6 +169,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         //Log.d("성공", token);
 
+
                     }
 
                     @Override
@@ -175,10 +180,18 @@ public class LoginActivity extends AppCompatActivity {
 
 
                 });
+                if(whereintent == "singup"){
+                    Intent intent = new Intent(view.getContext(), SingupActivity.class);
+                    startActivity(intent);
+                }
+                else{
+                    Intent intent= new Intent(view.getContext(), HomeFragment.class);
+                }
 
 
 
             }
+
         });
     }
 }

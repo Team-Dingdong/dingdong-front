@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#00FFFFFF"
+    tools:context=".login_register.SingupActivity">
+
+    <ImageView
+        android:id="@+id/iv_profile"
+        android:layout_width="145dp"
+        android:layout_height="138dp"
+        android:layout_marginTop="88dp"
+        android:layout_marginEnd="27dp"
+        android:layout_marginRight="27dp"
+        app:tint="#D3D2D2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.556"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/bg_indicator_inactive" />
+
+    <ImageButton
+        android:id="@+id/imgbtn_profile"
+        android:layout_width="71dp"
+        android:layout_height="71dp"
+        android:layout_marginTop="184dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.708"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_imgupload" />
+
+    <TextView
+        android:id="@+id/tv_nick"
+        android:layout_width="356dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="27dp"
+        android:layout_marginLeft="27dp"
+        android:layout_marginTop="42dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginRight="28dp"
+        android:hint="닉네임 입력 (15자 이하)"
+        android:maxLength="15"
+        android:shadowColor="#A6A5A5"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgbtn_profile" />
+
+    <EditText
+        android:id="@+id/et"
+        android:layout_width="352dp"
+        android:layout_height="31dp"
+        android:layout_marginStart="27dp"
+        android:layout_marginLeft="27dp"
+        android:layout_marginTop="13dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:background="#00FFFFFF"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:textColor="#D53636"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_nick" />
+
+    <Button
+        android:id="@+id/btn_ok"
+        android:layout_width="360dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="27dp"
+        android:layout_marginLeft="27dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:text="확인"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
