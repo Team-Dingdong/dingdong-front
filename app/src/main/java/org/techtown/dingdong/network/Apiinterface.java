@@ -1,6 +1,7 @@
 package org.techtown.dingdong.network;
 
 import org.techtown.dingdong.chatting.ChatResponse;
+import org.techtown.dingdong.chatting.ChatRoomInformResponse;
 import org.techtown.dingdong.chatting.ChatRoomResponse;
 import org.techtown.dingdong.chatting.ChatUserResponse;
 import org.techtown.dingdong.home.EditResponse;
@@ -93,6 +94,9 @@ public interface Apiinterface {
 
     @GET("/api/v1/chat/user/{roomId}")
     Call<ChatUserResponse> getChatUser(@Path("roomId") int id);
+
+    @GET("/api/v1/chat/room/{roomId}")
+    Call<ChatRoomInformResponse> getChatRoom(@Path("roomId") int id);
 
 
 

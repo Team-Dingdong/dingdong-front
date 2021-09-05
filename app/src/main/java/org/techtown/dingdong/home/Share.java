@@ -41,6 +41,18 @@ public class Share {
     @SerializedName("gatheredPeople")
     @Expose
     private String gatheredPeople;
+    @SerializedName("nickname")
+    @Expose
+    private String username = null;
+    @SerializedName("profile_bio")
+    @Expose
+    private String usertext;
+    @SerializedName("good")
+    @Expose
+    private String usergood = null;
+    @SerializedName("bad")
+    @Expose
+    private String userbad = null;
 
     public Share(String title, String image1, String image2, String image3, String maintext, String date, String price, String place, String personnelcapacity, String id, String gatheredPeople) {
         this.title = title;
@@ -54,6 +66,38 @@ public class Share {
         this.personnelcapacity = personnelcapacity;
         this.id = id;
         this.gatheredPeople = gatheredPeople;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getUsertext() {
+        return usertext;
+    }
+
+    public void setUsertext(String usertext) {
+        this.usertext = usertext;
+    }
+
+    public String getUsergood() {
+        return usergood;
+    }
+
+    public void setUsergood(String usergood) {
+        this.usergood = usergood;
+    }
+
+    public String getUserbad() {
+        return userbad;
+    }
+
+    public void setUserbad(String userbad) {
+        this.userbad = userbad;
     }
 
     public String getTitle() {

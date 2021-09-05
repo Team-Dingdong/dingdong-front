@@ -87,7 +87,7 @@ import static ua.naiksoftware.stomp.dto.LifecycleEvent.Type.OPENED;
 public class ChattingActivity extends AppCompatActivity implements ChattingBottomDialogFragment.onInteractionListener{
     private ArrayList<Chat> chats = new ArrayList<>();
     private RecyclerView recycler_chat;
-    private TextView tv_people;
+    private TextView tv_people, tv_title;
     private ImageView img_people;
     private ImageButton btn_plus, btn_send, btn_back;
     private EditText et_message;
@@ -126,10 +126,18 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
         Log.d("토큰", id);
-
         Log.d("토큰", String.valueOf(access));
 
+        btn_plus = findViewById(R.id.btn_plus);
+        btn_send = findViewById(R.id.btn_send);
+        et_message = findViewById(R.id.et_chat);
+        btn_back = findViewById(R.id.btn_back);
 
+        tv_people = findViewById(R.id.tv_people);
+        img_people = findViewById(R.id.btn_people);
+        tv_title = findViewById(R.id.tv_title);
+
+        initChatRoom(token);
 
         List<StompHeader> header = new ArrayList<>();
         header.add(new StompHeader("Authorization","Bearer " + token.getAccessToken()));
@@ -225,18 +233,14 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         //setChatRecycler(recycler_chat, chats);
 
 
-        btn_plus = findViewById(R.id.btn_plus);
-        btn_send = findViewById(R.id.btn_send);
-        et_message = findViewById(R.id.et_chat);
-        btn_back = findViewById(R.id.btn_back);
 
-        tv_people = findViewById(R.id.tv_people);
-        img_people = findViewById(R.id.btn_people);
 
         img_people.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ChattingActivity.this, UserListActivity.class));
+                Intent intent = new Intent(ChattingActivity.this, UserListActivity.class);
+                intent.putExtra("id",id);
+                startActivity(intent);
             }
         });
 
@@ -247,7 +251,6 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                 Intent intent = new Intent(ChattingActivity.this, UserListActivity.class);
                 intent.putExtra("id",id);
                 startActivity(intent);
-
             }
         });
 
@@ -477,6 +480,40 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public void initChatRoom(Token token){
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, ChattingActivity.this);
+        Call<ChatRoomInformResponse> call = apiinterface.getChatRoom(Integer.parseInt(id));
+        call.enqueue(new Callback<ChatRoomInformResponse>() {
+            @Override
+            public void onResponse(Call<ChatRoomInformResponse> call, Response<ChatRoomInformResponse> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    if(response.body().getResult().equals("CHAT_ROOM_READ_SUCCESS")) {
+                        ChatRoomInformResponse res = response.body();
+                        Log.d("성공", new Gson().toJson(res));
+                        ChatRoom chatRoom = res.getChatRoom();
+                        tv_title.setText(chatRoom.getTitle());
+                        tv_people.setText(chatRoom.getPersonnel());
+                    }
+                }else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
 
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ChatRoomInformResponse> call, Throwable t) {
+
+                Log.d("외않되", String.valueOf(t));
+
+            }
+        });
+
+    }
 
 }

@@ -79,7 +79,7 @@ public class EditActivity extends AppCompatActivity {
 
 
     String[] categories = {"과일·채소", "육류·계란", "간식류", "생필품", "기타"};
-    String[] personnels = {"1", "2", "3", "4"};
+    String[] personnels = {"1", "2", "3", "4", "5"};
     String[] region = {"미아2동", "안암동"};
 
 
@@ -341,16 +341,17 @@ public class EditActivity extends AppCompatActivity {
         btn_enroll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                res_hash = "#" + et_hashtag1.getText().toString() + "#" +  et_hashtag2.getText().toString() +
+                        "#" + et_hashtag3.getText().toString() + "#" +  et_hashtag4.getText().toString() + "#" + et_hashtag5.getText().toString();
+                res_hash = res_hash.replace("#####","").replace("####","").replace("###","").replace("##","");
+                res_hash = res_hash.replace("##","#");
+
                 if(et_place.getText().length() > 0 && et_title.getText().length() >0 &&
-                        et_detail.getText().length()>0 &&et_price.getText().length() >0 ){
+                        et_detail.getText().length()>0 && et_price.getText().length() >0 && res_hash.length() >0){
 
                     //9,999로 받아오기 때문에 Integer로 변환하기 위해 ','를 없애줌
                     res_price = et_price.getText().toString().replace(",","");
 
-                    res_hash = "#" + et_hashtag1.getText().toString() + "#" +  et_hashtag2.getText().toString() +
-                           "#" + et_hashtag3.getText().toString() + "#" +  et_hashtag4.getText().toString() + "#" + et_hashtag5.getText().toString();
-
-                    res_hash = res_hash.replace("#####","").replace("####","").replace("###","").replace("##","");
 
                     if(Integer.parseInt(id) != 0) {
                         setPatch(token);
@@ -358,7 +359,6 @@ public class EditActivity extends AppCompatActivity {
                         //게시물 작성일경우
                         setPost(token);
                     }
-
 
 
                 }
@@ -389,21 +389,6 @@ public class EditActivity extends AppCompatActivity {
                     Log.d("성공","수정이완료됨");
 
                     uploadImage(token, Integer.parseInt(id));
-
-                    if(status == 1) {
-
-                        Toast.makeText(EditActivity.this, "수정이 완료되었습니다.", Toast.LENGTH_LONG).show();
-
-                        //핸들러를 통한 액티비티 종료 시점 조절
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                finish();
-                            }
-                        }, 1000);
-
-                    }
 
                 }else{
                     Log.d("실패", new Gson().toJson(response.errorBody()));
@@ -501,19 +486,20 @@ public class EditActivity extends AppCompatActivity {
                         //String json = new Gson().toJson(res.getData().getShare());
 
                         if(share.getImage1()!=null){
-                        if(!share.getImage1().equals("null")){
+                        if(!share.getImage1().contains("default_post.png")){
 
                             imgList.add(share.getImage1());
 
                             //uriList.add(Uri.parse(share.getImage1()));
 
-                            if(!share.getImage2().equals("null")){
+                            if(!share.getImage2().contains("default_post.png")){
                                 imgList.add(share.getImage2());
                                 //uriList.add(Uri.parse(share.getImage2()));
                             }
-                            if(!share.getImage3().equals("null")){
+                            if(!share.getImage3().contains("default_post.png")){
                                 imgList.add(share.getImage3());
                                 //uriList.add(Uri.parse(share.getImage3()));
+                                //!share.getImage3().equals("null")
                             }
 
                             //이미지 리사이클러뷰 세팅
@@ -630,7 +616,7 @@ public class EditActivity extends AppCompatActivity {
                     File file = getResize(bitmap, Integer.toString((int) System.currentTimeMillis()).replace("-",""));
 
                     Log.d("uploadimg","resizing");
-                    Log.d("uploadimg", "file===" + file.getName());
+                    Log.d("uploadimg", "file == " + file.getName());
 
                     //files.add(file);
                     RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
@@ -691,7 +677,7 @@ public class EditActivity extends AppCompatActivity {
 
     public void onfinish(int status){
         if(status == 1){
-        Toast.makeText(EditActivity.this, "수정이 완료되었습니다.", Toast.LENGTH_LONG).show();
+        Toast.makeText(EditActivity.this, "등록이 완료되었습니다.", Toast.LENGTH_LONG).show();
         //핸들러를 통한 액티비티 종료 시점 조절
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
