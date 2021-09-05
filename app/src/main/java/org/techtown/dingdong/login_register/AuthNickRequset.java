@@ -4,17 +4,19 @@ import com.google.gson.annotations.SerializedName;
 
 public class AuthNickRequset {
     @SerializedName("nickname")
-    String nick;
+    String nickname;
 
-    public AuthNickRequset(String nick){
-        this.nick = nick;
+    public AuthNickRequset(String nickname) {
+        this.nickname = nickname;
     }
 
-    public String getNick() {
-        return nick;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setNick(String nick) {
-        this.nick = nick;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
+
+
 }

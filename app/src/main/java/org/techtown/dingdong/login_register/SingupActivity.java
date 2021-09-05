@@ -33,11 +33,14 @@ import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -57,6 +60,7 @@ public class SingupActivity extends AppCompatActivity {
     private Uri mImageCaptureUri;
     ImageView iv_profile;
     private String absoultePath;
+    String receiveMsg;
 
     private static final int PICK_FROM_CAMERA = 0;
 
@@ -115,6 +119,22 @@ public class SingupActivity extends AppCompatActivity {
                                 @Override
                                 public void onResponse(Call<AuthNickResponse> call, Response<AuthNickResponse> response) {
 
+                                    String url = "";
+                                    InputStream is = null;
+                                    try {
+                                        is = new URL(url).openStream();
+                                        BufferedReader rd = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                                        String str;
+                                        StringBuffer buffer = new StringBuffer();
+                                        while ((str = rd.readLine()) != null) {
+                                            buffer.append(str);
+                                        }
+                                        receiveMsg = buffer.toString();
+                                    } catch (IOException e) {
+                                        e.printStackTrace(); }
+
+
+
                                     if(response.isSuccessful()){
 
                                         if(response.body().code.equals("NICKNAME_CREATE_SUCCESS")){
@@ -129,7 +149,7 @@ public class SingupActivity extends AppCompatActivity {
                                         }
                                     }
                                     else{
-                                        Log.d("문제발생", String.valueOf(response));
+                                        Log.d("문제발생", String.valueOf(response) + receiveMsg);
                                     }
 
 
