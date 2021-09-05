@@ -1,6 +1,8 @@
 package org.techtown.dingdong.login_register;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -24,8 +26,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.techtown.dingdong.BuildConfig;
-import org.techtown.dingdong.MainActivity;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.home.HomeFragment;
 import org.techtown.dingdong.home.MainFragment;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
@@ -43,15 +45,12 @@ import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.http.Multipart;
-
-import static java.security.AccessController.getContext;
 
 public class SingupActivity extends AppCompatActivity {
 
     TextView tv_nick;
     String message;
-    Button btn_ok;
+    Button btn_ok, btn_check;
     ImageButton imgbtn_profile;
     EditText et;
     int id_view;
@@ -83,8 +82,13 @@ public class SingupActivity extends AppCompatActivity {
         btn_ok = (Button)findViewById(R.id.btn_ok);
         et = (EditText)findViewById(R.id.et);
         imgbtn_profile = (ImageButton)findViewById(R.id.imgbtn_profile);
+        btn_check = (Button)findViewById(R.id.btn_check);
 
-        tv_nick.addTextChangedListener(new TextWatcher() {
+        imgbtn_profile.setOnClickListener(this::onClick);
+        btn_ok.setOnClickListener(this::onClick);
+        btn_check.setOnClickListener(this::onClick);
+
+        et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
 
@@ -98,54 +102,58 @@ public class SingupActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
 
-                message= tv_nick.getText().toString();
-                if(message.length() <=15){
-                    AuthNickRequset authNickRequset = new AuthNickRequset(message);
-                    Log.d("tag", message);
-                    Apiinterface apiinterface = Api.createService(Apiinterface.class);
-                    Call<AuthNickResponse> call = apiinterface.AuthNickRequest(authNickRequset);
-                    call.enqueue(new Callback<AuthNickResponse>() {
-                        @Override
-                        public void onResponse(Call<AuthNickResponse> call, Response<AuthNickResponse> response) {
+                btn_check.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        message= et.getText().toString();
+                        if(message.length() <=15){
+                            AuthNickRequset authNickRequset = new AuthNickRequset(message);
+                            Log.d("tag", message);
+                            Apiinterface apiinterface = Api.createService(Apiinterface.class);
+                            Call<AuthNickResponse> call = apiinterface.AuthNickRequest(authNickRequset);
+                            call.enqueue(new Callback<AuthNickResponse>() {
+                                @Override
+                                public void onResponse(Call<AuthNickResponse> call, Response<AuthNickResponse> response) {
 
-                            if(response.isSuccessful()){
+                                    if(response.isSuccessful()){
 
-                                if(response.body().code.equals("NICKNAME_CREATE_SUCCESS")){
+                                        if(response.body().code.equals("NICKNAME_CREATE_SUCCESS")){
 
-                                    btn_ok.setEnabled(true);
-                                    et.setText("닉네임 설정이 완료됐습니다.");
+                                            btn_ok.setEnabled(true);
+                                            tv_nick.setText("닉네임 설정이 완료됐습니다.");
+
+                                        }
+                                        else if(response.body().code.equals("NICKNAME_DUPLICATION")){
+                                            //edittext
+                                            tv_nick.setText("다른 닉네임을 설정해주세요.");
+                                        }
+                                    }
+                                    else{
+                                        Log.d("문제발생", String.valueOf(response));
+                                    }
+
+
 
                                 }
-                                else if(response.body().code.equals("NICKNAME_DUPLICATION")){
-                                    //edittext
-                                    et.setText("다른 닉네임을 설정해주세요.");
+
+                                @Override
+                                public void onFailure(Call<AuthNickResponse> call, Throwable t) {
+
+                                    Log.d("tag", t.toString());
+
                                 }
-                            }
-                            else{
-                                Log.d("문제발생", String.valueOf(response));
-                            }
-
-
+                            });
 
                         }
-
-                        @Override
-                        public void onFailure(Call<AuthNickResponse> call, Throwable t) {
-
-                            Log.d("tag", t.toString());
-
+                        else{
+                            btn_ok.setEnabled(false);
                         }
-                    });
+                    }
+                });
 
-                }
-                else{
-                    btn_ok.setEnabled(false);
-                }
             }
 
-
         });
-
 
 
     }
@@ -364,11 +372,11 @@ public class SingupActivity extends AppCompatActivity {
 
                     .setTitle("업로드할 이미지 선택")
 
-                    .setPositiveButton("사진촬영", cameraListener)
+                    .setNegativeButton("사진촬영", cameraListener)
 
                     .setNeutralButton("앨범선택", albumListener)
 
-                    .setNegativeButton("취소", cancelListener)
+                    .setPositiveButton("취소", cancelListener)
 
                     .show();
 
@@ -376,7 +384,18 @@ public class SingupActivity extends AppCompatActivity {
         }
         else if(v.getId() == R.id.btn_ok){
             //다음 화면으로 넘어가기기
-            Intent intent = new Intent(this, MainFragment.class);
+            iv_profile.setVisibility(View.GONE);
+            imgbtn_profile.setVisibility(View.GONE);
+            tv_nick.setVisibility(View.GONE);
+            et.setVisibility(View.GONE);
+            btn_ok.setVisibility(View.GONE);
+            btn_check.setVisibility(View.GONE);
+
+            Fragment fragment = new HomeFragment();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.Signup, fragment).commit();
+
+
        }
 
     }

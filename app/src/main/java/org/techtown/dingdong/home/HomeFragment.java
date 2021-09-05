@@ -188,6 +188,8 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        //인텐트
+
         return v;
     }
 

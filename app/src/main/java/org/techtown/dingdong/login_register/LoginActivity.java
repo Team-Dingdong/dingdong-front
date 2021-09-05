@@ -3,6 +3,7 @@ package org.techtown.dingdong.login_register;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
@@ -13,7 +14,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
@@ -44,7 +48,6 @@ public class LoginActivity extends AppCompatActivity {
     public CountDownTimer countDownTimer;
     String time = "2021-08-21T12:23:19.883418";
     String str, token;
-    String whereintent;
 
 
     @Override
@@ -57,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         btn_validation = findViewById(R.id.btn_validation);
         tv_timer = findViewById(R.id.tv_timer);
 
-        /*
+
         //인텐트, 객체 받아오기
         Intent intent = getIntent();
         String phoneNumber = intent.getStringExtra("phoneNumber");
@@ -86,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
 
-        countDownTimer.start();*/
+        countDownTimer.start();
 
 
         //인증번호 6자리 입력하면 버튼 활성화
@@ -114,13 +117,14 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         btn_validation.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View view) {
                 //서버로 폰번호,인증번호 전달
 
                 authNumber= edt_number_validation.getText().toString();
 
-                String phoneNumber = "01050468554";
+                //String phoneNumber = "01011111111";
                 LoginRequest loginRequest = new LoginRequest(phoneNumber, authNumber);
                 Apiinterface apiinterface = Api.createService(Apiinterface.class);
                 Call<LoginResponse> call = apiinterface.LoginRequest(loginRequest);
@@ -136,8 +140,9 @@ public class LoginActivity extends AppCompatActivity {
 
                                 Log.d("회원가입성공", String.valueOf(response));
                                 token = response.body().data.accessToken;
-                                whereintent = "singup";
 
+                                Intent intent = new Intent(view.getContext(), SingupActivity.class);
+                                startActivity(intent);
                             }
                             else if(response.body().result.equals("LOGIN_SUCCESS")){
 
@@ -154,7 +159,18 @@ public class LoginActivity extends AppCompatActivity {
                                 preferences.edit().putString("oauth.expire", token.getExpireIn()).apply();
                                 preferences.edit().putString("oauth.tokentype", token.getGrantType()).apply();
 
-                                whereintent = "login";
+                                View v= findViewById(R.id.toolbar3);
+                                v.setVisibility(View.GONE);
+                                edt_number_validation.setVisibility(View.GONE);
+                                btn_validation.setVisibility(View.GONE);
+                                tv_timer.setVisibility(View.GONE);
+
+
+                                Fragment fragment = new HomeFragment();
+                                FragmentManager fragmentManager = getSupportFragmentManager();
+                                fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+
+
                             }
                             
                         }else{
@@ -180,13 +196,8 @@ public class LoginActivity extends AppCompatActivity {
 
 
                 });
-                if(whereintent == "singup"){
-                    Intent intent = new Intent(view.getContext(), SingupActivity.class);
-                    startActivity(intent);
-                }
-                else{
-                    Intent intent= new Intent(view.getContext(), HomeFragment.class);
-                }
+
+
 
 
 

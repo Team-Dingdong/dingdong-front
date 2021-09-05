@@ -67,7 +67,7 @@ public class profileFragment extends Fragment {
         startbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), LoginActivity.class));
+                startActivity(new Intent(getActivity(), LoginOrRegisterActivity.class));
                 //startActivity(new Intent(getActivity(), LoginOrRegisterActivity.class));
             }
         });
