@@ -43,6 +43,7 @@ import org.techtown.dingdong.R;
 import org.techtown.dingdong.home.ImageUploadAdapter;
 import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.network.Api;
+import org.techtown.dingdong.network.Apiinterface;
 
 import java.io.File;
 import java.sql.Timestamp;
@@ -59,6 +60,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import ua.naiksoftware.stomp.Stomp;
 import ua.naiksoftware.stomp.StompClient;
 import ua.naiksoftware.stomp.dto.StompHeader;
@@ -108,19 +112,18 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
 
         token  = new Token(access,refresh,expire,tokentype);
 
+        Intent intent = getIntent();
+        id = intent.getStringExtra("id");
+        Log.d("토큰", id);
+
         Log.d("토큰", String.valueOf(access));
 
-        //stompManager = new StompManager("ws://3.38.61.13:8080/ws-stomp/websocket", token);
-        //stompManager.connect();
 
 
         List<StompHeader> header = new ArrayList<>();
         header.add(new StompHeader("Authorization","Bearer " + token.getAccessToken()));
 
-        //Map<String, String> headers = new HashMap<>();
-        //headers.put("Authorization", "Bearer " + token.getAccessToken());
         stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://3.38.61.13:8080/ws-stomp/websocket");
-        ///stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://3.38.61.13:8080/ws-stomp/websocket", headers);
         stompClient.withClientHeartbeat(1000).withServerHeartbeat(1000);
 
 
@@ -165,12 +168,34 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                         });
 
         Log.d("chatstomp","자니..? 왜응답이없어");
-        //stompManager.subscribeTopic();
-
-        //stompManager.subscribeTopic("/topic/greetings", stompMessage -> Log.d("greeting", "Greeting incoming: " + stompMessage));
-
 
         gson = new GsonBuilder().create();
+
+        Disposable dispTopic = stompClient.topic("/topic/chat/room/" + id, header)
+                .doOnError(throwable -> {
+                    Log.e("distop", "Error on subscribe topic", throwable);
+                }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(topicMessage ->{
+
+            JSONObject jsonObject = new JSONObject(topicMessage.getPayload());
+
+            String msg = jsonObject.getString("message");
+            String type = jsonObject.getString("type");
+            String sender = jsonObject.getString("sender");
+            Log.d("onnext",jsonObject.toString());
+            //Log.d("onnext",stomp);
+
+            if(type.equals("TALK")){
+                Chat chat = new Chat(msg,sender,"아",new Timestamp(System.currentTimeMillis()).toString(), "TRUE", ChatType.ViewType.LEFT_CONTENT);
+                addItem(chat);
+                Log.d("talk","get");
+                }else if(type.equals("ENTER")){
+                Chat chat = new Chat(msg,sender,"아",new Timestamp(System.currentTimeMillis()).toString(), "FALSE", ChatType.ViewType.CENTER_CONTENT);
+                addItem(chat);
+            }
+            }, throwable -> { Log.e("chat", "Error on subscribe topic", throwable); }
+        );
 
 
         /*Disposable disTopi = stompClient.topic("/topic/chat/room/1")
@@ -207,28 +232,22 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
 
                     }
 
-                    @Override
-                    public void onComplete() {
 
-                    }
-                });
 
         compositeDisposable.add(disposable);
-        //compositeDisposable.add(distop);
+        compositeDisposable.add(dispTopic);
 
         stompClient.connect(header);
 
 
-
         //setDummy();
 
-        recycler_chat = findViewById(R.id.chatting_recycler);
-        LinearLayoutManager manager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
-        chatAdapter = new ChattingAdapter(chats);
-        chatAdapter.setHasStableIds(true);
-        recycler_chat.setAdapter(chatAdapter);
-        recycler_chat.setLayoutManager(manager);
 
+        recycler_chat = findViewById(R.id.chatting_recycler);
+
+        setChats(token);
+
+        //setChatRecycler(recycler_chat, chats);
 
 
         btn_plus = findViewById(R.id.btn_plus);
@@ -250,7 +269,9 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         tv_people.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ChattingActivity.this, UserListActivity.class));
+                Intent intent = new Intent(ChattingActivity.this, UserListActivity.class);
+                intent.putExtra("id",id);
+                startActivity(intent);
 
             }
         });
@@ -308,13 +329,13 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                 case OPEN_GALLERY:
                     Log.e("single choice", String.valueOf(data.getData()));
                     imageUri = data.getData();
-                    Chat chat = new Chat(imageUri.toString(),"다루","아","2021-08-25 17:00:33.822", Boolean.TRUE, ChatType.ViewType.RIGHT_CONTENT_IMG);
+                    Chat chat = new Chat(imageUri.toString(),"다루","아","2021-08-25 17:00:33.822", "TRUE", ChatType.ViewType.RIGHT_CONTENT_IMG);
                     chatAdapter.addItem(chat);
                     recycler_chat.scrollToPosition(chatAdapter.getItemCount()-1);
 
         }
-    }
-    }
+    } }
+
 
 
 
@@ -326,23 +347,23 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         Log.d("time",t);
         //객체 추가
         chats.add(new Chat("안녕하세요 여러분","원선","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                d,Boolean.TRUE,ChatType.ViewType.LEFT_CONTENT ));
+                d,"FALSE",ChatType.ViewType.LEFT_CONTENT ));
         chats.add(new Chat("넵 안녕하세요","다루","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                d,Boolean.FALSE,ChatType.ViewType.RIGHT_CONTENT ));
+                d,"FALSE",ChatType.ViewType.RIGHT_CONTENT ));
         chats.add(new Chat("반갑습니다!","다루","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                d,Boolean.FALSE,ChatType.ViewType.LEFT_CONTENT ));
+                d,"FALSE",ChatType.ViewType.LEFT_CONTENT ));
         chats.add(new Chat("반갑습니다!","다루","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                t,Boolean.FALSE,ChatType.ViewType.LEFT_CONTENT ));
+                t,"FALSE",ChatType.ViewType.LEFT_CONTENT ));
         chats.add(new Chat("반갑습니다!","다루","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                t,Boolean.FALSE,ChatType.ViewType.LEFT_CONTENT ));
+                t,"FALSE",ChatType.ViewType.LEFT_CONTENT ));
         chats.add(new Chat("https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg","정희","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                t,Boolean.TRUE,ChatType.ViewType.LEFT_CONTENT_IMG ));
+                t,"FALSE",ChatType.ViewType.LEFT_CONTENT_IMG ));
         chats.add(new Chat("https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg","정희","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                t,Boolean.FALSE,ChatType.ViewType.RIGHT_CONTENT_IMG ));
+                t,"FALSE",ChatType.ViewType.RIGHT_CONTENT_IMG ));
         chats.add(new Chat("노원구청어쩌구저쩌구에서 만나요!","정희","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                t,Boolean.FALSE,ChatType.ViewType.RIGHT_CONTENT_PLAN));
+                t,"FALSE",ChatType.ViewType.RIGHT_CONTENT_PLAN));
         chats.add(new Chat("노원구청어쩌구저쩌구에서 만나요!","정희","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                t,Boolean.FALSE,ChatType.ViewType.LEFT_CONTENT_PLAN));
+                t,"FALSE",ChatType.ViewType.LEFT_CONTENT_PLAN));
 
     }
 
@@ -370,6 +391,55 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
     }
 
 
+    private void setChatRecycler(RecyclerView recyclerView, ArrayList<Chat> chats){
+        chatAdapter = new ChattingAdapter(chats);
+        chatAdapter.setHasStableIds(true);
+        recyclerView.setAdapter(chatAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+        recyclerView.scrollToPosition(chatAdapter.getItemCount()-1);
+    }
+
+    private void setChats(Token token){
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, ChattingActivity.this);
+        Call<ChatResponse> call = apiinterface.getChats(Integer.parseInt(id));
+
+        call.enqueue(new Callback<ChatResponse>() {
+            @Override
+            public void onResponse(Call<ChatResponse> call, Response<ChatResponse> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    if(response.body().getResult().equals("CHAT_MESSAGE_READ_SUCCESS")) {
+
+                        ChatResponse res = response.body();
+                        Log.d("성공", new Gson().toJson(res));
+                        chats = res.getChats();
+                        setChatRecycler(recycler_chat, chats);
+
+                    }
+                }else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ChatResponse> call, Throwable t) {
+
+                Log.d("외않되", String.valueOf(t));
+
+            }
+        });
+
+
+
+
+    }
+
+
     @Override
     protected void onDestroy() {
         stompClient.disconnect();
@@ -383,6 +453,34 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
             compositeDisposable.dispose();
         }
         compositeDisposable = new CompositeDisposable();
+    }
+
+    public void sendStomp(String message) throws JSONException {
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("roomId",id);
+        jsonObject.put("sender","username");
+        jsonObject.put("type","TALK");
+        jsonObject.put("message",message);
+
+        Log.d("sendstomp","데이터센딩");
+
+        stompClient.send(new StompMessage(StompCommand.SEND, Arrays.asList(new StompHeader(StompHeader.DESTINATION, "/pub/chat/message"),
+                new StompHeader("Authorization","Bearer " + token.getAccessToken())), jsonObject.toString())).subscribe();
+
+        Chat chat = new Chat(message,"다루","아",new Timestamp(System.currentTimeMillis()).toString(), "TRUE", ChatType.ViewType.RIGHT_CONTENT);
+        addItem(chat);
+
+
+        Log.d("sendstomp","데이터센딩완료");
+
+    }
+
+    protected CompletableTransformer applySchedulers(){
+        return upstream -> upstream
+                .unsubscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
 

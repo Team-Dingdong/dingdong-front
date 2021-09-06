@@ -36,6 +36,14 @@ public class ImageUploadAdapter extends RecyclerView.Adapter<ImageUploadAdapter.
         this.context = mcontext;
     }
 
+    public ArrayList<String> getData() {
+        return Data;
+    }
+
+    public void setData(ArrayList<String> data) {
+        Data = data;
+    }
+
     @NonNull
     @NotNull
     @Override

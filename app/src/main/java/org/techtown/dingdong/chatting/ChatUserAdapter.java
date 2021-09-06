@@ -50,7 +50,7 @@ public class ChatUserAdapter extends RecyclerView.Adapter<ChatUserAdapter.ViewHo
     public void onBindViewHolder(@NonNull @NotNull ChatUserAdapter.ViewHolder holder, int position) {
         chatuser = chatUsers.get(position);
 
-        if(chatuser.getIsmaster()){
+        if(chatuser.getIsmaster().equals("true")){
             holder.ismaster.setVisibility(View.VISIBLE);
         }
 

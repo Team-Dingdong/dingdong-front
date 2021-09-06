@@ -1,21 +1,68 @@
 package org.techtown.dingdong.chatting;
 
+import android.util.Log;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class Chat {
 
+    @SerializedName("message")
+    @Expose
     private String content;
+    @SerializedName("nickname")
+    @Expose
     private String name;
+    @SerializedName("profileImageUrl")
+    @Expose
     private String profile;
+    @SerializedName("sendTime")
+    @Expose
     private String time;
-    private Boolean isMaster;
-    private int viewType;
+    @SerializedName("owner")
+    @Expose
+    private String owner;
+    private int viewType = 0;
+    @SerializedName("type")
+    @Expose
+    private String type;
+    @SerializedName("userId")
+    @Expose
+    private String userId;
 
-    public Chat(String content, String name, String profile, String time, Boolean isMaster, int viewType) {
+    public Chat(String content, String name, String profile, String time, String owner, int viewType) {
         this.content = content;
         this.name = name;
         this.profile = profile;
         this.time = time;
-        this.isMaster = isMaster;
+        this.owner = owner;
         this.viewType = viewType;
+    }
+
+    public Chat(String content, String name, String profile, String time, String owner, String id) {
+        this.content = content;
+        this.name = name;
+        this.profile = profile;
+        this.time = time;
+        this.owner = owner;
+        this.viewType = setViewType(id);
+        //this.viewType = viewType;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getContent() {
@@ -50,19 +97,25 @@ public class Chat {
         this.time = time;
     }
 
-    public Boolean getMaster() {
-        return isMaster;
+    public String getOwner() {
+        return owner;
     }
 
-    public void setMaster(Boolean master) {
-        isMaster = master;
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public int getViewType() {
         return viewType;
     }
 
-    public void setViewType(int viewType) {
-        this.viewType = viewType;
+    public int setViewType(String id) {
+        if(id.equals(userId)){
+            return this.viewType = ChatType.ViewType.RIGHT_CONTENT;
+        }
+        else{
+            return this.viewType = ChatType.ViewType.LEFT_CONTENT;
+        }
+
     }
 }
