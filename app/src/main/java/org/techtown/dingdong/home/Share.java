@@ -54,7 +54,8 @@ public class Share {
     @Expose
     private String userbad = null;
 
-    public Share(String title, String image1, String image2, String image3, String maintext, String date, String price, String place, String personnelcapacity, String id, String gatheredPeople) {
+
+    public Share(String title, String image1, String image2, String image3, String maintext, String date, String price, String place, String personnelcapacity, String id) {
         this.title = title;
         this.image1 = image1;
         this.image2 = image2;
@@ -65,7 +66,14 @@ public class Share {
         this.place = place;
         this.personnelcapacity = personnelcapacity;
         this.id = id;
-        this.gatheredPeople = gatheredPeople;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -172,19 +180,4 @@ public class Share {
         this.personnelcapacity = personnelcapacity;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getGatheredPeople() {
-        return gatheredPeople;
-    }
-
-    public void setGatheredPeople(String gatheredPeople) {
-        this.gatheredPeople = gatheredPeople;
-    }
 }
