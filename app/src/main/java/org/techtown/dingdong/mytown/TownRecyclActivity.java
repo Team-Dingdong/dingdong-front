@@ -1,6 +1,7 @@
 package org.techtown.dingdong.mytown;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -17,6 +18,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
@@ -47,8 +49,13 @@ import org.jetbrains.annotations.NotNull;
 import org.techtown.dingdong.R;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class TownRecyclActivity extends AppCompatActivity
                                 implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -59,7 +66,12 @@ public class TownRecyclActivity extends AppCompatActivity
     private GoogleMap mMap;
     private Marker currentMarker = null;
 
-    private static final String TAG = "googlemap_example";
+
+    String [] result;
+
+    public static final int sub = 1001;
+
+     private static final String TAG = "googlemap_example";
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     private static final int UPDATE_INTERVAL_MS = 1000;  // 1초
     private static final int FASTEST_UPDATE_INTERVAL_MS = 500; // 0.5초
@@ -240,6 +252,7 @@ public class TownRecyclActivity extends AppCompatActivity
         //mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
+            @RequiresApi(api = Build.VERSION_CODES.R)
             @Override
             public void onMapClick(LatLng latLng) {
 
@@ -264,12 +277,61 @@ public class TownRecyclActivity extends AppCompatActivity
 
                 mMap.addMarker(markerOptions); //마커 생성
 
-                clickposition = latLng;
 
+
+
+                for(int i=0; i<30; i++){
+                    Log.d(TAG,"동 탐색중");
+                    double lat = (clickposition.latitude+(i*0.003));
+                    double log = (clickposition.longitude+(i*0.003));
+                    LatLng town = new LatLng(lat, log);
+
+                    String check =  getCurrentAddress(town);
+                    String [] split = check.split("\\s ");
+                    //중복처리 해야함
+                   if(split.length> 3){
+                       townname[i]= split[2];
+
+                   }
+                   else{
+                       break;
+                   }
+
+
+                }
+                result  = Arrays.stream(townname).distinct().toArray(String[]::new);
+                RecyclerView recyclerView = findViewById(R.id.recyclerView);
+
+                TownAdapter adapter = new TownAdapter();
+
+                for(int i=0; i<result.length; i++){
+
+                    adapter.addItem(new Town(result[i]));
+
+                }
+                recyclerView.setAdapter(adapter);
+
+                adapter.setOnItemClickListener(new OnTownItemClickListener() {
+                    @Override
+                    public void onItemClick(TownAdapter.ViewHoldder holder, View view, int position) {
+
+                        Log.d(TAG, "아이템선택됨");
+
+                        Town item = adapter.getItem(position); //아이템 글릭 시 어댑터에서 해당 아이템의 town 객체 가져오기
+                        String town = item.getName();
+                        Intent intent = new Intent(TownRecyclActivity.this,changetownActivity.class);
+                        intent.putExtra("town", town);
+
+                        startActivityForResult(intent, sub);
+
+
+                    }
+                });
 
             }
         });
-    }
+
+        
 
     LocationCallback locationCallback = new LocationCallback() {
         @Override
