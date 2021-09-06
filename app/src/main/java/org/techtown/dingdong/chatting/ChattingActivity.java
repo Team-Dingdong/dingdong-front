@@ -30,6 +30,7 @@ import org.techtown.dingdong.R;
 import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
+import org.techtown.dingdong.profile.UserProfileResponse;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
     private final int OPEN_GALLERY = 201;
     ChattingAdapter chatAdapter;
     Uri imageUri;
-    private String message;
+    private String message, username;
     private String id = "1";
     private Boolean ismaster = true;
     ChattingBottomDialogFragment chattingBottomDialogFragment;
@@ -96,6 +97,8 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         id = intent.getStringExtra("id");
         Log.d("토큰", id);
         Log.d("토큰", String.valueOf(access));
+
+        getUser(token);
 
 
 
@@ -166,7 +169,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
             Log.d("onnext",jsonObject.toString());
             //Log.d("onnext",stomp);
 
-            if(type.equals("TALK")){
+            if(type.equals("TALK") && !sender.equals(username)){
                 Chat chat = new Chat(msg,sender,"아",new Timestamp(System.currentTimeMillis()).toString(), "TRUE", ChatType.ViewType.LEFT_CONTENT);
                 addItem(chat);
                 Log.d("talk","get");
@@ -357,7 +360,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
 
 
     private void setChatRecycler(RecyclerView recyclerView, ArrayList<Chat> chats){
-        chatAdapter = new ChattingAdapter(chats);
+        chatAdapter = new ChattingAdapter(chats, username);
         chatAdapter.setHasStableIds(true);
         recyclerView.setAdapter(chatAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
@@ -476,6 +479,43 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
 
             @Override
             public void onFailure(Call<ChatRoomInformResponse> call, Throwable t) {
+
+                Log.d("외않되", String.valueOf(t));
+
+            }
+        });
+
+    }
+
+    public void getUser(Token token){
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, ChattingActivity.this);
+        Call<UserProfileResponse> call = apiinterface.getUserProfile();
+        call.enqueue(new Callback<UserProfileResponse>() {
+            @Override
+            public void onResponse(Call<UserProfileResponse> call, Response<UserProfileResponse> response) {
+
+                if(response.isSuccessful() && response.body() != null) {
+                    if (response.body().getResult().equals("PROFILE_READ_SUCCESS")) {
+                        UserProfileResponse res = response.body();
+                        Log.d("성공", new Gson().toJson(res));
+                        username = res.getData().getNickname();
+                    }
+                }else{
+
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<UserProfileResponse> call, Throwable t) {
 
                 Log.d("외않되", String.valueOf(t));
 

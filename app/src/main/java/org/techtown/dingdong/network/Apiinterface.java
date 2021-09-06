@@ -15,6 +15,7 @@ import org.techtown.dingdong.login_register.AuthResponse;
 import org.techtown.dingdong.login_register.LoginRequest;
 import org.techtown.dingdong.login_register.LoginResponse;
 import org.techtown.dingdong.login_register.ProfileUploadResponse;
+import org.techtown.dingdong.profile.UserProfileResponse;
 
 import java.util.ArrayList;
 
@@ -94,6 +95,10 @@ public interface Apiinterface {
     Call<ChatRoomInformResponse> getChatRoom(@Path("roomId") int id);
 
 
+    @GET("/api/v1/profile")
+    Call<UserProfileResponse> getUserProfile();
+
+
 
 
 
@@ -105,8 +110,8 @@ public interface Apiinterface {
     //Call<ProfileImgResponse>
 
     @Multipart
-    @PATCH("/api/v1/upload/profile/:id")
-    Call<ProfileUploadResponse> ProfileUploadRequest(@Part MultipartBody.Part file);
+    @PATCH("/api/v1/upload/profile/{id}")
+    Call<ProfileUploadResponse> ProfileUploadRequest(@Part MultipartBody.Part file, @Path("id") int id);
 
     @POST("/api/v1/auth/nickname")
     Call<AuthNickResponse> AuthNickRequest(@Body AuthNickRequset authNickRequset);
