@@ -65,7 +65,7 @@ public class EditActivity extends AppCompatActivity {
     //수정삭제
 
     private Spinner select_category, select_personnel, select_region;
-    private String selected_category, res_price, res_detail, res_title, res_place, res_hash=null, selected_region;
+    private String selected_category, res_price, res_detail, res_title, res_place, res_hash, selected_region;
     private int selected_personnel = 2, category = 1;
     private RecyclerView recycler_image;
     private EditText et_title, et_detail, et_price, et_place, et_hashtag1, et_hashtag2, et_hashtag3, et_hashtag4, et_hashtag5 ;
@@ -375,7 +375,7 @@ public class EditActivity extends AppCompatActivity {
         //리퀘스트 생성
         PostRequest postRequest = new PostRequest(et_title.getText().toString(), selected_personnel,
                 Integer.parseInt(res_price), et_detail.getText().toString(),
-                et_place.getText().toString(), category, res_hash);
+                et_place.getText().toString(), category);
 
 
         //토큰을 이용해 통신하도록 레트로핏 통신 클래스에 전달
@@ -415,7 +415,7 @@ public class EditActivity extends AppCompatActivity {
         //리퀘스트 생성
         PostRequest postRequest = new PostRequest(et_title.getText().toString(), selected_personnel,
                 Integer.parseInt(res_price), et_detail.getText().toString(),
-                et_place.getText().toString(), category, res_hash);
+                et_place.getText().toString(), category);
 
 
         //토큰을 이용해 통신하도록 레트로핏 통신 클래스에 전달
@@ -453,7 +453,7 @@ public class EditActivity extends AppCompatActivity {
             }
         });
 
-        //uploadImage(token, 2);
+        uploadImage(token, 2);
 
 
 

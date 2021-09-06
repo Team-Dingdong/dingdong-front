@@ -3,6 +3,7 @@ package org.techtown.dingdong.login_register;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
@@ -12,15 +13,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.gson.Gson;
 
 import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.home.HomeFragment;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
+import org.techtown.dingdong.profile.profileFragment;
 
 import java.io.IOException;
 import java.sql.Date;
@@ -32,8 +39,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.view.View.GONE;
+
 public class LoginActivity extends AppCompatActivity {
 
+    View toolbar3;
     EditText edt_number_validation;
     Button btn_validation;
     String authNumber;
@@ -47,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
     String str;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +67,7 @@ public class LoginActivity extends AppCompatActivity {
         edt_number_validation = findViewById(R.id.edt_number_validation);
         btn_validation = findViewById(R.id.btn_validation);
         tv_timer = findViewById(R.id.tv_timer);
+        toolbar3 = (androidx.appcompat.widget.Toolbar) findViewById(R.id.toolbar3);
 
         /*
         //인텐트, 객체 받아오기
@@ -120,7 +132,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 authNumber= edt_number_validation.getText().toString();
 
-                //String phoneNumber = "01050468554";
+
+
                 String phoneNumber = "01011111111";
                 LoginRequest loginRequest = new LoginRequest(phoneNumber, authNumber);
                 Apiinterface apiinterface = Api.createService(Apiinterface.class);
@@ -138,6 +151,8 @@ public class LoginActivity extends AppCompatActivity {
                                 Log.d("회원가입성공", String.valueOf(response));
                                 String token = response.body().data.accessToken;
 
+
+
                             }
                             else if(response.body().result.equals("LOGIN_SUCCESS")){
 
@@ -153,6 +168,15 @@ public class LoginActivity extends AppCompatActivity {
                                 preferences.edit().putString("oauth.refreshtoken", token.getRefreshToken()).apply();
                                 preferences.edit().putString("oauth.expire", token.getExpireIn()).apply();
                                 preferences.edit().putString("oauth.tokentype", token.getGrantType()).apply();
+
+                                Fragment fragment = new profileFragment();
+                                FragmentManager fragmentManager = getSupportFragmentManager();
+                                fragmentManager.beginTransaction().replace(R.id.logincontainer, fragment).commit();
+                                edt_number_validation.setVisibility(GONE);
+                                tv_timer.setVisibility(GONE);
+                                toolbar3.setVisibility(GONE);
+                                return;
+
 
                             }
                             
