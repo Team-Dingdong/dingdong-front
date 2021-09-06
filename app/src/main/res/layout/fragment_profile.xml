@@ -44,7 +44,6 @@
         app:layout_constraintHorizontal_bias="0.392"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/bg_indicator_inactive"
         app:tint="#A8A8A8" />
 
     <TextView
