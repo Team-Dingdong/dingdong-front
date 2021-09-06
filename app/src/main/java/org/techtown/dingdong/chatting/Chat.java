@@ -25,7 +25,7 @@ public class Chat {
     private int viewType = 0;
     @SerializedName("type")
     @Expose
-    private String type;
+    private String type = null;
     @SerializedName("userId")
     @Expose
     private String userId;

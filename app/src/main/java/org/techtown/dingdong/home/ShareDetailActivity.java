@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator;
 
@@ -28,6 +29,7 @@ import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,9 +47,10 @@ public class ShareDetailActivity extends AppCompatActivity {
             "\n" +
             "날짜별 예약 대상은 해당 날짜 끝자리와 생년월일 끝자리가 일치하는 사람으로 지정된다. 가령, 예약이 시작되는 9일의 경우, 생년월일 끝자리가 9인 사람들이 예약 대상이다. 날짜별 예약은 오후 8시부터 이튿날 오후 6시까지 진행된다.";
     private String title = "18~49세 다음달 9일부터 10부제";
-    private TextView tv_detail, tv_title;
+    private TextView tv_detail, tv_title, tv_userbio, tv_username, tv_like, tv_dislike, tv_place, tv_people, tv_people2, tv_info, tv_price;
     private ImageButton btn_back, btn_more;
     private String id;
+    private ImageView img_profile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,11 +63,16 @@ public class ShareDetailActivity extends AppCompatActivity {
         tv_title = findViewById(R.id.tv_title);
         btn_back = findViewById(R.id.ic_back);
         btn_more = findViewById(R.id.ic_more);
-
-
-        tv_detail.setText(detail);
-        tv_title.setText(title);
-
+        img_profile = findViewById(R.id.imageView2);
+        tv_username = findViewById(R.id.textView4);
+        tv_userbio = findViewById(R.id.textView5);
+        tv_like = findViewById(R.id.tv_like);
+        tv_dislike = findViewById(R.id.tv_dislike);
+        tv_place = findViewById(R.id.tv_place);
+        tv_people = findViewById(R.id.tv_pepolenum);
+        tv_people2 = findViewById(R.id.tv_pepolenum2);
+        tv_info = findViewById(R.id.tv_info);
+        tv_price = findViewById(R.id.tv_price);
 
 
         SharedPreferences pref = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
@@ -118,10 +126,20 @@ public class ShareDetailActivity extends AppCompatActivity {
 
                         Share share;
                         share = res.getShare();
+                        String people = share.getGatheredPeople() + "/" + share.getPersonnelcapacity();
 
                         //String json = new Gson().toJson(res.getData().getShare());
                         tv_detail.setText(share.getMaintext());
                         tv_title.setText(share.getTitle());
+                        tv_dislike.setText(share.getUserbad());
+                        tv_like.setText(share.getUsergood());
+                        tv_username.setText(share.getUsername());
+                        tv_userbio.setText(share.getUsertext());
+                        tv_place.setText(share.getPlace());
+                        tv_people.setText(people);
+                        tv_people2.setText(people);
+                        tv_price.setText(priceFormat(share.getPrice()));
+                        tv_info.setText("을 " +share.getPersonnelcapacity()+"명이서 띵해요");
 
                         if(share.getImage1()!=null){
                         if(!share.getImage1().equals("null")){
@@ -165,8 +183,15 @@ public class ShareDetailActivity extends AppCompatActivity {
         });
 
 
+    }
 
+    public String priceFormat(String price){
 
+        DecimalFormat df = new DecimalFormat("#,###");
+        String res_price = "";
+        res_price = df.format(Double.parseDouble(price.replaceAll(",","")));
+
+        return res_price;
     }
 
 }

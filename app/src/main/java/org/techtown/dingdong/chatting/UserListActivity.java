@@ -40,7 +40,8 @@ public class UserListActivity extends AppCompatActivity {
     private ArrayList<ChatUser> chatUsers;
     private RecyclerView recyclerView;
     ChatUserAdapter chatUserAdapter;
-    private String id;
+    private TextView tv_title, tv_people;
+    private String id = "1";
     Boolean ismaster = true;
 
     @Override
@@ -60,8 +61,11 @@ public class UserListActivity extends AppCompatActivity {
         id = intent.getStringExtra("id");
         Log.d("토큰", id);
 
-
         recyclerView = findViewById(R.id.recycler_user);
+        tv_people = findViewById(R.id.tv_people);
+        tv_title = findViewById(R.id.tv_title);
+
+        initChatRoom(token);
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class, token, UserListActivity.this);
         Call<ChatUserResponse> call = apiinterface.getChatUser(Integer.parseInt(id));
@@ -164,6 +168,42 @@ public class UserListActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    public void initChatRoom(Token token){
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, UserListActivity.this);
+        Call<ChatRoomInformResponse> call = apiinterface.getChatRoom(Integer.parseInt(id));
+        call.enqueue(new Callback<ChatRoomInformResponse>() {
+            @Override
+            public void onResponse(Call<ChatRoomInformResponse> call, Response<ChatRoomInformResponse> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    if(response.body().getResult().equals("CHAT_ROOM_READ_SUCCESS")) {
+                        ChatRoomInformResponse res = response.body();
+                        Log.d("성공", new Gson().toJson(res));
+                        ChatRoom chatRoom = res.getChatRoom();
+                        tv_title.setText(chatRoom.getTitle());
+                        tv_people.setText(chatRoom.getPersonnel());
+                    }
+                }else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ChatRoomInformResponse> call, Throwable t) {
+
+                Log.d("외않되", String.valueOf(t));
+
+            }
+        });
+
     }
 
     private void setDummy(){

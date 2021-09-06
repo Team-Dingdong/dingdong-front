@@ -218,7 +218,9 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                ((MainActivity) getActivity()).replaceFragment(MainFragment.newInstance(0));
+                Intent intent = new Intent(getActivity(),TabActivity.class);
+                intent.putExtra("id","0");
+                startActivity(intent);
 
             }
         });
@@ -226,7 +228,9 @@ public class HomeFragment extends Fragment {
         cat2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).replaceFragment(MainFragment.newInstance(1));
+                Intent intent = new Intent(getActivity(),TabActivity.class);
+                intent.putExtra("id","1");
+                startActivity(intent);
 
             }
         });
@@ -234,7 +238,9 @@ public class HomeFragment extends Fragment {
         cat3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).replaceFragment(MainFragment.newInstance(2));
+                Intent intent = new Intent(getActivity(),TabActivity.class);
+                intent.putExtra("id","2");
+                startActivity(intent);
 
             }
         });
@@ -242,7 +248,9 @@ public class HomeFragment extends Fragment {
         cat4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).replaceFragment(MainFragment.newInstance(3));
+                Intent intent = new Intent(getActivity(),TabActivity.class);
+                intent.putExtra("id","3");
+                startActivity(intent);
 
             }
         });
