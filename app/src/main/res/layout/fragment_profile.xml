@@ -46,7 +46,7 @@
         app:srcCompat="@drawable/bg_indicator_inactive"
         app:tint="#A8A8A8" />
 
-    <EditText
+    <TextView
         android:id="@+id/name"
         android:layout_width="210dp"
         android:layout_height="55dp"

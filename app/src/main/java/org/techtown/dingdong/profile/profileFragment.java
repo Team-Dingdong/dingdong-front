@@ -45,6 +45,7 @@ import java.net.URLConnection;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.Url;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -163,6 +164,19 @@ public class profileFragment extends Fragment implements View.OnClickListener {
                             nickname = response.body().getData().nickname;
                             img = response.body().getData().profileImageUrl;
                             bio = response.body().getData().profile_bio;
+                            if(img != null) {
+                                try {
+                                    URL url = new URL(img);
+                                    Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                                    profile_img.setImageBitmap(bmp);
+
+                                } catch (IOException ex) {
+
+                                }
+                            }
+
+
+
                         } else {
                             Log.d(TAG, "프로필 조회 실패");
                         }
@@ -180,7 +194,6 @@ public class profileFragment extends Fragment implements View.OnClickListener {
 
             name.setText(nickname);
 
-            new DownloadFilesTask().execute("img");
 
             Call<MyLatingResponse> callLate = apiinterface.getLating();
             callLate.enqueue(new Callback<MyLatingResponse>() {
@@ -207,36 +220,6 @@ public class profileFragment extends Fragment implements View.OnClickListener {
 
             btn_img.setOnClickListener(this);
             return rootView;
-        }
-
-        //서버에서 파일 받아오기
-        private class DownloadFilesTask extends AsyncTask<String,Void, Bitmap> {
-            @Override
-            protected Bitmap doInBackground(String... strings) {
-                Bitmap bmp = null;
-                try {
-                    String img_url = strings[0]; //url of the image
-                    URL url = new URL(img_url);
-                    bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return bmp;
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-
-            @Override
-            protected void onPostExecute(Bitmap result) {
-                // doInBackground 에서 받아온 total 값 사용 장소
-                profile_img.setImageBitmap(result);
-            }
         }
 
 
@@ -279,7 +262,8 @@ public class profileFragment extends Fragment implements View.OnClickListener {
 
             }
             else if(v.getId() == R.id.btn_nickname){
-                //////
+                //닉네임 변경
+
                 return;
             }
         }
