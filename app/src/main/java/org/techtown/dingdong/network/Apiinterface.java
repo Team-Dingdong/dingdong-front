@@ -39,6 +39,6 @@ public interface Apiinterface {
     Call<AuthNickResponse> AuthNickRequest(@Body AuthNickRequset authNickRequset);
 
     @Multipart
-    @PATCH("/api/v1/upload/profile/:id")
+    @PATCH("/api/v1/upload/profile/{id}")
     Call<ProfileUploadResponse> ProfileUploadRequest(@Part MultipartBody.Part file);
 }
