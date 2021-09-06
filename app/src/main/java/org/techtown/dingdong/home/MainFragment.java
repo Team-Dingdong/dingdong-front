@@ -68,11 +68,12 @@ public class MainFragment extends Fragment {
         Fragment fragment4 = new Tab4Fragment().newInstance("", "");
         //Fragment fragment5 = new Tab5Fragment().newInstance("", "");
 
-
         TabLayout tabLayout = view.findViewById(R.id.tablayout);
         viewPager = view.findViewById(R.id.pager);
         btn_back = view.findViewById(R.id.btn_back);
         btn_search = view.findViewById(R.id.btn_search);
+
+
 
         pagerAdapter = new PagerAdapter(this);
         pagerAdapter.addFrag(fragment1);

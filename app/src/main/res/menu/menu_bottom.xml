@@ -19,7 +19,6 @@
     <item
         android:id="@+id/bottom_profile"
         app:showAsAction="ifRoom"
-        android:iconTint="@color/black"
         android:enabled="true"
         android:icon="@drawable/ic_insert_emoticon"
         android:title="profile"/>
@@ -27,7 +26,6 @@
     <item
         android:id="@+id/bottom_mypage"
         app:showAsAction="ifRoom"
-        android:iconTint="@color/black"
         android:enabled="true"
         android:icon="@drawable/ic_person"
         android:title="mypage"/>
