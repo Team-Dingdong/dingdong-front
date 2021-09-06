@@ -1,61 +1,43 @@
 package org.techtown.dingdong.chatting;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.VideoView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.MultiTransformation;
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-import com.bumptech.glide.request.RequestOptions;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
-import org.techtown.dingdong.home.ImageUploadAdapter;
 import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
 
-import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 import io.reactivex.CompletableTransformer;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -65,18 +47,14 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import ua.naiksoftware.stomp.Stomp;
 import ua.naiksoftware.stomp.StompClient;
+import ua.naiksoftware.stomp.dto.StompCommand;
 import ua.naiksoftware.stomp.dto.StompHeader;
 import ua.naiksoftware.stomp.dto.StompMessage;
-
-import static android.content.ContentValues.TAG;
-import static ua.naiksoftware.stomp.dto.LifecycleEvent.Type.CLOSED;
-import static ua.naiksoftware.stomp.dto.LifecycleEvent.Type.ERROR;
-import static ua.naiksoftware.stomp.dto.LifecycleEvent.Type.OPENED;
 
 public class ChattingActivity extends AppCompatActivity implements ChattingBottomDialogFragment.onInteractionListener{
     private ArrayList<Chat> chats = new ArrayList<>();
     private RecyclerView recycler_chat;
-    private TextView tv_people;
+    private TextView tv_people, tv_title;
     private ImageView img_people;
     private ImageButton btn_plus, btn_send, btn_back;
     private EditText et_message;
@@ -110,13 +88,15 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         String expire = pref.getString("oauth.expire","");
         String tokentype = pref.getString("oauth.tokentype","");
 
+
+
         token  = new Token(access,refresh,expire,tokentype);
 
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
         Log.d("토큰", id);
-
         Log.d("토큰", String.valueOf(access));
+
 
 
 
@@ -127,7 +107,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         stompClient.withClientHeartbeat(1000).withServerHeartbeat(1000);
 
 
-        resetSubscriptions();
+       resetSubscriptions();
 
 
         Disposable disposable = stompClient.lifecycle()
@@ -209,106 +189,91 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                 });*/
 
 
-       stompClient.topic("/topic/chat/room/1", header)
-                .doOnError(throwable -> {
-                    Log.e("distop", "Error on subscribe topic", throwable);
-                })
-                .subscribe(new Subscriber<StompMessage>() {
-
-                    @Override
-                    public void onSubscribe(Subscription s) {
-                        Log.d("onsubs",s.toString());
-
-                    }
-
-                    @Override
-                    public void onNext(StompMessage stompMessage) {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        Log.e("onerror", "Error on user data topic", t);
-
-                    }
-
-
-
         compositeDisposable.add(disposable);
         compositeDisposable.add(dispTopic);
 
         stompClient.connect(header);
-
-
         //setDummy();
-
-
         recycler_chat = findViewById(R.id.chatting_recycler);
-
-        setChats(token);
-
         //setChatRecycler(recycler_chat, chats);
-
-
         btn_plus = findViewById(R.id.btn_plus);
         btn_send = findViewById(R.id.btn_send);
         et_message = findViewById(R.id.et_chat);
         btn_back = findViewById(R.id.btn_back);
-
         tv_people = findViewById(R.id.tv_people);
         img_people = findViewById(R.id.btn_people);
+        tv_title = findViewById(R.id.tv_title);
 
-        img_people.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(ChattingActivity.this, UserListActivity.class));
-            }
-        });
+        initChatRoom(token);
+        setChats(token);
 
+        img_people.setOnClickListener(new View.OnClickListener()
 
-        tv_people.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ChattingActivity.this, UserListActivity.class);
-                intent.putExtra("id",id);
-                startActivity(intent);
-
-            }
-        });
+                    {
+                        @Override
+                        public void onClick (View v){
+                            Intent intent = new Intent(ChattingActivity.this, UserListActivity.class);
+                            intent.putExtra("id", id);
+                            startActivity(intent);
+                    }
+                    });
 
 
-        chattingBottomDialogFragment = new ChattingBottomDialogFragment(getApplicationContext(), ismaster);
+
+        tv_people.setOnClickListener(new View.OnClickListener()
+
+                    {
+                        @Override
+                        public void onClick (View v){
+                        Intent intent = new Intent(ChattingActivity.this, UserListActivity.class);
+                        intent.putExtra("id", id);
+                        startActivity(intent);
+
+                    }
+                    });
 
 
-        btn_plus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                chattingBottomDialogFragment.show(getSupportFragmentManager(), chattingBottomDialogFragment.getTag());
+        chattingBottomDialogFragment =new ChattingBottomDialogFragment(getApplicationContext(),ismaster);
 
-            }
-        });
+        btn_plus.setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick (View v){
+                        chattingBottomDialogFragment.show(getSupportFragmentManager(), chattingBottomDialogFragment.getTag());
 
-        btn_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+                    }
+                    });
 
+        btn_back.setOnClickListener(new View.OnClickListener()
 
-        btn_send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                message = et_message.getText().toString();
-                et_message.setText("");
-                Chat chat = new Chat(message,"다루","아","2021-08-24 17:00:33.822", Boolean.TRUE, ChatType.ViewType.RIGHT_CONTENT);
-                chatAdapter.addItem(chat);
-                recycler_chat.scrollToPosition(chatAdapter.getItemCount()-1);
-            }
-        });
+                    {
+                        @Override
+                        public void onClick (View v){
+                        finish();
+                    }
+                    });
 
 
-    }
+        btn_send.setOnClickListener(new View.OnClickListener()
+
+                    {
+                        @Override
+                        public void onClick (View v){
+                        message = et_message.getText().toString();
+                        et_message.setText("");
+                            try {
+                                sendStomp(message);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            //Chat chat = new Chat(message, "다루", "아", "2021-08-24 17:00:33.822", Boolean.TRUE, ChatType.ViewType.RIGHT_CONTENT);
+                        //chatAdapter.addItem(chat);
+                        //recycler_chat.scrollToPosition(chatAdapter.getItemCount() - 1);
+                    }
+                    });
+
+
+                }
 
     private void addItem(Chat chat){
         chats.add(chat);
@@ -476,13 +441,48 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
 
     }
 
-    protected CompletableTransformer applySchedulers(){
-        return upstream -> upstream
-                .unsubscribeOn(Schedulers.newThread())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-    }
+    protected CompletableTransformer applySchedulers() {
+            return upstream -> upstream
+                    .unsubscribeOn(Schedulers.newThread())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread());
+        }
 
+    public void initChatRoom(Token token){
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, ChattingActivity.this);
+        Call<ChatRoomInformResponse> call = apiinterface.getChatRoom(Integer.parseInt(id));
+        call.enqueue(new Callback<ChatRoomInformResponse>() {
+            @Override
+            public void onResponse(Call<ChatRoomInformResponse> call, Response<ChatRoomInformResponse> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    if(response.body().getResult().equals("CHAT_ROOM_READ_SUCCESS")) {
+                        ChatRoomInformResponse res = response.body();
+                        Log.d("성공", new Gson().toJson(res));
+                        ChatRoom chatRoom = res.getChatRoom();
+                        tv_title.setText(chatRoom.getTitle());
+                        tv_people.setText(chatRoom.getPersonnel());
+                    }
+                }else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ChatRoomInformResponse> call, Throwable t) {
+
+                Log.d("외않되", String.valueOf(t));
+
+            }
+        });
+
+    }
 
 
 }

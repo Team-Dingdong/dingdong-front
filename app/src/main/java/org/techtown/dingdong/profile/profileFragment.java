@@ -21,12 +21,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
+import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
 import org.techtown.dingdong.login_register.LoginActivity;
 import org.techtown.dingdong.login_register.LoginOrRegisterActivity;
+import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.mytown.changetownActivity;
 
 import org.techtown.dingdong.network.Api;
@@ -118,7 +122,6 @@ public class profileFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_profile, container, false);
         startbtn= rootView.findViewById(R.id.button);
         townbtn= rootView.findViewById(R.id.changetown);
@@ -127,6 +130,7 @@ public class profileFragment extends Fragment implements View.OnClickListener {
         profile_img = rootView.findViewById(R.id.profile_img);
         number_good = rootView.findViewById(R.id.number_good);
         number_bad = rootView.findViewById(R.id.number_bad);
+
 
         startbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,10 +157,11 @@ public class profileFragment extends Fragment implements View.OnClickListener {
         String expire = pref.getString("oauth.expire","");
         String tokentype = pref.getString("oauth.tokentype","");
 
+
         Token token = new Token(access,refresh,expire,tokentype);
         Log.d("토큰", String.valueOf(access));
 
-        Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
+        /*Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
         Call<ProfileResponse> call = apiinterface.getData();
         call.enqueue(new Callback<ProfileResponse>() {
                 @Override
@@ -193,11 +198,12 @@ public class profileFragment extends Fragment implements View.OnClickListener {
                 public void onFailure(Call<ProfileResponse> call, Throwable t) {
 
                 }
-            });
+            });*/
 
-            name.setText(nickname);
+            //name.setText(nickname);
 
 
+            /*
             Call<MyLatingResponse> callLate = apiinterface.getLating();
             callLate.enqueue(new Callback<MyLatingResponse>() {
                 @Override
@@ -221,7 +227,8 @@ public class profileFragment extends Fragment implements View.OnClickListener {
             number_good.setText(String.valueOf(good));
             number_bad.setText(String.valueOf(bad));
 
-            btn_img.setOnClickListener(this);
+
+            btn_img.setOnClickListener(this);*/
             return rootView;
         }
 
