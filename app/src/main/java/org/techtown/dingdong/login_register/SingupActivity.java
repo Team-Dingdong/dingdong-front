@@ -24,9 +24,16 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import org.techtown.dingdong.BuildConfig;
+import org.techtown.dingdong.MainActivity;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.chatting.Chat;
+import org.techtown.dingdong.chatting.ChatType;
+import org.techtown.dingdong.home.EditActivity;
 import org.techtown.dingdong.home.HomeFragment;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
@@ -51,7 +58,7 @@ import retrofit2.Response;
 public class SingupActivity extends AppCompatActivity {
 
     TextView tv_nick;
-    String message;
+    String nickname;
     Button btn_ok, btn_check;
     ImageButton imgbtn_profile;
     EditText et;
@@ -60,12 +67,16 @@ public class SingupActivity extends AppCompatActivity {
     ImageView iv_profile;
     private String absoultePath;
     String receiveMsg;
+    private final int OPEN_GALLERY = 201;
+    Uri imageUri = null;
+    MainActivity mainActivity;
+    HomeFragment homeFragment;
 
-    private static final int PICK_FROM_CAMERA = 0;
+    /*private static final int PICK_FROM_CAMERA = 0;
 
     private static final int PICK_FROM_ALBUM = 1;
 
-    private static final int CROP_FROM_iMAGE = 2;
+    private static final int CROP_FROM_iMAGE = 2;*/
 
 
     @Override
@@ -87,11 +98,127 @@ public class SingupActivity extends AppCompatActivity {
         imgbtn_profile = (ImageButton)findViewById(R.id.imgbtn_profile);
         btn_check = (Button)findViewById(R.id.btn_check);
 
-        imgbtn_profile.setOnClickListener(this::onClick);
-        btn_ok.setOnClickListener(this::onClick);
-        btn_check.setOnClickListener(this::onClick);
+        btn_ok.setEnabled(true);
 
-        et.addTextChangedListener(new TextWatcher() {
+        imgbtn_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                startActivityForResult(intent, OPEN_GALLERY);
+            }
+        });
+
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(imageUri!=null){
+                    Bitmap bitmap = null;
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(SingupActivity.this.getContentResolver(), imageUri);
+                        File file = getResize(bitmap, Integer.toString((int) System.currentTimeMillis()).replace("-",""));
+
+                        Log.d("uploadimg","resizing");
+                        Log.d("uploadimg", "file == " + file.getName());
+
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                        MultipartBody.Part upimg = MultipartBody.Part.createFormData("data", file.getName(), requestBody);
+
+                        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, SingupActivity.this);
+
+                        Call<ProfileUploadResponse> call = apiinterface.ProfileUploadRequest(upimg, 1);
+                        call.enqueue(new Callback<ProfileUploadResponse>() {
+                            @Override
+                            public void onResponse(Call<ProfileUploadResponse> call, Response<ProfileUploadResponse> response) {
+                                if(response.isSuccessful() && response.body() != null){
+                                    if(response.body().getCode().equals("IMAGE_UPLOAD_SUCCESS")) {
+                                        Log.d("이미지등록성공", new Gson().toJson(response.code()));
+                                        Toast.makeText(SingupActivity.this,"프로필 등록이 완료되었습니다.", Toast.LENGTH_LONG).show();
+                                    }
+                                }else{
+                                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                                    Log.d("실패", response.toString());
+                                    Log.d("실패", String.valueOf(response.code()));
+                                    Log.d("실패", response.message());
+                                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<ProfileUploadResponse> call, Throwable t) {
+                                Log.d("외않되", String.valueOf(t));
+                            }
+                        });
+
+
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+
+                /*FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.Signup, fragment).commit();*/
+                mainActivity.replaceFragment(homeFragment);
+
+            }
+        });
+        btn_check.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(et.getText().toString().length()>0){
+                    nickname = et.getText().toString();
+                    AuthNickRequset authNickRequset = new AuthNickRequset(nickname);
+                    Apiinterface apiinterface = Api.createService(Apiinterface.class, token, SingupActivity.this);
+                    Call<AuthNickResponse> call = apiinterface.AuthNickRequest(authNickRequset);
+                    call.enqueue(new Callback<AuthNickResponse>() {
+                        @Override
+                        public void onResponse(Call<AuthNickResponse> call, Response<AuthNickResponse> response) {
+                            if(response.isSuccessful() && response.body() != null){
+                                if(response.body().getCode().equals("NICKNAME_CREATE_SUCCESS")) {
+                                    tv_nick.setText("닉네임 설정 성공");
+                                    btn_ok.setEnabled(true);
+
+
+                                }
+                                else if(response.body().getCode().equals("NICKNAME_DUPLICATION")){
+                                    tv_nick.setText("이미 사용 중인 닉네임입니다");
+                                    btn_ok.setEnabled(false);
+
+                                }
+                            }
+                            else{
+                                Log.d("실패", new Gson().toJson(response.errorBody()));
+                                Log.d("실패", response.toString());
+                                Log.d("실패", String.valueOf(response.code()));
+                                Log.d("실패", response.message());
+                                Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                                Log.d("실패", new Gson().toJson(response.raw().request()));
+                                btn_ok.setEnabled(false);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<AuthNickResponse> call, Throwable t) {
+
+                            Log.d("외않되", String.valueOf(t));
+                            btn_ok.setEnabled(false);
+
+                        }
+                    });
+
+
+
+                }
+
+            }
+        });
+
+        /*et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
 
@@ -172,12 +299,12 @@ public class SingupActivity extends AppCompatActivity {
 
             }
 
-        });
+        });*/
 
 
     }
 
-    public void doTakePhotoAction() // 카메라 촬영 후 이미지 가져오기
+    /*public void doTakePhotoAction() // 카메라 촬영 후 이미지 가져오기
 
     {
 
@@ -195,7 +322,7 @@ public class SingupActivity extends AppCompatActivity {
 
         startActivityForResult(intent, PICK_FROM_CAMERA);
 
-    }
+    }*/
 
 
     /**
@@ -204,7 +331,7 @@ public class SingupActivity extends AppCompatActivity {
 
      */
 
-    public void doTakeAlbumAction() // 앨범에서 이미지 가져오기
+    /*public void doTakeAlbumAction() // 앨범에서 이미지 가져오기
 
     {
 
@@ -216,7 +343,7 @@ public class SingupActivity extends AppCompatActivity {
 
         startActivityForResult(intent, PICK_FROM_ALBUM);
 
-    }
+    }*/
 
 
     @Override
@@ -225,8 +352,17 @@ public class SingupActivity extends AppCompatActivity {
 
         super.onActivityResult(requestCode,resultCode,data);
 
+        if(resultCode == RESULT_OK && data != null && data.getData() != null){
+            switch(requestCode) {
+                case OPEN_GALLERY:
+                    Log.e("single choice", String.valueOf(data.getData()));
+                    imageUri = data.getData();
 
-        if(resultCode != RESULT_OK)
+            }
+        }
+
+
+        /*if(resultCode != RESULT_OK)
 
             return;
 
@@ -335,7 +471,7 @@ public class SingupActivity extends AppCompatActivity {
                 ProfileUploadRequset();
             }
 
-        }
+        }*/
 
         }
 
@@ -345,7 +481,7 @@ public class SingupActivity extends AppCompatActivity {
 
 
 
-    public void onClick(View v){
+    /*public void onClick(View v){
         id_view = v.getId();
         if(v.getId() == R.id.imgbtn_profile) {
             DialogInterface.OnClickListener cameraListener = new DialogInterface.OnClickListener() {
@@ -417,7 +553,9 @@ public class SingupActivity extends AppCompatActivity {
 
        }
 
-    }
+    }*/
+
+
     private void storeCropImage(Bitmap bitmap, String filePath) {
 
         // SmartWheel 폴더를 생성하여 이미지를 저장하는 방식이다.
@@ -466,6 +604,23 @@ public class SingupActivity extends AppCompatActivity {
         }
 
     }
+    private File getResize(Bitmap bitmap, String name) throws IOException {
+        File storage = getCacheDir();
+        String filename = name + ".jpg";
+        File imgfile = new File(storage, filename);
+
+        Log.d("getuploadimg","resizing");
+
+        imgfile.createNewFile();
+        FileOutputStream out = new FileOutputStream(imgfile);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 40, out);
+        out.close();
+
+
+        return new File(getCacheDir() + "/" + filename);
+
+    }
+
     //이미지 서버로 보내기
     private void ProfileUploadRequset(){
         File file = new File(mImageCaptureUri.getPath());
@@ -480,7 +635,7 @@ public class SingupActivity extends AppCompatActivity {
         bitmap2.compress(Bitmap.CompressFormat.JPEG, 20, byteArrayOutputStream);
         RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpg"), byteArrayOutputStream.toByteArray());
         MultipartBody.Part uploadFile = MultipartBody.Part.createFormData("data", file.getName() ,requestBody);
-        AuthNickRequset authNickRequset = new AuthNickRequset(message);
+       /* AuthNickRequset authNickRequset = new AuthNickRequset(message);
         Log.d("tag", "이미지 서버 전송 시도");
         Apiinterface apiinterface = Api.createService(Apiinterface.class);
         Call<ProfileUploadResponse> call = apiinterface.ProfileUploadRequest(uploadFile);
@@ -505,7 +660,7 @@ public class SingupActivity extends AppCompatActivity {
             public void onFailure(Call<ProfileUploadResponse> call, Throwable t) {
 
             }
-        });
+        });*/
     }
 
 }

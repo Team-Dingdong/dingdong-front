@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName;
 
 public class ChatUser {
 
-
     @SerializedName("nickname")
     @Expose
     private String username;

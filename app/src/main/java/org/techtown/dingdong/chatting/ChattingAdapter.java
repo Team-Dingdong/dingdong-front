@@ -13,18 +13,29 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.login_register.Token;
+import org.techtown.dingdong.network.Api;
+import org.techtown.dingdong.network.Apiinterface;
+import org.techtown.dingdong.profile.UserProfileResponse;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatViewHolder> {
     private ArrayList<Chat> myChatList;
     private String prev = "0";
+    private String username;
 
-    public ChattingAdapter(ArrayList<Chat> myChatList) {
+    public ChattingAdapter(ArrayList<Chat> myChatList, String username) {
         this.myChatList = myChatList;
+        this.username = username;
     }
 
 
@@ -197,6 +208,9 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
         if(myChatList.get(position).getType().equals("ENTER")){
             return ChatType.ViewType.CENTER_CONTENT;
         }
+        else if(myChatList.get(position).getName().equals(username)){
+            return ChatType.ViewType.RIGHT_CONTENT;
+        }
         return myChatList.get(position).getViewType();
     }
 
@@ -320,4 +334,5 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
         myChatList.add(chat);
         notifyDataSetChanged();
     }
+
 }
