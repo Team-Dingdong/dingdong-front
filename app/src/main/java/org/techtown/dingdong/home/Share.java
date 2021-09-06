@@ -68,6 +68,15 @@ public class Share {
         this.id = id;
     }
 
+
+    public String getGatheredPeople() {
+        return gatheredPeople;
+    }
+
+    public void setGatheredPeople(String gatheredPeople) {
+        this.gatheredPeople = gatheredPeople;
+    }
+
     public String getId() {
         return id;
     }
