@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_changetown"
@@ -32,9 +32,6 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="307dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar3"
         tools:context=".MapsActivity" />
 
     <TextView
@@ -42,65 +39,48 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="47dp"
-        android:text="설정돼 있는 위치는"
+        android:layout_marginTop="70dp"
+        android:text="설정돼 있는 위치는 혜화동, 한강로동이에요."
         android:textAlignment="center"
         android:textColor="#000000"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/map" />
+        android:textSize="24sp" />
 
     <TextView
         android:id="@+id/tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="78dp"
+        android:layout_marginTop="20dp"
         android:text="설정된 위치에서만 거래할 수 있어요."
         android:textAlignment="center"
         android:textColor="#000000"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv1" />
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/tv2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:text="현재 위치는 한강로3가, 한강로동이에요."
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="24sp" />
 
     <Button
         android:id="@+id/list_btn"
-        android:layout_width="218dp"
-        android:layout_height="47dp"
+        android:layout_width="221dp"
+        android:layout_height="63dp"
         android:layout_gravity="center"
-        android:layout_marginStart="96dp"
-        android:layout_marginLeft="96dp"
-        android:layout_marginTop="46dp"
-        android:layout_marginEnd="97dp"
-        android:layout_marginRight="97dp"
-        android:text="확인"
+        android:layout_marginTop="30dp"
+        android:text="동네 변경하기"
         android:textColor="#000000"
         android:textSize="24sp"
-        app:backgroundTint="@color/blue"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv" />
-
-    <com.google.android.material.chip.Chip
-        android:id="@+id/chip1"
-        android:layout_width="127dp"
-        android:layout_height="53dp"
-        android:layout_marginStart="80dp"
-        android:layout_marginLeft="80dp"
-        android:layout_marginTop="7dp"
-        android:layout_marginEnd="205dp"
-        android:layout_marginRight="205dp"
-        android:drawableBottom="@android:drawable/ic_menu_add"
-        android:text=""
-        app:checkedIconEnabled="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv1"
-        style="@style/Widget.MaterialComponents.Chip.Action"/>
+        app:backgroundTint="@color/blue" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</LinearLayout>
 
 

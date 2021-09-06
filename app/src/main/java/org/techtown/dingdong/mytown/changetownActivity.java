@@ -1,6 +1,5 @@
 package org.techtown.dingdong.mytown;
 
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,7 +13,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -45,7 +43,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.material.chip.Chip;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.jetbrains.annotations.NotNull;
@@ -61,7 +58,7 @@ import java.util.Locale;
 public class changetownActivity extends AppCompatActivity
         implements OnMapReadyCallback,
         ActivityCompat.OnRequestPermissionsResultCallback {
-    public static final int sub = 1001;
+
 
     private GoogleMap mMap;
     private Marker currentMarker = null;
@@ -91,7 +88,7 @@ public class changetownActivity extends AppCompatActivity
     private Location location;
     Button list_btn;
     Button change_btn;
-    Chip chip1;
+
     private View mLayout;  // Snackbar 사용하기 위해서는 View가 필요합니다.
     // (참고로 Toast에서는 Context가 필요했습니다.)
 
@@ -101,7 +98,6 @@ public class changetownActivity extends AppCompatActivity
 
         list_btn = (Button) findViewById(R.id.list_btn);
         change_btn = (Button) findViewById(R.id.change_btn);
-
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -137,7 +133,24 @@ public class changetownActivity extends AppCompatActivity
         }*/
 
 
+        //동네변경하기 버튼튼
+        list_btn.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //현재위치 리스트로 보여주기
 
+                //api로
+
+            }
+        });
+
+        //동네 선택하고 확인누르면 알림창 띄우고, 데이터 저장하고 있다가 로그인/회원가입하고 서버로 전달
+        change_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 
 
@@ -210,7 +223,6 @@ public class changetownActivity extends AppCompatActivity
             public void onMapClick(LatLng latLng) {
 
                 Log.d(TAG, "onMapClick :");
-
 
             }
         });
@@ -301,29 +313,6 @@ public class changetownActivity extends AppCompatActivity
                 mMap.setMyLocationEnabled(true);
 
         }
-
-        chip1 = (Chip)findViewById(R.id.chip1);
-        chip1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "칩클릭됨");
-
-                    Intent intent = new Intent(getApplicationContext(), TownRecyclActivity.class);
-                    startActivityForResult(intent, sub);
-                    //데이터 받아오기
-                    intent = getIntent();
-                    String town = intent.getExtras().getString("town");
-
-                    //텍스트 설정, 이미지 delete로 설정
-                    Drawable myDrawable = getResources().getDrawable(R.drawable.ic_baseline_cancel_24);
-                    chip1.setText(town);
-                    chip1.setCompoundDrawables(null,null, myDrawable ,null);
-                /*
-                else{
-                    //텍스트 없애기, 이미지 add로 설정
-                }*/
-            }
-        });
 
 
     }

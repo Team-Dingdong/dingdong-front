@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -8,19 +9,34 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:orientation="vertical"
         android:layout_marginTop="6dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
+            android:id="@+id/tv_date"
+            android:visibility="gone"
+            android:layout_marginTop="6dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/noto_sans"
+            android:text="2021.08.23"
+            android:layout_gravity="center_horizontal"
+            android:textColor="#c5c5c5"
+            android:textFontWeight="800"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/chat"
-            android:layout_width="250dp"
+            android:layout_width="400dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/noto_sans"
             android:paddingHorizontal="21dp"
             android:paddingVertical="11dp"
-            android:text="노원구청 앞 20210801 17시 17분 나눔 약속이 확정되었어요 약속 시간 세 시간 전, 알림을 드릴게요!"
+            android:text="노원구청 앞 20210801 17시 17분 나눔 약속이 확정되었어요.
+             약속 시간 세 시간 전, 알림을 드릴게요!"
             android:textColor="#000000"
             android:textFontWeight="400"
             android:textSize="13dp"
@@ -28,10 +44,11 @@
 
         <TextView
             android:id="@+id/time"
+            android:visibility="visible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:layout_marginLeft="9dp"
+            android:layout_marginLeft="21dp"
             android:fontFamily="@font/noto_sans"
             android:text="오후 12:58"
             android:textFontWeight="400" />
@@ -39,4 +56,4 @@
     </LinearLayout>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

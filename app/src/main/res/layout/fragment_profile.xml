@@ -32,6 +32,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/button" />
 
+
     <ImageView
         android:id="@+id/profile_img"
         android:layout_width="135dp"
@@ -206,4 +207,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/name" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

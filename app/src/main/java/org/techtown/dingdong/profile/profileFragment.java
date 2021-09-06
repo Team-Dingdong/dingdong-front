@@ -1,35 +1,34 @@
 package org.techtown.dingdong.profile;
 
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Bundle;
+
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.content.Intent;
+import android.os.Bundle;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
-import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
-import org.techtown.dingdong.home.PostResponse;
 import org.techtown.dingdong.login_register.LoginActivity;
 import org.techtown.dingdong.login_register.LoginOrRegisterActivity;
-import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.mytown.changetownActivity;
+
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
 
@@ -47,6 +46,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.http.Url;
 
+
 import static android.app.Activity.RESULT_OK;
 
 public class profileFragment extends Fragment implements View.OnClickListener {
@@ -59,6 +59,7 @@ public class profileFragment extends Fragment implements View.OnClickListener {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
     Button startbtn, townbtn;
 
     Button btn_img;
@@ -77,6 +78,7 @@ public class profileFragment extends Fragment implements View.OnClickListener {
 
     private Uri mImageCaptureUri;
     private String absoultePath;
+
 
 
     public profileFragment() {
@@ -142,6 +144,7 @@ public class profileFragment extends Fragment implements View.OnClickListener {
                 startActivity(new Intent(getActivity(), changetownActivity.class));
             }
         });
+
 
 
         SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
