@@ -108,6 +108,7 @@ public class profileFragment extends Fragment implements View.OnClickListener {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
+
     }
 
     @Override
@@ -115,8 +116,14 @@ public class profileFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        View v = inflater.inflate(R.layout.fragment_profile, container, false);
-        startbtn= v.findViewById(R.id.button);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_profile, container, false);
+        startbtn= rootView.findViewById(R.id.button);
+        townbtn= rootView.findViewById(R.id.changetown);
+        btn_img= rootView.findViewById(R.id.btn_img);
+        name = rootView.findViewById(R.id.name);
+        profile_img = rootView.findViewById(R.id.profile_img);
+        number_good = rootView.findViewById(R.id.number_good);
+        number_bad = rootView.findViewById(R.id.number_bad);
 
         startbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,8 +133,7 @@ public class profileFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        townbtn= v.findViewById(R.id.changetown);
-        btn_img= v.findViewById(R.id.btn_img);
+
         townbtn.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -135,11 +141,7 @@ public class profileFragment extends Fragment implements View.OnClickListener {
                 startActivity(new Intent(getActivity(), changetownActivity.class));
             }
         });
-        //본인 프로필 조회
-        name = v.findViewById(R.id.name);
-        profile_img = v.findViewById(R.id.profile_img);
-        number_good = v.findViewById(R.id.number_good);
-        number_bad = v.findViewById(R.id.number_bad);
+
 
         SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         String access = pref.getString("oauth.accesstoken","");
@@ -204,7 +206,7 @@ public class profileFragment extends Fragment implements View.OnClickListener {
             number_bad.setText(String.valueOf(bad));
 
             btn_img.setOnClickListener(this);
-            return v;
+            return rootView;
         }
 
         //서버에서 파일 받아오기
