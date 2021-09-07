@@ -3,6 +3,7 @@ package org.techtown.dingdong.chatting;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -55,8 +56,9 @@ import ua.naiksoftware.stomp.dto.StompMessage;
 public class ChattingActivity extends AppCompatActivity implements ChattingBottomDialogFragment.onInteractionListener{
     private ArrayList<Chat> chats = new ArrayList<>();
     private RecyclerView recycler_chat;
-    private TextView tv_people, tv_title;
-    private ImageView img_people;
+    private LinearLayout sec_info;
+    private TextView tv_people, tv_title, tv_info;
+    private ImageView img_people, btn_alarm;
     private ImageButton btn_plus, btn_send, btn_back;
     private EditText et_message;
     private LinearLayout view_plus;
@@ -65,7 +67,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
     Uri imageUri;
     private String message, username, userprofile, isowner="false";
     private String id = "1";
-    private Boolean ismaster = true;
+    private Boolean ismaster = true, isvisible = false;
     ChattingBottomDialogFragment chattingBottomDialogFragment;
     private Gson gson;
     public static String WS_URL = "ws://3.38.61.13:8080/ws-stomp/websocket";
@@ -210,9 +212,13 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         tv_people = findViewById(R.id.tv_people);
         img_people = findViewById(R.id.btn_people);
         tv_title = findViewById(R.id.tv_title);
+        tv_info = findViewById(R.id.tv_info);
+        sec_info = findViewById(R.id.sec_info);
+        btn_alarm = findViewById(R.id.btn_alarm);
 
         initChatRoom(token);
         setChats(token);
+        //getInfo(token);
 
         img_people.setOnClickListener(new View.OnClickListener()
 
@@ -278,9 +284,26 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                         //recycler_chat.scrollToPosition(chatAdapter.getItemCount() - 1);
                     }
                     });
-
+        btn_alarm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isvisible == true){
+                    //텍스트뷰가 보이는 상태일때
+                    tv_info.setVisibility(View.GONE);
+                    sec_info.setBackgroundColor(Color.parseColor("#00000000"));
+                    isvisible = false;
+                }
+                else{
+                    tv_info.setVisibility(View.VISIBLE);
+                    sec_info.setBackgroundColor(Color.parseColor("#B2FFE2"));
+                    isvisible = true;
 
                 }
+            }
+        });
+
+
+    }
 
     private void addItem(Chat chat){
         chats.add(chat);
@@ -532,6 +555,50 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
 
             }
         });
+
+    }
+
+    public void getInfo(Token token){
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, ChattingActivity.this);
+        Call<ChatPromiseResponse> call = apiinterface.getPromise(Integer.parseInt(id));
+        call.enqueue(new Callback<ChatPromiseResponse>() {
+            @Override
+            public void onResponse(Call<ChatPromiseResponse> call, Response<ChatPromiseResponse> response) {
+                if(response.isSuccessful() && response.body() != null) {
+                    if (response.body().getResult().equals("CHAT_PROMISE_READ_SUCCESS")) {
+                        ChatPromiseResponse res = response.body();
+                        Log.d("성공", new Gson().toJson(res));
+                        String date = res.getData().getPromiseDate();
+                        String hour = res.getData().getPromiseTime().substring(0,2);
+                        String min = res.getData().getPromiseTime().substring(3,5);
+                        String local = res.getData().getPromiseLocal();
+                        String info = date + ", " + hour + "시 " + min + "분에 " + local + "에서 만나요";
+                        tv_info.setVisibility(View.VISIBLE);
+                        sec_info.setBackgroundColor(Color.parseColor("#B2FFE2"));
+                        isvisible = true;
+                        tv_info.setText(info);
+
+                    }
+                }else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ChatPromiseResponse> call, Throwable t) {
+
+                Log.d("외않되", String.valueOf(t));
+
+            }
+        });
+
 
     }
 

@@ -4,12 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -19,10 +22,21 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.login_register.Token;
+import org.techtown.dingdong.network.Api;
+import org.techtown.dingdong.network.Apiinterface;
 
 import java.sql.Timestamp;
 import java.util.Date;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.graphics.Color.parseColor;
 
@@ -33,9 +47,11 @@ public class PlanningActivity extends AppCompatActivity {
     private TextView tv_info, tv_date, tv_time;
     private EditText et_place;
     private String y="yyyy", m="mm", d="dd", h="hh", mm="mm", place="place";
-    private String date = y + "." + m + "." + d, time = h + "시 " + mm + "분";
+    private String date = y + "-" + m + "-" + d, time = h + "시 " + mm + "분";
     private String info = null;
     private Boolean getp = false, gett = false, getd = false;
+    private String id;
+    private Token token;
 
 
     @Override
@@ -43,9 +59,17 @@ public class PlanningActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_planning);
 
+        SharedPreferences pref = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+        String access = pref.getString("oauth.accesstoken","");
+        String refresh = pref.getString("oauth.refreshtoken","");
+        String expire = pref.getString("oauth.expire","");
+        String tokentype = pref.getString("oauth.tokentype","");
+
+        token  = new Token(access,refresh,expire,tokentype);
+
 
         Intent intent = getIntent();
-        String id = intent.getStringExtra("id");
+        id = intent.getStringExtra("id");
 
         btn_datepick = findViewById(R.id.btn_datepick);
         btn_timepick = findViewById(R.id.btn_timepick);
@@ -58,6 +82,9 @@ public class PlanningActivity extends AppCompatActivity {
 
 
         tv_info.setText(null);
+
+
+        //getInfo(token);
 
 
 
@@ -81,12 +108,12 @@ public class PlanningActivity extends AppCompatActivity {
                 d = Integer.toString(dayOfMonth);
 
 
-                date = y + "." + m + "." + d;
+                date = y + "-" + m + "-" + d;
                 info = makeInfo(date, time, place);
                 tv_info.setText(info);
                 tv_date.setText(date);
-                getd = true;
-                setBtnFinish(gett, getd, getp);
+                //getd = true;
+                //setBtnFinish(gett, getd, getp);
             }
         };
 
@@ -115,9 +142,9 @@ public class PlanningActivity extends AppCompatActivity {
                 time = h + "시 " + mm + "분";
                 info = makeInfo(date, time, place);
                 tv_info.setText(info);
-                tv_time.setText(time);
-                gett = true;
-                setBtnFinish(gett, getd, getp);
+                tv_time.setText(h + ":" + mm);
+                //gett = true;
+                //setBtnFinish(gett, getd, getp);
 
             }
         };
@@ -154,8 +181,8 @@ public class PlanningActivity extends AppCompatActivity {
                 place = et_place.getText().toString();
                 info = makeInfo(date, time, place);
                 tv_info.setText(info);
-                getp = true;
-                setBtnFinish(gett, getd, getp);
+                //getp = true;
+                //setBtnFinish(gett, getd, getp);
 
             }
         });
@@ -175,17 +202,8 @@ public class PlanningActivity extends AppCompatActivity {
         btn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(gett && getp && getd){
-
-                    Toast.makeText(PlanningActivity.this, "생성이 완료되었습니다.",Toast.LENGTH_LONG).show();
-
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            finish();
-                        }
-                    }, 1000);
+                if(tv_date.getText().toString().length() > 0 && et_place.getText().toString().length() > 0 && tv_time.getText().toString().length() > 0){
+                    sendInfo(token);
 
                 }
                 else{
@@ -203,9 +221,96 @@ public class PlanningActivity extends AppCompatActivity {
         return date + ", " + time + "에 " + place + "에서";
     }
 
-    private void setBtnFinish(Boolean time, Boolean place, Boolean date){
+    /*private void setBtnFinish(Boolean time, Boolean place, Boolean date){
         if(time && place && date){
             btn_finish.setBackgroundColor(Color.parseColor("#B2FFE2"));
         }
+    }*/
+
+    public void getInfo(Token token) {
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, PlanningActivity.this);
+        Call<ChatPromiseResponse> call = apiinterface.getPromise(Integer.parseInt(id));
+        call.enqueue(new Callback<ChatPromiseResponse>() {
+            @Override
+            public void onResponse(Call<ChatPromiseResponse> call, Response<ChatPromiseResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getResult().equals("CHAT_PROMISE_READ_SUCCESS")) {
+                        ChatPromiseResponse res = response.body();
+                        Log.d("성공", new Gson().toJson(res));
+                        String date = res.getData().getPromiseDate();
+                        String hour = res.getData().getPromiseTime().substring(0, 2);
+                        String min = res.getData().getPromiseTime().substring(3, 5);
+                        String local = res.getData().getPromiseLocal();
+                        String info = makeInfo(date, hour + "시 " + min + "분", local);
+                        tv_date.setText(date);
+                        tv_time.setText(hour + "시 " + min + "분");
+                        tv_info.setText(info);
+                        et_place.setText(local);
+
+                    }
+                } else {
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ChatPromiseResponse> call, Throwable t) {
+
+                Log.d("외않되", String.valueOf(t));
+
+            }
+        });
+    }
+
+    public void sendInfo(Token token){
+        ChatPromiseRequest chatPromiseRequest = new ChatPromiseRequest(tv_date.getText().toString(),tv_time.getText().toString(),et_place.getText().toString());
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, PlanningActivity.this);
+        Call<ResponseBody> call = apiinterface.setPromise(Integer.parseInt(id), chatPromiseRequest);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    if (response.code() == 201) {
+
+                        Toast.makeText(PlanningActivity.this, "생성이 완료되었습니다.",Toast.LENGTH_LONG).show();
+
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                finish();
+                            }
+                        }, 1000);
+
+
+                    }
+                }else{
+
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                Log.d("외않되", String.valueOf(t));
+
+
+            }
+        });
+
     }
 }

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.loader.content.CursorLoader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,7 +21,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.FileUtils;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -46,6 +46,8 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
@@ -61,9 +63,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.annotation.Target;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -72,6 +77,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.Url;
 
 public class EditActivity extends AppCompatActivity {
 
@@ -646,7 +652,7 @@ public class EditActivity extends AppCompatActivity {
 
         imgfile.createNewFile();
         FileOutputStream out = new FileOutputStream(imgfile);
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 40, out);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 20, out);
         out.close();
 
 
@@ -654,38 +660,18 @@ public class EditActivity extends AppCompatActivity {
 
     }
 
-    private File getUritoFile(Uri uri, String name) {
-        File storage = getCacheDir();
-        String filename = name + ".jpg";
+    private File getFile(Context context, Uri uri) throws IOException {
+        String[] proj = { MediaStore.Images.Media.DATA };
 
-        Glide.with(EditActivity.this)
-                .asBitmap()
-                .load(uri)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .into(new CustomTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
-                        File imgfile = new File(storage, filename);
-                        try {
-                            imgfile.createNewFile();
-                            FileOutputStream out = new FileOutputStream(imgfile);
-                            resource.compress(Bitmap.CompressFormat.JPEG, 30, out);
-                            out.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+        Cursor cursor = context.getContentResolver().query(uri, proj, null, null, null);
+        cursor.moveToNext();
+        String path = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
+        cursor.close();
+        //Uri muri = Uri.fromFile(new File(path));
 
-                    }
-
-                    @Override
-                    public void onLoadCleared(@Nullable @org.jetbrains.annotations.Nullable Drawable placeholder) {
-
-                    }
-                });
-
-        return new File(getCacheDir() + "/" + filename);
-
+        return new File(path);
     }
+
 
     private void uploadImage(Token token, int id) {
 
@@ -710,11 +696,22 @@ public class EditActivity extends AppCompatActivity {
                         uplist.add(MultipartBody.Part.createFormData("files", file.getName(), requestBody));
                     }
                     else{
-                        File file = getUritoFile(uriList.get(i),Integer.toString((int) System.currentTimeMillis()).replace("-", ""));
+                        //String tmpdir = System.getProperty("java.io.tmpdir");
+                        //File storage = getCacheDir();
+                        //String path = tmpdir + Integer.toString((int) System.currentTimeMillis()).replace("-", "") + ".jpg";
+                        //File file = new File(path);
+                        //file.deleteOnExit();
+                        //URL url = new URL(uriList.get(i).toString());
+                        File file = getFile(EditActivity.this, uriList.get(i));
+                        //FileUtils.copyURLToFile(url,file);
+                        //File file = getUritoFile(uriList.get(i),Integer.toString((int) System.currentTimeMillis()).replace("-", ""));
                         Log.d("uploadimg","geturitofile");
                         Log.d("uploadimg", "file == " + file.getName());
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                         uplist.add(MultipartBody.Part.createFormData("files", file.getName(), requestBody));
+                        if(file.exists()){
+                            file.deleteOnExit();
+                        }
                     }
                     //files.add(file);
 
