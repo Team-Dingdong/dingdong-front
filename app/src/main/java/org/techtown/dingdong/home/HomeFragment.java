@@ -61,6 +61,11 @@ public class HomeFragment extends Fragment {
     private String selected_region;
     private Boolean trans = true; //버튼 선택시 true(최신순) -> false(마감임)
     String[] region = {"미아2동", "안암동"};
+    ArrayList<Share> createdList = new ArrayList<>();
+    ArrayList<Share> endtimeList = new ArrayList<>();
+    Token token;
+    int page = 0;
+    Boolean loading = false;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -128,7 +133,7 @@ public class HomeFragment extends Fragment {
         String expire = pref.getString("oauth.expire","");
         String tokentype = pref.getString("oauth.tokentype","");
 
-        Token token = new Token(access,refresh,expire,tokentype);
+        token = new Token(access,refresh,expire,tokentype);
 
         Log.d("토큰", String.valueOf(access));
 
@@ -140,12 +145,14 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 if(trans){
                     //최신순병렬일때 마감임박순을 불러오기
+                    page = 0;
                     tv_align.setText("마감임박순");
                     setEndTimeData(token);
                     trans = false; //마감임박순 병렬로 바꾸기
                 }
                 else{
                     //마감임박순병렬일때 최신순을 불러오기
+                    page = 0;
                     tv_align.setText("최신순");
                     setCreatedData(token);
                     trans = true; //최신순병렬로 바꾸기
@@ -289,10 +296,16 @@ public class HomeFragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
-                        ArrayList<Share> mList = new ArrayList<>();
-                        mList = res.getData().getShare();
-                        //String json = new Gson().toJson(res.getData().getShare());
-                        setShareListRecycler(sharelistrecycler, mList);
+                        if(page == 0){
+                            createdList = res.getData().getShare();
+                            setShareListRecycler(sharelistrecycler, createdList);
+                        }
+                        else{
+                            createdList.addAll(res.getData().getShare());
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            shareListAdpater.notifyDataSetChanged();
+
+                        }
 
                     }
 
@@ -330,10 +343,15 @@ public class HomeFragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
-                        ArrayList<Share> mList = new ArrayList<>();
-                        mList = res.getData().getShare();
-                        //String json = new Gson().toJson(res.getData().getShare());
-                        setShareListRecycler(sharelistrecycler, mList);
+                        if(page == 0){
+                            endtimeList = res.getData().getShare();
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            setShareListRecycler(sharelistrecycler, endtimeList);}
+                        else{
+                            endtimeList.addAll(res.getData().getShare());
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            shareListAdpater.notifyDataSetChanged();
+                        }
 
                     }
 

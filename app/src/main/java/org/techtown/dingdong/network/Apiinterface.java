@@ -51,6 +51,12 @@ public interface Apiinterface {
     //Call<AuthResponse> setAuth(@Body AuthRequest authRequest);
     //Call<AuthResponse> setAuth(@Field("to") String ID);
 
+    @GET("/api/v1/post/category/sorted_by=desc(endDate)/{id}")
+    Call<PostResponse> getEndCategoryData(@Path("id") int id);
+
+    @GET("/api/v1/post/category/sorted_by=desc(createdDate)/{id}")
+    Call<PostResponse> getCreatedCategoryData(@Path("id") int id);
+
     @POST("/api/v1/post")
     Call<EditResponse> setPost(@Body PostRequest postRequest);
 
@@ -97,6 +103,9 @@ public interface Apiinterface {
 
     @GET("/api/v1/profile")
     Call<UserProfileResponse> getUserProfile();
+
+    @DELETE("/api/v1/post/{id}")
+    Call<ResponseBody> deleteShare(@Path("id") int id);
 
 
 

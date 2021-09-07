@@ -47,6 +47,12 @@ public class Tab4Fragment extends Fragment {
     private LinearLayout btn_trans;
     private TextView tv_align;
     private Boolean trans = true;
+    int page = 0;
+    Boolean loading = false;
+    ArrayList<Share> createdList = new ArrayList<>();
+    ArrayList<Share> endtimeList = new ArrayList<>();
+    Token token;
+
 
     public Tab4Fragment() {
         // Required empty public constructor
@@ -94,7 +100,7 @@ public class Tab4Fragment extends Fragment {
         String expire = pref.getString("oauth.expire","");
         String tokentype = pref.getString("oauth.tokentype","");
 
-        Token token = new Token(access,refresh,expire,tokentype);
+        token = new Token(access,refresh,expire,tokentype);
 
         Log.d("토큰", String.valueOf(access));
 
@@ -106,12 +112,14 @@ public class Tab4Fragment extends Fragment {
             public void onClick(View v) {
                 if(trans){
                     //최신순병렬일때 마감임박순을 불러오기
+                    page = 0;
                     tv_align.setText("마감임박순");
                     setEndTimeData(token);
                     trans = false; //마감임박순 병렬로 바꾸기
                 }
                 else{
                     //마감임박순병렬일때 최신순을 불러오기
+                    page = 0;
                     tv_align.setText("최신순");
                     setCreatedData(token);
                     trans = true; //최신순병렬로 바꾸기
@@ -140,7 +148,7 @@ public class Tab4Fragment extends Fragment {
     public void setEndTimeData(Token token){
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
-        Call<PostResponse> call = apiinterface.getCategoryData(4);
+        Call<PostResponse> call = apiinterface.getEndCategoryData(4);
         call.enqueue(new Callback<PostResponse>() {
             @Override
             public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
@@ -149,10 +157,15 @@ public class Tab4Fragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
-                        ArrayList<Share> mList = new ArrayList<>();
-                        mList = res.getData().getShare();
-                        //String json = new Gson().toJson(res.getData().getShare());
-                        setShareListRecycler(sharelistrecycler, mList);
+                        if(page == 0){
+                            endtimeList = res.getData().getShare();
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            setShareListRecycler(sharelistrecycler, endtimeList);}
+                        else{
+                            endtimeList.addAll(res.getData().getShare());
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            shareListAdpater.notifyDataSetChanged();
+                        }
                         Log.d("성공", new Gson().toJson(response.raw().request()));
 
                     }
@@ -181,7 +194,7 @@ public class Tab4Fragment extends Fragment {
     public void setCreatedData(Token token){
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
-        Call<PostResponse> call = apiinterface.getCategoryData(4);
+        Call<PostResponse> call = apiinterface.getCreatedCategoryData(4);
         call.enqueue(new Callback<PostResponse>() {
             @Override
             public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
@@ -190,10 +203,17 @@ public class Tab4Fragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
-                        ArrayList<Share> mList = new ArrayList<>();
-                        mList = res.getData().getShare();
-                        //String json = new Gson().toJson(res.getData().getShare());
-                        setShareListRecycler(sharelistrecycler, mList);
+                        if(page == 0){
+                            createdList = res.getData().getShare();
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            setShareListRecycler(sharelistrecycler, createdList);
+                        }
+                        else{
+                            createdList.addAll(res.getData().getShare());
+                            //String json = new Gson().toJson(res.getData().getShare());
+                            shareListAdpater.notifyDataSetChanged();
+
+                        }
                         Log.d("성공", new Gson().toJson(response.raw().request()));
 
                     }
