@@ -612,15 +612,20 @@ public class EditActivity extends AppCompatActivity {
             //ArrayList<File> files = new ArrayList<>();
             for (int i = 0; i < uriList.size(); i++) {
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(EditActivity.this.getContentResolver(), uriList.get(i));
-                    File file = getResize(bitmap, Integer.toString((int) System.currentTimeMillis()).replace("-",""));
-
-                    Log.d("uploadimg","resizing");
-                    Log.d("uploadimg", "file == " + file.getName());
-
+                    if(!uriList.get(i).toString().contains("dingdongbucket")) {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(EditActivity.this.getContentResolver(), uriList.get(i));
+                        File file = getResize(bitmap, Integer.toString((int) System.currentTimeMillis()).replace("-", ""));
+                        Log.d("uploadimg","resizing");
+                        Log.d("uploadimg", "file == " + file.getName());
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                        uplist.add(MultipartBody.Part.createFormData("files", file.getName(), requestBody));
+                    }
+                    else{
+                        File file = new File(uriList.get(i).getPath());
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                        uplist.add(MultipartBody.Part.createFormData("files", file.getName(), requestBody));
+                    }
                     //files.add(file);
-                    RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-                    uplist.add(MultipartBody.Part.createFormData("files", file.getName(), requestBody));
 
                 } catch (IOException e) {
                     e.printStackTrace();

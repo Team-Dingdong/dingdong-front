@@ -63,7 +63,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
     private final int OPEN_GALLERY = 201;
     ChattingAdapter chatAdapter;
     Uri imageUri;
-    private String message, username;
+    private String message, username, userprofile, isowner="TRUE", ownername="test_nickname2";
     private String id = "1";
     private Boolean ismaster = true;
     ChattingBottomDialogFragment chattingBottomDialogFragment;
@@ -169,8 +169,10 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
             Log.d("onnext",jsonObject.toString());
             //Log.d("onnext",stomp);
 
+
             if(type.equals("TALK") && !sender.equals(username)){
-                Chat chat = new Chat(msg,sender,"아",new Timestamp(System.currentTimeMillis()).toString(), "TRUE", ChatType.ViewType.LEFT_CONTENT);
+                //isowner = (sender.equals(ownername)) ? "TRUE" : "FALSE";
+                Chat chat = new Chat(msg,sender,"아",new Timestamp(System.currentTimeMillis()).toString(), (sender.equals(ownername)) ? "TRUE" : "FALSE", ChatType.ViewType.LEFT_CONTENT);
                 addItem(chat);
                 Log.d("talk","get");
                 }else if(type.equals("ENTER")){
@@ -179,6 +181,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
             }
             }, throwable -> { Log.e("chat", "Error on subscribe topic", throwable); }
         );
+
 
 
         /*Disposable disTopi = stompClient.topic("/topic/chat/room/1")
@@ -297,7 +300,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                 case OPEN_GALLERY:
                     Log.e("single choice", String.valueOf(data.getData()));
                     imageUri = data.getData();
-                    Chat chat = new Chat(imageUri.toString(),"다루","아","2021-08-25 17:00:33.822", "TRUE", ChatType.ViewType.RIGHT_CONTENT_IMG);
+                    Chat chat = new Chat(imageUri.toString(),username,userprofile,new Timestamp(System.currentTimeMillis()).toString(), (username.equals(ownername)) ? "TRUE" : "FALSE", ChatType.ViewType.RIGHT_CONTENT_IMG);
                     chatAdapter.addItem(chat);
                     recycler_chat.scrollToPosition(chatAdapter.getItemCount()-1);
 
@@ -436,7 +439,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         stompClient.send(new StompMessage(StompCommand.SEND, Arrays.asList(new StompHeader(StompHeader.DESTINATION, "/pub/chat/message"),
                 new StompHeader("Authorization","Bearer " + token.getAccessToken())), jsonObject.toString())).subscribe();
 
-        Chat chat = new Chat(message,"다루","아",new Timestamp(System.currentTimeMillis()).toString(), "TRUE", ChatType.ViewType.RIGHT_CONTENT);
+        Chat chat = new Chat(message,username,userprofile,new Timestamp(System.currentTimeMillis()).toString(), (username.equals(ownername)) ? "TRUE" : "FALSE", ChatType.ViewType.RIGHT_CONTENT);
         addItem(chat);
 
 
@@ -499,6 +502,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                         UserProfileResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
                         username = res.getData().getNickname();
+                        userprofile = res.getData().getProfileImg();
                     }
                 }else{
 
