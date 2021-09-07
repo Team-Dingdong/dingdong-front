@@ -107,8 +107,8 @@ public interface Apiinterface {
     @DELETE("/api/v1/post/{id}")
     Call<ResponseBody> deleteShare(@Path("id") int id);
 
-
-
+    @POST("/api/v1/chat/room/{id}")
+    Call<ResponseBody> enterChatRoom(@Path("id") int id);
 
 
 

@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -31,6 +32,7 @@ import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator;
 
 import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.chatting.ChattingActivity;
 import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
@@ -58,6 +60,7 @@ public class ShareDetailActivity extends AppCompatActivity {
     private ImageButton btn_back, btn_more;
     private String id;
     private ImageView img_profile;
+    private Button btn_enroll;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +83,7 @@ public class ShareDetailActivity extends AppCompatActivity {
         tv_people2 = findViewById(R.id.tv_pepolenum2);
         tv_info = findViewById(R.id.tv_info);
         tv_price = findViewById(R.id.tv_price);
+        btn_enroll = findViewById(R.id.btn_enroll);
 
 
         SharedPreferences pref = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
@@ -195,6 +199,60 @@ public class ShareDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+
+
+        btn_enroll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Apiinterface apiinterface = Api.createService(Apiinterface.class,token,ShareDetailActivity.this);
+                Log.d("postedid",id);
+                Call<ResponseBody> call = apiinterface.enterChatRoom(Integer.parseInt(id));
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.isSuccessful() && response.body() != null){
+                            if(response.code() == 201){
+                                Toast.makeText(ShareDetailActivity.this,"채팅방 입장 성공.", Toast.LENGTH_LONG).show();
+                                Intent intent = new Intent(ShareDetailActivity.this, ChattingActivity.class);
+                                intent.putExtra("id",id);
+                                startActivity(intent);
+                            }
+
+                        }else{
+
+                            if(response.code() == 409){
+                                Toast.makeText(ShareDetailActivity.this,"이미 입장한 채팅방입니다.", Toast.LENGTH_LONG).show();
+                                Intent intent = new Intent(ShareDetailActivity.this, ChattingActivity.class);
+                                intent.putExtra("id",id);
+                                startActivity(intent);
+
+                            }
+                            else if(response.code() == 404){
+                                Toast.makeText(ShareDetailActivity.this,"해당 채팅방을 찾을 수 없습니다.", Toast.LENGTH_LONG).show();
+                            }
+                            else{
+                            Log.d("실패", new Gson().toJson(response.errorBody()));
+                            Log.d("실패", response.toString());
+                            Log.d("실패", String.valueOf(response.code()));
+                            Log.d("실패", response.message());
+                            Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                            Log.d("실패", new Gson().toJson(response.raw().request()));
+                            }
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                        Log.d("외않되", String.valueOf(t));
+
+                    }
+                });
+
             }
         });
 

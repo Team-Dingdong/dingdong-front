@@ -15,7 +15,7 @@ public class Chat {
     private String name;
     @SerializedName("profileImageUrl")
     @Expose
-    private String profile;
+    private String profile=null;
     @SerializedName("sendTime")
     @Expose
     private String time;

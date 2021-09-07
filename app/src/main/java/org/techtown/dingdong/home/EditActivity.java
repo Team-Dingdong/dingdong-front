@@ -11,6 +11,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -598,6 +599,18 @@ public class EditActivity extends AppCompatActivity {
 
     }
 
+    private File getUritoFile(Uri uri) {
+        String[] proj = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getContentResolver().query(uri, proj, null, null, null);
+        if(cursor == null) return null;
+        cursor.moveToFirst();
+        int colIndex = cursor.getColumnIndexOrThrow(proj[0]);
+        String path = cursor.getString(colIndex);
+        cursor.close();
+
+        return new File(path);
+    }
+
     private void uploadImage(Token token, int id) {
 
         imgList = imageUploadAdapter.getData();
@@ -621,7 +634,9 @@ public class EditActivity extends AppCompatActivity {
                         uplist.add(MultipartBody.Part.createFormData("files", file.getName(), requestBody));
                     }
                     else{
-                        File file = new File(uriList.get(i).getPath());
+                        File file = getUritoFile(uriList.get(i));
+                        Log.d("uploadimg","geturitofile");
+                        Log.d("uploadimg", "file == " + file.getName());
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                         uplist.add(MultipartBody.Part.createFormData("files", file.getName(), requestBody));
                     }

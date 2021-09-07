@@ -63,7 +63,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
     private final int OPEN_GALLERY = 201;
     ChattingAdapter chatAdapter;
     Uri imageUri;
-    private String message, username, userprofile, isowner="TRUE", ownername="test_nickname2";
+    private String message, username, userprofile, isowner="false";
     private String id = "1";
     private Boolean ismaster = true;
     ChattingBottomDialogFragment chattingBottomDialogFragment;
@@ -166,17 +166,18 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
             String msg = jsonObject.getString("message");
             String type = jsonObject.getString("type");
             String sender = jsonObject.getString("sender");
+            String profileUrl = jsonObject.getString("profileImageUrl");
             Log.d("onnext",jsonObject.toString());
             //Log.d("onnext",stomp);
 
 
             if(type.equals("TALK") && !sender.equals(username)){
                 //isowner = (sender.equals(ownername)) ? "TRUE" : "FALSE";
-                Chat chat = new Chat(msg,sender,"아",new Timestamp(System.currentTimeMillis()).toString(), (sender.equals(ownername)) ? "TRUE" : "FALSE", ChatType.ViewType.LEFT_CONTENT);
+                Chat chat = new Chat(msg,sender,profileUrl,new Timestamp(System.currentTimeMillis()).toString(), "FALSE", ChatType.ViewType.LEFT_CONTENT);
                 addItem(chat);
                 Log.d("talk","get");
                 }else if(type.equals("ENTER")){
-                Chat chat = new Chat(msg,sender,"아",new Timestamp(System.currentTimeMillis()).toString(), "FALSE", ChatType.ViewType.CENTER_CONTENT);
+                Chat chat = new Chat(msg,sender,profileUrl,new Timestamp(System.currentTimeMillis()).toString(), "FALSE", ChatType.ViewType.CENTER_CONTENT);
                 addItem(chat);
             }
             }, throwable -> { Log.e("chat", "Error on subscribe topic", throwable); }
@@ -300,7 +301,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                 case OPEN_GALLERY:
                     Log.e("single choice", String.valueOf(data.getData()));
                     imageUri = data.getData();
-                    Chat chat = new Chat(imageUri.toString(),username,userprofile,new Timestamp(System.currentTimeMillis()).toString(), (username.equals(ownername)) ? "TRUE" : "FALSE", ChatType.ViewType.RIGHT_CONTENT_IMG);
+                    Chat chat = new Chat(imageUri.toString(),username,userprofile,new Timestamp(System.currentTimeMillis()).toString(), isowner.toUpperCase(), ChatType.ViewType.RIGHT_CONTENT_IMG);
                     chatAdapter.addItem(chat);
                     recycler_chat.scrollToPosition(chatAdapter.getItemCount()-1);
 
@@ -439,7 +440,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         stompClient.send(new StompMessage(StompCommand.SEND, Arrays.asList(new StompHeader(StompHeader.DESTINATION, "/pub/chat/message"),
                 new StompHeader("Authorization","Bearer " + token.getAccessToken())), jsonObject.toString())).subscribe();
 
-        Chat chat = new Chat(message,username,userprofile,new Timestamp(System.currentTimeMillis()).toString(), (username.equals(ownername)) ? "TRUE" : "FALSE", ChatType.ViewType.RIGHT_CONTENT);
+        Chat chat = new Chat(message,username,userprofile,new Timestamp(System.currentTimeMillis()).toString(), isowner.toUpperCase(), ChatType.ViewType.RIGHT_CONTENT);
         addItem(chat);
 
 
@@ -467,6 +468,12 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                         ChatRoom chatRoom = res.getChatRoom();
                         tv_title.setText(chatRoom.getTitle());
                         tv_people.setText(chatRoom.getPersonnel());
+                        isowner = chatRoom.getIsOwner();
+                        if(isowner.equals("true")){
+                            ismaster = true;
+                        }else{
+                            ismaster = false;
+                        }
                     }
                 }else{
                     Log.d("실패", new Gson().toJson(response.errorBody()));
