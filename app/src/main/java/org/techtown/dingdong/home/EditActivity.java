@@ -3,17 +3,20 @@ package org.techtown.dingdong.home;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.loader.content.CursorLoader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,6 +26,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -74,9 +78,12 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import okio.BufferedSink;
+import okio.Okio;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.Multipart;
 import retrofit2.http.Url;
 
 public class EditActivity extends AppCompatActivity {
@@ -97,6 +104,7 @@ public class EditActivity extends AppCompatActivity {
     ArrayList<String> imgList = new ArrayList<>();
     ImageUploadAdapter imageUploadAdapter;
     private String id;
+    final int PERMISSIONS_REQUEST = 1005;
 
 
     String[] categories = {"과일·채소", "육류·계란", "간식류", "생필품", "기타"};
@@ -210,11 +218,21 @@ public class EditActivity extends AppCompatActivity {
         btn_imgupload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int permisson = ContextCompat.checkSelfPermission(EditActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                if (permisson == PackageManager.PERMISSION_DENIED){
+                    if(ActivityCompat.shouldShowRequestPermissionRationale(EditActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+
+                    }else{
+                        ActivityCompat.requestPermissions(EditActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST);
+                    }
+
+                }else{
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
                 intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, 2222);
+                }
             }
         });
 
@@ -660,18 +678,37 @@ public class EditActivity extends AppCompatActivity {
 
     }
 
-    private File getFile(Context context, Uri uri) throws IOException {
-        String[] proj = { MediaStore.Images.Media.DATA };
 
-        Cursor cursor = context.getContentResolver().query(uri, proj, null, null, null);
-        cursor.moveToNext();
-        String path = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
-        cursor.close();
-        //Uri muri = Uri.fromFile(new File(path));
 
-        return new File(path);
+    public static MultipartBody.Part uriToMultipart(final Uri uri, String name, final ContentResolver contentResolver){
+        final Cursor c = contentResolver.query(uri, null, null, null, null);
+        if(c != null){
+            if(c.moveToNext()){
+                final String displayName = c.getString(c.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                RequestBody requestBody = new RequestBody() {
+                    @org.jetbrains.annotations.Nullable
+                    @Override
+                    public MediaType contentType() {
+                        return MediaType.parse(contentResolver.getType(uri));
+                    }
+
+                    @Override
+                    public void writeTo(BufferedSink sink) throws IOException {
+                        sink.writeAll(Okio.source(contentResolver.openInputStream(uri)));
+                    }
+                };
+                c.close();
+                return MultipartBody.Part.createFormData("files", name, requestBody);
+            } else{
+                c.close();
+                return null;
+            }
+        } else {
+            return null;
+        }
+
+
     }
-
 
     private void uploadImage(Token token, int id) {
 
@@ -696,22 +733,10 @@ public class EditActivity extends AppCompatActivity {
                         uplist.add(MultipartBody.Part.createFormData("files", file.getName(), requestBody));
                     }
                     else{
-                        //String tmpdir = System.getProperty("java.io.tmpdir");
-                        //File storage = getCacheDir();
-                        //String path = tmpdir + Integer.toString((int) System.currentTimeMillis()).replace("-", "") + ".jpg";
-                        //File file = new File(path);
-                        //file.deleteOnExit();
-                        //URL url = new URL(uriList.get(i).toString());
-                        File file = getFile(EditActivity.this, uriList.get(i));
-                        //FileUtils.copyURLToFile(url,file);
-                        //File file = getUritoFile(uriList.get(i),Integer.toString((int) System.currentTimeMillis()).replace("-", ""));
-                        Log.d("uploadimg","geturitofile");
-                        Log.d("uploadimg", "file == " + file.getName());
-                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-                        uplist.add(MultipartBody.Part.createFormData("files", file.getName(), requestBody));
-                        if(file.exists()){
-                            file.deleteOnExit();
-                        }
+                        MultipartBody.Part part = uriToMultipart(uriList.get(i),Integer.toString((int) System.currentTimeMillis()).replace("-", ""),EditActivity.this.getContentResolver());
+                        Log.d("uploadimg","reuploading");
+                        uplist.add(part);
+
                     }
                     //files.add(file);
 
@@ -782,5 +807,24 @@ public class EditActivity extends AppCompatActivity {
 
     }
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Toast.makeText(this,"승인이 허가되어 있습니다.",Toast.LENGTH_LONG).show();
+                }
+                else{
+                    Toast.makeText(this,"승인이 허가되어 있지 않습니다.",Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+        }
+    }
+
+
+
 
 }

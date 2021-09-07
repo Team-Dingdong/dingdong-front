@@ -1,8 +1,10 @@
 package org.techtown.dingdong.chatting;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,9 +15,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,6 +33,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.home.EditActivity;
 import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
@@ -77,6 +83,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
     CompositeDisposable compositeDisposable;
     private static final Pattern PATTERN_HEADER = Pattern.compile("([^:\\n\\r]+)\\s*:\\s*([^:\\n\\r]+)");
     Boolean isUnexpectedClosed;
+    final int PERMISSIONS_REQUEST = 1005;
 
 
 
@@ -366,10 +373,20 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
     public void onButtonChoice(int choice) {
         switch (choice){
             case 1:
+                int permisson = ContextCompat.checkSelfPermission(ChattingActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                if (permisson == PackageManager.PERMISSION_DENIED){
+                    if(ActivityCompat.shouldShowRequestPermissionRationale(ChattingActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+
+                    }else{
+                        ActivityCompat.requestPermissions(ChattingActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST);
+                    }
+
+                }else{
                 Intent intent1 = new Intent(Intent.ACTION_PICK);
                 intent1.setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
                 startActivityForResult(intent1, OPEN_GALLERY);
                 chattingBottomDialogFragment.dismiss();
+                }
                 break;
             case 2:
                 Intent intent2 = new Intent(ChattingActivity.this,PlanningActivity.class);
@@ -600,6 +617,22 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         });
 
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Toast.makeText(ChattingActivity.this,"승인이 허가되어 있습니다.",Toast.LENGTH_LONG).show();
+                }
+                else{
+                    Toast.makeText(ChattingActivity.this,"승인이 허가되어 있지 않습니다.",Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+        }
     }
 
 
