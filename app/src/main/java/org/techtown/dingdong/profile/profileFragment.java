@@ -162,10 +162,10 @@ public class profileFragment extends Fragment implements View.OnClickListener {
         Log.d("토큰", String.valueOf(access));
 
         /*Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
-        Call<ProfileResponse> call = apiinterface.getData();
-        call.enqueue(new Callback<ProfileResponse>() {
+        Call<UserProfileResponse> call = apiinterface.getData();
+        call.enqueue(new Callback<UserProfileResponse>() {
                 @Override
-                public void onResponse(Call<ProfileResponse> call, Response<ProfileResponse> response) {
+                public void onResponse(Call<UserProfileResponse> call, Response<UserProfileResponse> response) {
                     if (response.isSuccessful()) {
                         if (response.body().getCode().equals("PROFILE_READ_SUCCESS")) {
                             Log.d(TAG, "프로필 조회 성공");
@@ -190,7 +190,7 @@ public class profileFragment extends Fragment implements View.OnClickListener {
                         }
                     }
                     else{
-                        Log.d(TAG,"profilereponse실패");
+                        Log.d(TAG,"UserProfileResponse실패");
                     }
                 }
 

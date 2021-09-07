@@ -36,7 +36,7 @@ public class UserProfileResponse {
         @SerializedName("profile_bio")
         @Expose
         String profile;
-        @SerializedName("rofileImageUrl")
+        @SerializedName("profileImageUrl")
         @Expose
         String profileImg;
 
