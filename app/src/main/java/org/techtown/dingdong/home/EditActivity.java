@@ -1,5 +1,6 @@
 package org.techtown.dingdong.home;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -8,12 +9,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.ClipData;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,11 +36,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
 
+import org.jetbrains.annotations.NotNull;
 import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
 import org.techtown.dingdong.login_register.Token;
@@ -46,10 +55,15 @@ import org.techtown.dingdong.network.Apiinterface;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.annotation.Target;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -483,7 +497,48 @@ public class EditActivity extends AppCompatActivity {
                         et_place.setText(share.getPlace());
                         int capa = Integer.parseInt(share.getPersonnelcapacity()) -1;
                         select_personnel.setSelection(capa);
-                        select_category.setSelection(2);
+                        List<String> hashtag = share.getHashtag();
+                        for(int i=0; i < hashtag.size(); i++){
+                            switch (i){
+                                case 0:
+                                    et_hashtag1.setText(hashtag.get(0).replace("#",""));
+                                    break;
+                                case 1:
+                                    et_hashtag2.setText(hashtag.get(1).replace("#",""));
+                                    break;
+                                case 2:
+                                    et_hashtag3.setText(hashtag.get(2).replace("#",""));
+                                    break;
+                                case 3:
+                                    et_hashtag4.setText(hashtag.get(3).replace("#",""));
+                                    break;
+                                case 4:
+                                    et_hashtag5.setText(hashtag.get(4).replace("#",""));
+                                    break;
+                            }
+                        }
+
+                        switch(share.getCategory()){
+                            case "과일,채소":
+                                select_category.setSelection(0);
+                                break;
+                            case "육류,계란":
+                                select_category.setSelection(1);
+                                break;
+                            case "간식":
+                                select_category.setSelection(2);
+                                break;
+                            case "생필품":
+                                select_category.setSelection(3);
+                                break;
+                            case "기타":
+                                select_category.setSelection(4);
+                                break;
+                            default:
+                                select_category.setSelection(0);
+                                break;
+                        }
+                        //select_category.setSelection(2);
                         //String json = new Gson().toJson(res.getData().getShare());
 
                         if(share.getImage1()!=null){
@@ -599,16 +654,37 @@ public class EditActivity extends AppCompatActivity {
 
     }
 
-    private File getUritoFile(Uri uri) {
-        String[] proj = { MediaStore.Images.Media.DATA };
-        Cursor cursor = getContentResolver().query(uri, proj, null, null, null);
-        if(cursor == null) return null;
-        cursor.moveToFirst();
-        int colIndex = cursor.getColumnIndexOrThrow(proj[0]);
-        String path = cursor.getString(colIndex);
-        cursor.close();
+    private File getUritoFile(Uri uri, String name) {
+        File storage = getCacheDir();
+        String filename = name + ".jpg";
 
-        return new File(path);
+        Glide.with(EditActivity.this)
+                .asBitmap()
+                .load(uri)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(new CustomTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
+                        File imgfile = new File(storage, filename);
+                        try {
+                            imgfile.createNewFile();
+                            FileOutputStream out = new FileOutputStream(imgfile);
+                            resource.compress(Bitmap.CompressFormat.JPEG, 30, out);
+                            out.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable @org.jetbrains.annotations.Nullable Drawable placeholder) {
+
+                    }
+                });
+
+        return new File(getCacheDir() + "/" + filename);
+
     }
 
     private void uploadImage(Token token, int id) {
@@ -634,7 +710,7 @@ public class EditActivity extends AppCompatActivity {
                         uplist.add(MultipartBody.Part.createFormData("files", file.getName(), requestBody));
                     }
                     else{
-                        File file = getUritoFile(uriList.get(i));
+                        File file = getUritoFile(uriList.get(i),Integer.toString((int) System.currentTimeMillis()).replace("-", ""));
                         Log.d("uploadimg","geturitofile");
                         Log.d("uploadimg", "file == " + file.getName());
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);

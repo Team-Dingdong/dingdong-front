@@ -56,7 +56,7 @@ public class ShareDetailActivity extends AppCompatActivity {
             "\n" +
             "날짜별 예약 대상은 해당 날짜 끝자리와 생년월일 끝자리가 일치하는 사람으로 지정된다. 가령, 예약이 시작되는 9일의 경우, 생년월일 끝자리가 9인 사람들이 예약 대상이다. 날짜별 예약은 오후 8시부터 이튿날 오후 6시까지 진행된다.";
     private String title = "18~49세 다음달 9일부터 10부제";
-    private TextView tv_detail, tv_title, tv_userbio, tv_username, tv_like, tv_dislike, tv_place, tv_people, tv_people2, tv_info, tv_price;
+    private TextView tv_detail, tv_title, tv_userbio, tv_username, tv_like, tv_dislike, tv_place, tv_people, tv_people2, tv_info, tv_price, tv_category, tv_hashtag;
     private ImageButton btn_back, btn_more;
     private String id;
     private ImageView img_profile;
@@ -84,6 +84,8 @@ public class ShareDetailActivity extends AppCompatActivity {
         tv_info = findViewById(R.id.tv_info);
         tv_price = findViewById(R.id.tv_price);
         btn_enroll = findViewById(R.id.btn_enroll);
+        tv_category = findViewById(R.id.tv_category);
+        tv_hashtag = findViewById(R.id.hashtag);
 
 
         SharedPreferences pref = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
@@ -289,6 +291,19 @@ public class ShareDetailActivity extends AppCompatActivity {
                         tv_people2.setText(people);
                         tv_price.setText(priceFormat(share.getPrice()));
                         tv_info.setText("을 " +share.getPersonnelcapacity()+"명이서 띵해요");
+                        Glide.with(ShareDetailActivity.this)
+                                .load(share.getProfileImg())
+                                .into(img_profile);
+                        tv_category.setText(share.getCategory());
+                        List<String> hashtag = share.getHashtag();
+                        String str="";
+                        for(int i=0; i < hashtag.size(); i++){
+                            str += hashtag.get(i);
+                        }
+                        Log.d("myhash",str);
+                        tv_hashtag.setText(str);
+
+
 
                         if(share.getImage1()!=null){
                         if(!share.getImage1().equals("null")){

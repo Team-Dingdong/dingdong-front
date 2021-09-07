@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.InputStream;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Share {
     @SerializedName("title")
@@ -53,7 +55,15 @@ public class Share {
     @SerializedName("bad")
     @Expose
     private String userbad = null;
-
+    @SerializedName("profileImageUrl")
+    @Expose
+    private String profileImg;
+    @SerializedName("tagList")
+    @Expose
+    private List<String> hashtag;
+    @SerializedName("category")
+    @Expose
+    private String category;
 
     public Share(String title, String image1, String image2, String image3, String maintext, String date, String price, String place, String personnelcapacity, String id) {
         this.title = title;
@@ -68,6 +78,29 @@ public class Share {
         this.id = id;
     }
 
+    public String getProfileImg() {
+        return profileImg;
+    }
+
+    public void setProfileImg(String profileImg) {
+        this.profileImg = profileImg;
+    }
+
+    public List<String> getHashtag() {
+        return hashtag;
+    }
+
+    public void setHashtag(List<String> hashtag) {
+        this.hashtag = hashtag;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
     public String getGatheredPeople() {
         return gatheredPeople;
