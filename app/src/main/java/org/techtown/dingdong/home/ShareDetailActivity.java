@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -31,6 +32,7 @@ import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator;
 
 import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.chatting.ChattingActivity;
 import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
@@ -54,10 +56,11 @@ public class ShareDetailActivity extends AppCompatActivity {
             "\n" +
             "날짜별 예약 대상은 해당 날짜 끝자리와 생년월일 끝자리가 일치하는 사람으로 지정된다. 가령, 예약이 시작되는 9일의 경우, 생년월일 끝자리가 9인 사람들이 예약 대상이다. 날짜별 예약은 오후 8시부터 이튿날 오후 6시까지 진행된다.";
     private String title = "18~49세 다음달 9일부터 10부제";
-    private TextView tv_detail, tv_title, tv_userbio, tv_username, tv_like, tv_dislike, tv_place, tv_people, tv_people2, tv_info, tv_price;
+    private TextView tv_detail, tv_title, tv_userbio, tv_username, tv_like, tv_dislike, tv_place, tv_people, tv_people2, tv_info, tv_price, tv_category, tv_hashtag;
     private ImageButton btn_back, btn_more;
     private String id;
     private ImageView img_profile;
+    private Button btn_enroll;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +83,9 @@ public class ShareDetailActivity extends AppCompatActivity {
         tv_people2 = findViewById(R.id.tv_pepolenum2);
         tv_info = findViewById(R.id.tv_info);
         tv_price = findViewById(R.id.tv_price);
+        btn_enroll = findViewById(R.id.btn_enroll);
+        tv_category = findViewById(R.id.tv_category);
+        tv_hashtag = findViewById(R.id.hashtag);
 
 
         SharedPreferences pref = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
@@ -198,6 +204,60 @@ public class ShareDetailActivity extends AppCompatActivity {
             }
         });
 
+
+        btn_enroll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Apiinterface apiinterface = Api.createService(Apiinterface.class,token,ShareDetailActivity.this);
+                Log.d("postedid",id);
+                Call<ResponseBody> call = apiinterface.enterChatRoom(Integer.parseInt(id));
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.isSuccessful() && response.body() != null){
+                            if(response.code() == 201){
+                                Toast.makeText(ShareDetailActivity.this,"채팅방 입장 성공.", Toast.LENGTH_LONG).show();
+                                Intent intent = new Intent(ShareDetailActivity.this, ChattingActivity.class);
+                                intent.putExtra("id",id);
+                                startActivity(intent);
+                            }
+
+                        }else{
+
+                            if(response.code() == 409){
+                                Toast.makeText(ShareDetailActivity.this,"이미 입장한 채팅방입니다.", Toast.LENGTH_LONG).show();
+                                Intent intent = new Intent(ShareDetailActivity.this, ChattingActivity.class);
+                                intent.putExtra("id",id);
+                                startActivity(intent);
+
+                            }
+                            else if(response.code() == 404){
+                                Toast.makeText(ShareDetailActivity.this,"해당 채팅방을 찾을 수 없습니다.", Toast.LENGTH_LONG).show();
+                            }
+                            else{
+                            Log.d("실패", new Gson().toJson(response.errorBody()));
+                            Log.d("실패", response.toString());
+                            Log.d("실패", String.valueOf(response.code()));
+                            Log.d("실패", response.message());
+                            Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                            Log.d("실패", new Gson().toJson(response.raw().request()));
+                            }
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                        Log.d("외않되", String.valueOf(t));
+
+                    }
+                });
+
+            }
+        });
+
     }
 
     private void setShare(Token token){
@@ -231,6 +291,19 @@ public class ShareDetailActivity extends AppCompatActivity {
                         tv_people2.setText(people);
                         tv_price.setText(priceFormat(share.getPrice()));
                         tv_info.setText("을 " +share.getPersonnelcapacity()+"명이서 띵해요");
+                        Glide.with(ShareDetailActivity.this)
+                                .load(share.getProfileImg())
+                                .into(img_profile);
+                        tv_category.setText(share.getCategory());
+                        List<String> hashtag = share.getHashtag();
+                        String str="";
+                        for(int i=0; i < hashtag.size(); i++){
+                            str += hashtag.get(i);
+                        }
+                        Log.d("myhash",str);
+                        tv_hashtag.setText(str);
+
+
 
                         if(share.getImage1()!=null){
                         if(!share.getImage1().equals("null")){

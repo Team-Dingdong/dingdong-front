@@ -26,6 +26,9 @@ public class ChatRoom {
     @SerializedName("lastChatTime")
     @Expose
     private String lastChatTime;
+    @SerializedName("owner")
+    @Expose
+    private String isOwner;
     //private ArrayList<User> users;
 
 
@@ -36,6 +39,14 @@ public class ChatRoom {
         this.lastMsg = lastMsg;
         this.id = id;
         this.lastChatTime = lastChatTime;
+    }
+
+    public String getIsOwner() {
+        return isOwner;
+    }
+
+    public void setIsOwner(String isOwner) {
+        this.isOwner = isOwner;
     }
 
     public String getImage() {
