@@ -21,11 +21,11 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
 
     public RecyclerViewHolder(@NonNull @NotNull View itemView) {
         super(itemView);
-        tv_sale_date = itemView.findViewById(R.id.tv_sale_date);
-        tv_group = itemView.findViewById(R.id.tv_group);
-        tv_posttitle = itemView.findViewById(R.id.tv_posttitle);
+        tv_sale_date = itemView.findViewById(R.id.tv_profile_sale_date);
+        tv_group = itemView.findViewById(R.id.tv_profile_group);
+        tv_posttitle = itemView.findViewById(R.id.tv_profile_sale_postTitle);
         btn_mypage_sales = itemView.findViewById(R.id.btn_mypage_sales);
-        iv_post = itemView.findViewById(R.id.iv_post);
+        iv_post = itemView.findViewById(R.id.iv_profile_sale_img);
     }
 
 }

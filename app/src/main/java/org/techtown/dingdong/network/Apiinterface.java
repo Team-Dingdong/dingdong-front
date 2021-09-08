@@ -17,6 +17,9 @@ import org.techtown.dingdong.login_register.AuthResponse;
 import org.techtown.dingdong.login_register.LoginRequest;
 import org.techtown.dingdong.login_register.LoginResponse;
 import org.techtown.dingdong.login_register.ProfileUploadResponse;
+import org.techtown.dingdong.mypage.EstimateRequset;
+import org.techtown.dingdong.mypage.EstimateResponse;
+import org.techtown.dingdong.mypage.SalesResponse;
 import org.techtown.dingdong.profile.UserProfileResponse;
 
 import java.util.ArrayList;
@@ -135,5 +138,16 @@ public interface Apiinterface {
 
     @POST("/api/v1/auth/nickname")
     Call<AuthNickResponse> AuthNickRequest(@Body AuthNickRequset authNickRequset);
+
+    @GET("/api/v1/post/user/sell")
+    Call<SalesResponse> getSales();
+
+    @POST("/api/v1/rating/{userId}")
+    Call<EstimateResponse> EstimateRequest(@Body EstimateRequset estimateRequset);
+
+
+
+
+
 
 }
