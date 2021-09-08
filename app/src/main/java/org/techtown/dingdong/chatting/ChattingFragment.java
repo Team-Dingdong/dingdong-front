@@ -72,7 +72,6 @@ public class ChattingFragment extends Fragment {
         Log.d("토큰", String.valueOf(access));
 
 
-
         //setDummy();
 
         recyclerView = v.findViewById(R.id.recycler_chathome);
@@ -103,26 +102,7 @@ public class ChattingFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Log.i("Dialog", "네");
-                                
-                                if(ismaster){
 
-                                    final Snackbar snackbar = Snackbar.make(v,"방장은 거래를 나갈 수 없습니다.\n" + "채팅방-더보기-나눔파기를 통해 나눔을 파기해주세요.", Snackbar.LENGTH_INDEFINITE);
-                                    snackbar.setAction("확인", new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            snackbar.dismiss();
-                                        }
-                                    });
-
-                                    TextView tvs = snackbar.getView().findViewById(com.google.android.material.R.id.snackbar_text);
-
-                                    tvs.setTextSize(13);
-
-                                    snackbar.show();
-
-
-                                }
-                                else{
                                     String roomid = chatRoomListAdapter.getChatRooms().get(position).getId();
                                     Apiinterface apiinterface = Api.createService(Apiinterface.class, token, getActivity());
                                     Call<ResponseBody> call = apiinterface.exitChatRoom(Integer.parseInt(roomid));
@@ -131,18 +111,40 @@ public class ChattingFragment extends Fragment {
                                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                             if (response.isSuccessful()) {
                                                 if (response.code() == 200) {
-                                                    Log.d("이미지등록성공", new Gson().toJson(response.code()));
+                                                    Log.d("채팅방 나가기 성공", new Gson().toJson(response.code()));
                                                     chatRoomListAdapter.removeItem(position);
                                                     Toast.makeText(getActivity(),"퇴장되었습니다.",Toast.LENGTH_LONG).show();
                                                 }
 
                                             } else {
+                                                if(response.code() == 404){
+                                                    final Snackbar snackbar = Snackbar.make(v,"방장은 거래를 나갈 수 없습니다.\n" + "채팅방-더보기-나눔파기를 통해 나눔을 파기해주세요.", Snackbar.LENGTH_INDEFINITE);
+                                                    snackbar.setAction("확인", new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View v) {
+                                                            snackbar.dismiss();
+                                                        }
+                                                    });
+
+                                                    TextView tvs = snackbar.getView().findViewById(com.google.android.material.R.id.snackbar_text);
+
+                                                    tvs.setTextSize(13);
+
+                                                    snackbar.show();
+
+                                                }else if(response.code() == 403){
+
+                                                    Toast.makeText(getActivity(),"퇴장되었습니다.",Toast.LENGTH_LONG).show();
+
+
+                                                }else{
                                                 Log.d("실패", new Gson().toJson(response.errorBody()));
                                                 Log.d("실패", response.toString());
                                                 Log.d("실패", String.valueOf(response.code()));
                                                 Log.d("실패", response.message());
                                                 Log.d("실패", String.valueOf(response.raw().request().url().url()));
                                                 Log.d("실패", new Gson().toJson(response.raw().request()));
+                                                }
 
                                             }
                                         }
@@ -155,8 +157,6 @@ public class ChattingFragment extends Fragment {
                                         }
                                     });
 
-
-                                }
 
                             }
                         }).show();

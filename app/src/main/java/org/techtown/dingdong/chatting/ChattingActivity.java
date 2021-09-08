@@ -1,8 +1,11 @@
 package org.techtown.dingdong.chatting;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,9 +15,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,6 +33,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.home.EditActivity;
 import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
@@ -55,8 +62,9 @@ import ua.naiksoftware.stomp.dto.StompMessage;
 public class ChattingActivity extends AppCompatActivity implements ChattingBottomDialogFragment.onInteractionListener{
     private ArrayList<Chat> chats = new ArrayList<>();
     private RecyclerView recycler_chat;
-    private TextView tv_people, tv_title;
-    private ImageView img_people;
+    private LinearLayout sec_info;
+    private TextView tv_people, tv_title, tv_info;
+    private ImageView img_people, btn_alarm;
     private ImageButton btn_plus, btn_send, btn_back;
     private EditText et_message;
     private LinearLayout view_plus;
@@ -65,7 +73,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
     Uri imageUri;
     private String message, username, userprofile, isowner="false";
     private String id = "1";
-    private Boolean ismaster = true;
+    private Boolean ismaster = true, isvisible = false;
     ChattingBottomDialogFragment chattingBottomDialogFragment;
     private Gson gson;
     public static String WS_URL = "ws://3.38.61.13:8080/ws-stomp/websocket";
@@ -75,6 +83,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
     CompositeDisposable compositeDisposable;
     private static final Pattern PATTERN_HEADER = Pattern.compile("([^:\\n\\r]+)\\s*:\\s*([^:\\n\\r]+)");
     Boolean isUnexpectedClosed;
+    final int PERMISSIONS_REQUEST = 1005;
 
 
 
@@ -210,9 +219,13 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         tv_people = findViewById(R.id.tv_people);
         img_people = findViewById(R.id.btn_people);
         tv_title = findViewById(R.id.tv_title);
+        tv_info = findViewById(R.id.tv_info);
+        sec_info = findViewById(R.id.sec_info);
+        btn_alarm = findViewById(R.id.btn_alarm);
 
         initChatRoom(token);
         setChats(token);
+        //getInfo(token);
 
         img_people.setOnClickListener(new View.OnClickListener()
 
@@ -278,9 +291,26 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                         //recycler_chat.scrollToPosition(chatAdapter.getItemCount() - 1);
                     }
                     });
-
+        btn_alarm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isvisible == true){
+                    //텍스트뷰가 보이는 상태일때
+                    tv_info.setVisibility(View.GONE);
+                    sec_info.setBackgroundColor(Color.parseColor("#00000000"));
+                    isvisible = false;
+                }
+                else{
+                    tv_info.setVisibility(View.VISIBLE);
+                    sec_info.setBackgroundColor(Color.parseColor("#B2FFE2"));
+                    isvisible = true;
 
                 }
+            }
+        });
+
+
+    }
 
     private void addItem(Chat chat){
         chats.add(chat);
@@ -343,10 +373,20 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
     public void onButtonChoice(int choice) {
         switch (choice){
             case 1:
+                int permisson = ContextCompat.checkSelfPermission(ChattingActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                if (permisson == PackageManager.PERMISSION_DENIED){
+                    if(ActivityCompat.shouldShowRequestPermissionRationale(ChattingActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+
+                    }else{
+                        ActivityCompat.requestPermissions(ChattingActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST);
+                    }
+
+                }else{
                 Intent intent1 = new Intent(Intent.ACTION_PICK);
                 intent1.setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
                 startActivityForResult(intent1, OPEN_GALLERY);
                 chattingBottomDialogFragment.dismiss();
+                }
                 break;
             case 2:
                 Intent intent2 = new Intent(ChattingActivity.this,PlanningActivity.class);
@@ -533,6 +573,66 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
             }
         });
 
+    }
+
+    public void getInfo(Token token){
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, ChattingActivity.this);
+        Call<ChatPromiseResponse> call = apiinterface.getPromise(Integer.parseInt(id));
+        call.enqueue(new Callback<ChatPromiseResponse>() {
+            @Override
+            public void onResponse(Call<ChatPromiseResponse> call, Response<ChatPromiseResponse> response) {
+                if(response.isSuccessful() && response.body() != null) {
+                    if (response.body().getResult().equals("CHAT_PROMISE_READ_SUCCESS")) {
+                        ChatPromiseResponse res = response.body();
+                        Log.d("성공", new Gson().toJson(res));
+                        String date = res.getData().getPromiseDate();
+                        String hour = res.getData().getPromiseTime().substring(0,2);
+                        String min = res.getData().getPromiseTime().substring(3,5);
+                        String local = res.getData().getPromiseLocal();
+                        String info = date + ", " + hour + "시 " + min + "분에 " + local + "에서 만나요";
+                        tv_info.setVisibility(View.VISIBLE);
+                        sec_info.setBackgroundColor(Color.parseColor("#B2FFE2"));
+                        isvisible = true;
+                        tv_info.setText(info);
+
+                    }
+                }else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ChatPromiseResponse> call, Throwable t) {
+
+                Log.d("외않되", String.valueOf(t));
+
+            }
+        });
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Toast.makeText(ChattingActivity.this,"승인이 허가되었습니다.",Toast.LENGTH_LONG).show();
+                }
+                else{
+                    Toast.makeText(ChattingActivity.this,"승인이 허가되어 있지 않습니다. 설정 - 권한에서 설정해주세요. ",Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+        }
     }
 
 

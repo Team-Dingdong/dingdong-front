@@ -113,12 +113,12 @@
             </androidx.recyclerview.widget.RecyclerView>
 
             <LinearLayout
-                android:visibility="gone"
-                android:background="@color/mint"
+                android:id="@+id/sec_info"
                 android:layout_width="match_parent"
                 android:layout_height="72dp">
 
                 <ImageView
+                    android:id="@+id/btn_alarm"
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -126,6 +126,8 @@
                 </ImageView>
 
                 <TextView
+                    android:id="@+id/tv_info"
+                    android:visibility="gone"
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

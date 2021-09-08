@@ -1,5 +1,7 @@
 package org.techtown.dingdong.network;
 
+import org.techtown.dingdong.chatting.ChatPromiseRequest;
+import org.techtown.dingdong.chatting.ChatPromiseResponse;
 import org.techtown.dingdong.chatting.ChatResponse;
 import org.techtown.dingdong.chatting.ChatRoomInformResponse;
 import org.techtown.dingdong.chatting.ChatRoomResponse;
@@ -110,6 +112,11 @@ public interface Apiinterface {
     @POST("/api/v1/chat/room/{id}")
     Call<ResponseBody> enterChatRoom(@Path("id") int id);
 
+    @GET("/api/v1/chat/promise/{id}")
+    Call<ChatPromiseResponse> getPromise(@Path("id") int id);
+
+    @PATCH("/api/v1/chat/promise/{id}")
+    Call<ResponseBody> setPromise(@Path("id") int id, @Body ChatPromiseRequest chatPromiseRequest);
 
 
     //@POST("/api/v1/auth")

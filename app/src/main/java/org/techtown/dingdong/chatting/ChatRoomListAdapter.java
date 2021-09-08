@@ -66,7 +66,7 @@ public class ChatRoomListAdapter extends RecyclerView.Adapter<ChatRoomListAdapte
         holder.title.setText(chatRoom.getTitle());
         holder.personnel.setText(chatRoom.getPersonnel());
         holder.latestmsg.setText(chatRoom.getLastMsg());
-        //holder.latesttime.setText(calcDate(chatRoom.getLastChatTime()));
+        holder.latesttime.setText(calcDate(chatRoom.getLastChatTime()));
         Glide.with(holder.img.getContext())
                 .load(chatRoom.getImage())
                 .into(holder.img);
@@ -109,6 +109,7 @@ public class ChatRoomListAdapter extends RecyclerView.Adapter<ChatRoomListAdapte
     }
 
     public String calcDate(String date){
+        if(date != null){
         String time = date;
         String result;
         time = time.substring(0,10) + " " +time.substring(11,19);
@@ -131,6 +132,7 @@ public class ChatRoomListAdapter extends RecyclerView.Adapter<ChatRoomListAdapte
             result = Integer.toString((int) mymin) + "분" + "전";
         }
 
-        return result;
+        return result;}
+        else return null;
     }
 }
