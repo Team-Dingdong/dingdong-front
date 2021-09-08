@@ -79,7 +79,7 @@ public interface Apiinterface {
 
     @Multipart
     @PATCH("/api/v1/upload/post/{id}")
-    Call<ResponseBody> uploadImg(@Part ArrayList<MultipartBody.Part> files, @PartMap HashMap<String, RequestBody> partmap, @Path("id") int id);
+    Call<ResponseBody> uploadImg(@Part ArrayList<MultipartBody.Part> files, @Path("id") int id);
     //Call<ResponseBody> uploadImg(@PartMap HashMap<String, RequestBody> partmap, @Path("id") int id);
 
 

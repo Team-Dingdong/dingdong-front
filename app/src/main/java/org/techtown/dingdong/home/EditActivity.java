@@ -759,9 +759,9 @@ public class EditActivity extends AppCompatActivity {
                         //MultipartBody.Part part = uriToMultipart(uriList.get(i),Integer.toString((int) System.currentTimeMillis()).replace("-", ""),EditActivity.this.getContentResolver());
                         Log.d("uploadimg","reuploading");
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), uriList.get(i).toString());
-                        hashMap.put("image_urls",requestBody);
+                        //hashMap.put("image_urls",requestBody);
                         //uplist.add(MultipartBody.Part.createFormData("image_urls", String.valueOf(requestBody)));
-                        //uplist.add(MultipartBody.Part.createFormData("image_urls","name",requestBody));
+                        uplist.add(MultipartBody.Part.createFormData("image_urls",requestBody.toString()));
 
                     }
                     //files.add(file);
@@ -773,7 +773,7 @@ public class EditActivity extends AppCompatActivity {
             //Collections.reverse(hashMap);
             //uplist.addAll(upurl);
             Apiinterface apiinterface = Api.createService(Apiinterface.class, token, EditActivity.this);
-            Call<ResponseBody> call = apiinterface.uploadImg(uplist, hashMap, id);
+            Call<ResponseBody> call = apiinterface.uploadImg(uplist, id);
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
