@@ -683,7 +683,9 @@ public class EditActivity extends AppCompatActivity {
     public static MultipartBody.Part uriToMultipart(final Uri uri, String name, final ContentResolver contentResolver){
         final Cursor c = contentResolver.query(uri, null, null, null, null);
         if(c != null){
+            Log.d("uploadimg","어디");
             if(c.moveToNext()){
+                Log.d("uploadimg","안되는거");
                 final String displayName = c.getString(c.getColumnIndex(OpenableColumns.DISPLAY_NAME));
                 RequestBody requestBody = new RequestBody() {
                     @org.jetbrains.annotations.Nullable
@@ -697,10 +699,12 @@ public class EditActivity extends AppCompatActivity {
                         sink.writeAll(Okio.source(contentResolver.openInputStream(uri)));
                     }
                 };
+                Log.d("uploadimg","정상저장");
                 c.close();
                 return MultipartBody.Part.createFormData("files", name, requestBody);
             } else{
                 c.close();
+                Log.d("uploadimg","close");
                 return null;
             }
         } else {
@@ -733,10 +737,9 @@ public class EditActivity extends AppCompatActivity {
                         uplist.add(MultipartBody.Part.createFormData("files", file.getName(), requestBody));
                     }
                     else{
-                        MultipartBody.Part part = uriToMultipart(uriList.get(i),Integer.toString((int) System.currentTimeMillis()).replace("-", ""),EditActivity.this.getContentResolver());
+                        //MultipartBody.Part part = uriToMultipart(uriList.get(i),Integer.toString((int) System.currentTimeMillis()).replace("-", ""),EditActivity.this.getContentResolver());
                         Log.d("uploadimg","reuploading");
-                        uplist.add(part);
-
+                        uplist.add(MultipartBody.Part.createFormData("files",uriList.get(i).toString()));
                     }
                     //files.add(file);
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -52,6 +54,8 @@ public class Tab4Fragment extends Fragment {
     ArrayList<Share> createdList = new ArrayList<>();
     ArrayList<Share> endtimeList = new ArrayList<>();
     Token token;
+    NestedScrollView nestedScrollView;
+    ProgressBar pgbar;
 
 
     public Tab4Fragment() {
@@ -93,6 +97,8 @@ public class Tab4Fragment extends Fragment {
         sharelistrecycler = v.findViewById(R.id.sharelist);
         btn_trans = v.findViewById(R.id.trans);
         tv_align = v.findViewById(R.id.tv_align);
+        nestedScrollView = v.findViewById(R.id.scrollView);
+        pgbar = v.findViewById(R.id.pgbar);
 
         SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         String access = pref.getString("oauth.accesstoken","");
@@ -103,6 +109,25 @@ public class Tab4Fragment extends Fragment {
         token = new Token(access,refresh,expire,tokentype);
 
         Log.d("토큰", String.valueOf(access));
+
+        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if(scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()){
+                    page ++;
+                    pgbar.setVisibility(View.VISIBLE);
+                    if(trans){
+                        //최신순 병렬일때
+                        setCreatedData(token);
+
+                    }else{
+                        //마감임박순 병렬일때
+                        setEndTimeData(token);
+                    }
+
+                }
+            }
+        });
 
 
         setCreatedData(token);
@@ -157,6 +182,8 @@ public class Tab4Fragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
+                        pgbar.setVisibility(View.GONE);
+
                         if(page == 0){
                             endtimeList = res.getData().getShare();
                             //String json = new Gson().toJson(res.getData().getShare());
@@ -202,6 +229,8 @@ public class Tab4Fragment extends Fragment {
                     if(response.body().getResult().equals("POST_READ_SUCCESS")){
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
+
+                        pgbar.setVisibility(View.GONE);
 
                         if(page == 0){
                             createdList = res.getData().getShare();

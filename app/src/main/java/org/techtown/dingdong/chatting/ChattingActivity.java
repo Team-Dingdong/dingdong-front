@@ -625,10 +625,10 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         switch (requestCode) {
             case PERMISSIONS_REQUEST: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    Toast.makeText(ChattingActivity.this,"승인이 허가되어 있습니다.",Toast.LENGTH_LONG).show();
+                    Toast.makeText(ChattingActivity.this,"승인이 허가되었습니다.",Toast.LENGTH_LONG).show();
                 }
                 else{
-                    Toast.makeText(ChattingActivity.this,"승인이 허가되어 있지 않습니다.",Toast.LENGTH_LONG).show();
+                    Toast.makeText(ChattingActivity.this,"승인이 허가되어 있지 않습니다. 설정 - 권한에서 설정해주세요. ",Toast.LENGTH_LONG).show();
                 }
                 return;
             }
