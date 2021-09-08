@@ -117,7 +117,7 @@ public class ChattingFragment extends Fragment {
                                                 }
 
                                             } else {
-                                                if(response.code() == 404){
+                                                if(response.code() == 403){
                                                     final Snackbar snackbar = Snackbar.make(v,"방장은 거래를 나갈 수 없습니다.\n" + "채팅방-더보기-나눔파기를 통해 나눔을 파기해주세요.", Snackbar.LENGTH_INDEFINITE);
                                                     snackbar.setAction("확인", new View.OnClickListener() {
                                                         @Override
@@ -132,9 +132,9 @@ public class ChattingFragment extends Fragment {
 
                                                     snackbar.show();
 
-                                                }else if(response.code() == 403){
+                                                }else if(response.code() == 404){
 
-                                                    Toast.makeText(getActivity(),"퇴장되었습니다.",Toast.LENGTH_LONG).show();
+                                                    Toast.makeText(getActivity(),"해당 사용자가 채팅방에 속해 있지 않습니다",Toast.LENGTH_LONG).show();
 
 
                                                 }else{

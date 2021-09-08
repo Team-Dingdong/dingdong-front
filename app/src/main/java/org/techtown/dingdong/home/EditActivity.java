@@ -71,6 +71,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -427,7 +430,12 @@ public class EditActivity extends AppCompatActivity {
                 if(response.isSuccessful()){
                     Log.d("성공","수정이완료됨");
 
-                    uploadImage(token, Integer.parseInt(id));
+                    try {
+                        uploadImage(token, Integer.parseInt(id));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        onfinish(1);
+                    }
 
                 }else{
                     Log.d("실패", new Gson().toJson(response.errorBody()));
@@ -470,7 +478,12 @@ public class EditActivity extends AppCompatActivity {
                    String resId = res.getId();
                    Log.d("성공",resId);
 
-                   uploadImage(token, Integer.parseInt(resId));
+                    try {
+                        uploadImage(token, Integer.parseInt(resId));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        onfinish(1);
+                    }
 
                 }else{
                     Log.d("실패", new Gson().toJson(response.errorBody()));
@@ -714,8 +727,9 @@ public class EditActivity extends AppCompatActivity {
 
     }
 
-    private void uploadImage(Token token, int id) {
+    private void uploadImage(Token token, int id) throws IOException {
 
+        if(!imageUploadAdapter.getData().isEmpty()){
         imgList = imageUploadAdapter.getData();
         uriList = new ArrayList<>();
         for (int i=0; i<imgList.size(); i++){
@@ -725,21 +739,30 @@ public class EditActivity extends AppCompatActivity {
 
         if(uriList.size() != 0) {
             ArrayList<MultipartBody.Part> uplist = new ArrayList<>();
+            HashMap<String, RequestBody> hashMap = new HashMap<>();
+            //ArrayList<MultipartBody.Part> upurl = new ArrayList<>();
             //ArrayList<File> files = new ArrayList<>();
             for (int i = 0; i < uriList.size(); i++) {
                 try {
-                    if(!uriList.get(i).toString().contains("dingdongbucket")) {
+                    if(!uriList.get(i).toString().contains("amazonaws")) {
+                        Log.d("1",uriList.get(i).toString());
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(EditActivity.this.getContentResolver(), uriList.get(i));
                         File file = getResize(bitmap, Integer.toString((int) System.currentTimeMillis()).replace("-", ""));
                         Log.d("uploadimg","resizing");
                         Log.d("uploadimg", "file == " + file.getName());
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-                        uplist.add(MultipartBody.Part.createFormData("files", file.getName(), requestBody));
+                        //hashMap.put("postImages", requestBody);
+                        uplist.add(MultipartBody.Part.createFormData("postImages", file.getName(), requestBody));
                     }
                     else{
+                        Log.d("2",uriList.get(i).toString());
                         //MultipartBody.Part part = uriToMultipart(uriList.get(i),Integer.toString((int) System.currentTimeMillis()).replace("-", ""),EditActivity.this.getContentResolver());
                         Log.d("uploadimg","reuploading");
-                        uplist.add(MultipartBody.Part.createFormData("files",uriList.get(i).toString()));
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), uriList.get(i).toString());
+                        hashMap.put("image_urls",requestBody);
+                        //uplist.add(MultipartBody.Part.createFormData("image_urls", String.valueOf(requestBody)));
+                        //uplist.add(MultipartBody.Part.createFormData("image_urls","name",requestBody));
+
                     }
                     //files.add(file);
 
@@ -747,9 +770,10 @@ public class EditActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-
+            //Collections.reverse(hashMap);
+            //uplist.addAll(upurl);
             Apiinterface apiinterface = Api.createService(Apiinterface.class, token, EditActivity.this);
-            Call<ResponseBody> call = apiinterface.uploadImg(uplist, id);
+            Call<ResponseBody> call = apiinterface.uploadImg(uplist, hashMap, id);
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -792,6 +816,7 @@ public class EditActivity extends AppCompatActivity {
 
         }
         else{onfinish(1);}
+        }
 
 
     }

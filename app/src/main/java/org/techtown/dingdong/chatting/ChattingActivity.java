@@ -225,7 +225,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
 
         initChatRoom(token);
         setChats(token);
-        //getInfo(token);
+        getInfo(token);
 
         img_people.setOnClickListener(new View.OnClickListener()
 
