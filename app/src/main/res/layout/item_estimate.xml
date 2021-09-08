@@ -38,13 +38,12 @@
         android:layout_marginStart="28dp"
         android:layout_marginLeft="28dp"
         android:layout_marginTop="12dp"
-        android:background="@drawable/round"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintCircleRadius="@dimen/permission_dp_40"
         app:layout_constraintStart_toEndOf="@+id/iv_estimate"
         app:layout_constraintTop_toBottomOf="@+id/tv_estimate"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/ic_thumbsup_small"
+        app:srcCompat="@drawable/ic_thumbsup_regular"
         app:tint="#FFFFFF" />
 
     <ImageButton
@@ -53,7 +52,6 @@
         android:layout_height="60dp"
         android:layout_marginStart="20dp"
         android:layout_marginLeft="20dp"
-        android:background="@drawable/round"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ibtn_estimate_goob"
         app:layout_constraintTop_toBottomOf="@+id/tv_estimate"

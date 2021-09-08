@@ -25,12 +25,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.techtown.dingdong.BuildConfig;
+import org.techtown.dingdong.MainActivity;
 import org.techtown.dingdong.R;
 import org.techtown.dingdong.login_register.LoginActivity;
 import org.techtown.dingdong.login_register.LoginOrRegisterActivity;
 import org.techtown.dingdong.login_register.Token;
+import org.techtown.dingdong.mypage.Sales;
+import org.techtown.dingdong.mypage.SalesAdapter;
+import org.techtown.dingdong.mypage.mySalesFragment;
 import org.techtown.dingdong.mytown.changetownActivity;
 
 import org.techtown.dingdong.network.Api;
@@ -44,6 +50,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -64,7 +71,7 @@ public class profileFragment extends Fragment implements View.OnClickListener {
     private String mParam1;
     private String mParam2;
 
-    Button startbtn, townbtn;
+    Button startbtn, townbtn , sale;
 
     Button btn_img;
     TextView name, number_good, number_bad;
@@ -73,6 +80,10 @@ public class profileFragment extends Fragment implements View.OnClickListener {
     String nickname, img, bio;
     int good, bad;
     private int id_view;
+    RecyclerView rv_sell;
+    SalesAdapter salesAdapter;
+    ArrayList<Sales> saleslist= new ArrayList<>();
+    Token token;
 
     private static final int PICK_FROM_CAMERA = 0;
 
@@ -104,6 +115,7 @@ public class profileFragment extends Fragment implements View.OnClickListener {
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
+        ArrayList<Sales> saleslist= new ArrayList<>();
         return fragment;
     }
     private Button button;
@@ -125,17 +137,30 @@ public class profileFragment extends Fragment implements View.OnClickListener {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_profile, container, false);
         startbtn= rootView.findViewById(R.id.button);
         townbtn= rootView.findViewById(R.id.changetown);
+        sale =rootView.findViewById(R.id.button2);
         btn_img= rootView.findViewById(R.id.btn_img);
         name = rootView.findViewById(R.id.name);
         profile_img = rootView.findViewById(R.id.profile_img);
         number_good = rootView.findViewById(R.id.number_good);
         number_bad = rootView.findViewById(R.id.number_bad);
+        rv_sell = rootView.findViewById(R.id.rv_sell);
 
 
+        mySalesFragment mySalesFragment = new mySalesFragment();
+        MainActivity mainActivity =new MainActivity();
+
+
+        sale.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                ((MainActivity) getActivity()).replaceFragment(mySalesFragment);
+            }
+        });
         startbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), LoginActivity.class));
+                startActivity(new Intent(getActivity(), LoginOrRegisterActivity.class));
                 //startActivity(new Intent(getActivity(), LoginOrRegisterActivity.class));
             }
         });
@@ -161,17 +186,16 @@ public class profileFragment extends Fragment implements View.OnClickListener {
         Token token = new Token(access,refresh,expire,tokentype);
         Log.d("토큰", String.valueOf(access));
 
-        /*Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
-        Call<UserProfileResponse> call = apiinterface.getData();
+        Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
+        Call<UserProfileResponse> call = apiinterface.getUserProfile();
         call.enqueue(new Callback<UserProfileResponse>() {
                 @Override
                 public void onResponse(Call<UserProfileResponse> call, Response<UserProfileResponse> response) {
                     if (response.isSuccessful()) {
-                        if (response.body().getCode().equals("PROFILE_READ_SUCCESS")) {
+                        if (response.body().getResult().equals("PROFILE_READ_SUCCESS")) {
                             Log.d(TAG, "프로필 조회 성공");
                             nickname = response.body().getData().nickname;
-                            img = response.body().getData().profileImageUrl;
-                            bio = response.body().getData().profile_bio;
+                            img = response.body().getData().profileImg;
                             if(img != null) {
                                 try {
                                     URL url = new URL(img);
@@ -194,11 +218,13 @@ public class profileFragment extends Fragment implements View.OnClickListener {
                     }
                 }
 
-                @Override
-                public void onFailure(Call<ProfileResponse> call, Throwable t) {
+            @Override
+            public void onFailure(Call<UserProfileResponse> call, Throwable t) {
 
-                }
-            });*/
+            }
+
+
+            });
 
             //name.setText(nickname);
 
@@ -229,7 +255,17 @@ public class profileFragment extends Fragment implements View.OnClickListener {
 
 
             btn_img.setOnClickListener(this);*/
+
+            setDummy();
+
             return rootView;
+        }
+
+        public void setRecycler(RecyclerView recyclerView, ArrayList<Sales> saleslist){
+
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL, false));
+            SalesAdapter salesAdapter = new SalesAdapter(getActivity(), saleslist); //어댑터 수정해야함
+            recyclerView.setAdapter(salesAdapter);
         }
 
 
@@ -476,6 +512,16 @@ public class profileFragment extends Fragment implements View.OnClickListener {
 
         }
 
+        public void setDummy(){
+            ArrayList<Sales> dummy = new ArrayList<>();
+            dummy.add(new Sales("2021-01-01","감자를 나누고 싶어요","이미지","ㅇㅇ","5"));
+            dummy.add(new Sales("2021-01-01","감자를 나누고 싶어요","이미지","ㅇㅇ","5"));
+            dummy.add(new Sales("2021-01-01","감자를 나누고 싶어요","이미지","ㅇㅇ","5"));
+            dummy.add(new Sales("2021-01-01","감자를 나누고 싶어요","이미지","ㅇㅇ","5"));
+            dummy.add(new Sales("2021-01-01","감자를 나누고 싶어요","이미지","ㅇㅇ","5"));
+
+            setRecycler(rv_sell, dummy);
+        }
     }
 
 

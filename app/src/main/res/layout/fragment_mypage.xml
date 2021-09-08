@@ -1,15 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="it'mypage"
+    <Button
+        android:id="@+id/btn_mypage"
+        android:layout_width="413dp"
+        android:layout_height="160dp"
+        android:layout_marginTop="59dp"
+        android:background="#00FFFFFF"
+        android:text="Button"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/iv_mypage"
+        android:layout_width="124dp"
+        android:layout_height="122dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="40dp"
+        app:tint="#DADADA"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.129" />
+
+    <TextView
+        android:id="@+id/tv_mypage"
+        android:layout_width="174dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="52dp"
+        android:layout_marginRight="52dp"
+        android:text="닉네임"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/imageView7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.649" />
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="108dp"
+        app:tint="@color/blue"
+        app:layout_constraintEnd_toStartOf="@+id/tv_goobnum"
+        app:layout_constraintStart_toEndOf="@+id/iv_mypage"
+        app:layout_constraintTop_toTopOf="@+id/btn_mypage"
+        app:srcCompat="@drawable/ic_thumbsup_small" />
+
+    <TextView
+        android:id="@+id/tv_goobnum"
+        android:layout_width="31dp"
+        android:layout_height="21dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginLeft="64dp"
+        android:layout_marginTop="56dp"
+        android:text="63"
+        app:layout_constraintStart_toEndOf="@+id/iv_mypage"
+        app:layout_constraintTop_toBottomOf="@+id/tv_mypage" />
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="36dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginRight="100dp"
+        app:tint="@color/blue"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_mypage"
+        app:layout_constraintEnd_toEndOf="@+id/btn_mypage"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.935"
+        app:srcCompat="@drawable/ic_thumbsdown_small" />
+
+    <TextView
+        android:id="@+id/tv_badnum"
+        android:layout_width="36dp"
+        android:layout_height="23dp"
+        android:layout_marginTop="56dp"
+        android:text="9"
+        app:layout_constraintEnd_toEndOf="@+id/imgbtn_mypage"
+        app:layout_constraintHorizontal_bias="0.174"
+        app:layout_constraintStart_toEndOf="@+id/imageView7"
+        app:layout_constraintTop_toBottomOf="@+id/tv_mypage" />
+
+    <ImageButton
+        android:id="@+id/imgbtn_mypage"
+        android:layout_width="52dp"
+        android:layout_height="67dp"
+        android:layout_marginTop="108dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/iv_mypage"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/btn_keyboard_arrow_right" />
+
+    <Button
+        android:id="@+id/btn_town"
+        android:layout_width="345dp"
+        android:layout_height="53dp"
+        android:layout_marginTop="44dp"
+        android:text="동네변경"
+        android:textColor="#000000"
+        app:backgroundTint="@color/blue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_mypage" />
+
+    <Button
+        android:id="@+id/btn_change_userdata"
+        android:layout_width="345dp"
+        android:layout_height="53dp"
+        android:layout_marginTop="216dp"
+        android:text="회원정보 수정"
+        android:textColor="#000000"
+        app:backgroundTint="@color/blue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_mypage" />
+
+    <Button
+        android:id="@+id/btn_history"
+        android:layout_width="345dp"
+        android:layout_height="53dp"
+        android:layout_marginTop="128dp"
+        android:text="나의 판매/구매 내역"
+        android:textColor="#000000"
+        app:backgroundTint="@color/blue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_mypage" />
 </androidx.constraintlayout.widget.ConstraintLayout>
