@@ -46,10 +46,10 @@ public class PlanningActivity extends AppCompatActivity {
     private Button btn_finish;
     private TextView tv_info, tv_date, tv_time;
     private EditText et_place;
+    private String gettime, getlocal, getdate, getmin, gethour;
     private String y="yyyy", m="mm", d="dd", h="hh", mm="mm", place="place";
     private String date = y + "-" + m + "-" + d, time = h + "시 " + mm + "분";
     private String info = null;
-    private Boolean getp = false, gett = false, getd = false;
     private String id;
     private Token token;
 
@@ -81,10 +81,10 @@ public class PlanningActivity extends AppCompatActivity {
         btn_finish = findViewById(R.id.btn_finish);
 
 
-        tv_info.setText(null);
+        tv_info.setVisibility(View.GONE);
 
 
-        //getInfo(token);
+        getInfo(token);
 
 
 
@@ -103,9 +103,18 @@ public class PlanningActivity extends AppCompatActivity {
         DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+
+                if(monthOfYear< 10){
+                    m = "0" + Integer.toString(monthOfYear);
+                }else{
+                    m = Integer.toString(monthOfYear);
+                }
+                if(dayOfMonth < 10){
+                    d = "0" + Integer.toString(dayOfMonth);
+                }else{
+                    d = Integer.toString(dayOfMonth);
+                }
                 y = Integer.toString(year);
-                m = Integer.toString(monthOfYear);
-                d = Integer.toString(dayOfMonth);
 
 
                 date = y + "-" + m + "-" + d;
@@ -136,13 +145,21 @@ public class PlanningActivity extends AppCompatActivity {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
-                h = Integer.toString(hourOfDay);
+                if(hourOfDay < 10){
+                    h = "0" + Integer.toString(hourOfDay);
+                }else {
+                    h = Integer.toString(hourOfDay);
+                }
+                if(minute < 10){
+                    mm = "0" + Integer.toString(minute);
+                }else{
                 mm = Integer.toString(minute);
+                }
 
-                time = h + "시 " + mm + "분";
+                time = h + ":" + mm + ":00";
                 info = makeInfo(date, time, place);
                 tv_info.setText(info);
-                tv_time.setText(h + ":" + mm);
+                tv_time.setText(time);
                 //gett = true;
                 //setBtnFinish(gett, getd, getp);
 
@@ -196,6 +213,8 @@ public class PlanningActivity extends AppCompatActivity {
             }
         });
 
+        btn_finish.setEnabled(true);
+
 
         //#B2FFE2
 
@@ -203,6 +222,9 @@ public class PlanningActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(tv_date.getText().toString().length() > 0 && et_place.getText().toString().length() > 0 && tv_time.getText().toString().length() > 0){
+                    if(Integer.parseInt(mm) < 10){
+                        //gettime = h + ":" + mm + ":00";
+                    }
                     sendInfo(token);
 
                 }
@@ -218,6 +240,7 @@ public class PlanningActivity extends AppCompatActivity {
     }
 
     private String makeInfo(String date, String time, String place){
+        tv_info.setVisibility(View.VISIBLE);
         return date + ", " + time + "에 " + place + "에서";
     }
 
@@ -237,15 +260,18 @@ public class PlanningActivity extends AppCompatActivity {
                     if (response.body().getResult().equals("CHAT_PROMISE_READ_SUCCESS")) {
                         ChatPromiseResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
-                        String date = res.getData().getPromiseDate();
-                        String hour = res.getData().getPromiseTime().substring(0, 2);
-                        String min = res.getData().getPromiseTime().substring(3, 5);
-                        String local = res.getData().getPromiseLocal();
-                        String info = makeInfo(date, hour + "시 " + min + "분", local);
-                        tv_date.setText(date);
-                        tv_time.setText(hour + "시 " + min + "분");
+                        getdate = res.getData().getPromiseDate();
+                        gethour = res.getData().getPromiseTime().substring(0, 2);
+                        getmin = res.getData().getPromiseTime().substring(3, 5);
+                        Log.d("성공", date);
+
+                        et_place.setText(getlocal);
+                        gettime = gethour + "시 " + getmin + "분";
+                        getlocal = res.getData().getPromiseLocal();
+                        info = makeInfo(getdate, gettime, getlocal);
+                        tv_date.setText(getdate);
+                        tv_time.setText(gettime);
                         tv_info.setText(info);
-                        et_place.setText(local);
 
                     }
                 } else {

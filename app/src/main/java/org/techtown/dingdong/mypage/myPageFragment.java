@@ -1,6 +1,7 @@
 package org.techtown.dingdong.mypage;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import com.google.gson.Gson;
 
 import org.techtown.dingdong.BuildConfig;
+import org.techtown.dingdong.MainActivity;
 import org.techtown.dingdong.R;
 import org.techtown.dingdong.login_register.LoginRequest;
 import org.techtown.dingdong.login_register.LoginResponse;
@@ -28,6 +30,8 @@ import retrofit2.Response;
 
 
 public class myPageFragment extends Fragment {
+    Button btn;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -77,6 +81,14 @@ public class myPageFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_mypage, container, false);
 
         TextView tv = v.findViewById(R.id.textView);
+        btn = v.findViewById(R.id.btn);
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), ModifyInfoActivity.class));
+            }
+        });
 
 
         SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
