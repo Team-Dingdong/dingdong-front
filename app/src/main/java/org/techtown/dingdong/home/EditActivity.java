@@ -740,11 +740,12 @@ public class EditActivity extends AppCompatActivity {
         if(uriList.size() != 0) {
             ArrayList<MultipartBody.Part> uplist = new ArrayList<>();
             HashMap<String, RequestBody> hashMap = new HashMap<>();
-            ArrayList<MultipartBody.Part> upurl = new ArrayList<>();
+            //ArrayList<MultipartBody.Part> upurl = new ArrayList<>();
             //ArrayList<File> files = new ArrayList<>();
             for (int i = 0; i < uriList.size(); i++) {
                 try {
-                    if(!uriList.get(i).toString().contains("https")) {
+                    if(!uriList.get(i).toString().contains("amazonaws")) {
+                        Log.d("1",uriList.get(i).toString());
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(EditActivity.this.getContentResolver(), uriList.get(i));
                         File file = getResize(bitmap, Integer.toString((int) System.currentTimeMillis()).replace("-", ""));
                         Log.d("uploadimg","resizing");
@@ -754,6 +755,7 @@ public class EditActivity extends AppCompatActivity {
                         uplist.add(MultipartBody.Part.createFormData("postImages", file.getName(), requestBody));
                     }
                     else{
+                        Log.d("2",uriList.get(i).toString());
                         //MultipartBody.Part part = uriToMultipart(uriList.get(i),Integer.toString((int) System.currentTimeMillis()).replace("-", ""),EditActivity.this.getContentResolver());
                         Log.d("uploadimg","reuploading");
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), uriList.get(i).toString());
@@ -769,7 +771,7 @@ public class EditActivity extends AppCompatActivity {
                 }
             }
             //Collections.reverse(hashMap);
-            uplist.addAll(upurl);
+            //uplist.addAll(upurl);
             Apiinterface apiinterface = Api.createService(Apiinterface.class, token, EditActivity.this);
             Call<ResponseBody> call = apiinterface.uploadImg(uplist, hashMap, id);
             call.enqueue(new Callback<ResponseBody>() {
