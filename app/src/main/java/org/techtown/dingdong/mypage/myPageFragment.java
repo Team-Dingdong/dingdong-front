@@ -33,6 +33,9 @@ import retrofit2.Response;
 
 
 public class myPageFragment extends Fragment implements View.OnClickListener{
+
+    Button btn;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -114,6 +117,16 @@ public class myPageFragment extends Fragment implements View.OnClickListener{
         btn_history.setOnClickListener(this::onClick);
         btn_change_userdata.setOnClickListener(this::onClick);
         btn_setting.setOnClickListener(this::onClick);
+
+        btn = v.findViewById(R.id.btn);
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), ModifyInfoActivity.class));
+            }
+        });
+
 
 
         SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);

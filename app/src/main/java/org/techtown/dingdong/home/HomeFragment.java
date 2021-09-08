@@ -14,11 +14,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -66,7 +68,8 @@ public class HomeFragment extends Fragment {
     Token token;
     int page = 0;
     Boolean loading = false;
-
+    NestedScrollView nestedScrollView;
+    ProgressBar pgbar;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -126,6 +129,8 @@ public class HomeFragment extends Fragment {
         cat3 = v.findViewById(R.id.cat3);
         cat4 = v.findViewById(R.id.cat4);
         btn_search = v.findViewById(R.id.ic_search);
+        nestedScrollView = v.findViewById(R.id.scrollView);
+        pgbar = v.findViewById(R.id.pgbar);
 
         SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         String access = pref.getString("oauth.accesstoken","");
@@ -138,6 +143,26 @@ public class HomeFragment extends Fragment {
         Log.d("토큰", String.valueOf(access));
 
         setCreatedData(token);
+
+        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if(scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()){
+                    page ++;
+                    pgbar.setVisibility(View.VISIBLE);
+                    if(trans){
+                        //최신순 병렬일때
+                        setCreatedData(token);
+
+                    }else{
+                        //마감임박순 병렬일때
+                        setEndTimeData(token);
+                    }
+
+                }
+            }
+        });
+
 
 
         tv_align.setOnClickListener(new View.OnClickListener() {
@@ -296,6 +321,8 @@ public class HomeFragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
+                        pgbar.setVisibility(View.GONE);
+
                         if(page == 0){
                             createdList = res.getData().getShare();
                             setShareListRecycler(sharelistrecycler, createdList);
@@ -342,6 +369,8 @@ public class HomeFragment extends Fragment {
                     if(response.body().getResult().equals("POST_READ_SUCCESS")){
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
+
+                        pgbar.setVisibility(View.GONE);
 
                         if(page == 0){
                             endtimeList = res.getData().getShare();

@@ -1,5 +1,7 @@
 package org.techtown.dingdong.network;
 
+import org.techtown.dingdong.chatting.ChatPromiseRequest;
+import org.techtown.dingdong.chatting.ChatPromiseResponse;
 import org.techtown.dingdong.chatting.ChatResponse;
 import org.techtown.dingdong.chatting.ChatRoomInformResponse;
 import org.techtown.dingdong.chatting.ChatRoomResponse;
@@ -21,8 +23,10 @@ import org.techtown.dingdong.mypage.SalesResponse;
 import org.techtown.dingdong.profile.UserProfileResponse;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -32,6 +36,7 @@ import retrofit2.http.Multipart;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.PartMap;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -77,7 +82,8 @@ public interface Apiinterface {
 
     @Multipart
     @PATCH("/api/v1/upload/post/{id}")
-    Call<ResponseBody> uploadImg(@Part ArrayList<MultipartBody.Part> files, @Path("id") int id);
+    Call<ResponseBody> uploadImg(@Part ArrayList<MultipartBody.Part> files, @PartMap HashMap<String, RequestBody> partmap, @Path("id") int id);
+    //Call<ResponseBody> uploadImg(@PartMap HashMap<String, RequestBody> partmap, @Path("id") int id);
 
 
     @POST("/api/v1/auth")
@@ -113,6 +119,11 @@ public interface Apiinterface {
     @POST("/api/v1/chat/room/{id}")
     Call<ResponseBody> enterChatRoom(@Path("id") int id);
 
+    @GET("/api/v1/chat/promise/{id}")
+    Call<ChatPromiseResponse> getPromise(@Path("id") int id);
+
+    @PATCH("/api/v1/chat/promise/{id}")
+    Call<ResponseBody> setPromise(@Path("id") int id, @Body ChatPromiseRequest chatPromiseRequest);
 
 
     //@POST("/api/v1/auth")
