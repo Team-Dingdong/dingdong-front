@@ -58,9 +58,9 @@ public class Share {
     @SerializedName("profileImageUrl")
     @Expose
     private String profileImg;
-    @SerializedName("tagList")
+    @SerializedName("tags")
     @Expose
-    private List<String> hashtag;
+    private List<String> hashtag = null;
     @SerializedName("category")
     @Expose
     private String category;

@@ -60,10 +60,10 @@ public interface Apiinterface {
     //Call<AuthResponse> setAuth(@Field("to") String ID);
 
     @GET("/api/v1/post/category/sorted_by=desc(endDate)/{id}")
-    Call<PostResponse> getEndCategoryData(@Path("id") int id);
+    Call<PostResponse> getEndCategoryData(@Path("id") int id, @Query("page") int num);
 
     @GET("/api/v1/post/category/sorted_by=desc(createdDate)/{id}")
-    Call<PostResponse> getCreatedCategoryData(@Path("id") int id);
+    Call<PostResponse> getCreatedCategoryData(@Path("id") int id, @Query("page") int num);
 
     @POST("/api/v1/post")
     Call<EditResponse> setPost(@Body PostRequest postRequest);

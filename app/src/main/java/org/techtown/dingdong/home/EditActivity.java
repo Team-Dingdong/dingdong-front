@@ -505,7 +505,6 @@ public class EditActivity extends AppCompatActivity {
             }
         });
 
-        //uploadImage(token, 2);
 
 
 
@@ -575,24 +574,17 @@ public class EditActivity extends AppCompatActivity {
                                 select_category.setSelection(0);
                                 break;
                         }
-                        //select_category.setSelection(2);
-                        //String json = new Gson().toJson(res.getData().getShare());
 
                         if(share.getImage1()!=null){
                         if(!share.getImage1().contains("default_post.png")){
 
                             imgList.add(share.getImage1());
 
-                            //uriList.add(Uri.parse(share.getImage1()));
-
                             if(!share.getImage2().contains("default_post.png")){
                                 imgList.add(share.getImage2());
-                                //uriList.add(Uri.parse(share.getImage2()));
                             }
                             if(!share.getImage3().contains("default_post.png")){
                                 imgList.add(share.getImage3());
-                                //uriList.add(Uri.parse(share.getImage3()));
-                                //!share.getImage3().equals("null")
                             }
 
                             //이미지 리사이클러뷰 세팅
@@ -635,7 +627,6 @@ public class EditActivity extends AppCompatActivity {
             if(data.getClipData() == null){
                 Log.e("single choice", String.valueOf(data.getData()));
                 Uri imageUri = data.getData();
-                //uriList.add(imageUri);
                 imgList.add(imageUri.toString());
 
                 imageUploadAdapter = new ImageUploadAdapter(imgList, getApplicationContext());
@@ -658,7 +649,6 @@ public class EditActivity extends AppCompatActivity {
                         Uri imageUri = clipData.getItemAt(i).getUri();
 
                         try{
-                            //uriList.add(imageUri);
                             imgList.add(imageUri.toString());
                         } catch (Exception e){
                             Log.e("MultiImageActivity", "File select error", e);
@@ -692,41 +682,6 @@ public class EditActivity extends AppCompatActivity {
     }
 
 
-
-    public static MultipartBody.Part uriToMultipart(final Uri uri, String name, final ContentResolver contentResolver){
-        final Cursor c = contentResolver.query(uri, null, null, null, null);
-        if(c != null){
-            Log.d("uploadimg","어디");
-            if(c.moveToNext()){
-                Log.d("uploadimg","안되는거");
-                final String displayName = c.getString(c.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                RequestBody requestBody = new RequestBody() {
-                    @org.jetbrains.annotations.Nullable
-                    @Override
-                    public MediaType contentType() {
-                        return MediaType.parse(contentResolver.getType(uri));
-                    }
-
-                    @Override
-                    public void writeTo(BufferedSink sink) throws IOException {
-                        sink.writeAll(Okio.source(contentResolver.openInputStream(uri)));
-                    }
-                };
-                Log.d("uploadimg","정상저장");
-                c.close();
-                return MultipartBody.Part.createFormData("files", name, requestBody);
-            } else{
-                c.close();
-                Log.d("uploadimg","close");
-                return null;
-            }
-        } else {
-            return null;
-        }
-
-
-    }
-
     private void uploadImage(Token token, int id) throws IOException {
 
         if(!imageUploadAdapter.getData().isEmpty()){
@@ -739,9 +694,7 @@ public class EditActivity extends AppCompatActivity {
 
         if(uriList.size() != 0) {
             ArrayList<MultipartBody.Part> uplist = new ArrayList<>();
-            HashMap<String, RequestBody> hashMap = new HashMap<>();
             ArrayList<MultipartBody.Part> upurl = new ArrayList<>();
-            //ArrayList<File> files = new ArrayList<>();
             for (int i = 0, j = 0; i < uriList.size(); i++) {
                 try {
                     if(!uriList.get(i).toString().contains("amazonaws")) {
@@ -751,29 +704,20 @@ public class EditActivity extends AppCompatActivity {
                         Log.d("uploadimg","resizing");
                         Log.d("uploadimg", "file == " + file.getName());
                         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-                        //hashMap.put("postImages", requestBody);
                         uplist.add(MultipartBody.Part.createFormData("postImages", file.getName(), requestBody));
                     }
                     else{
                         Log.d("2",uriList.get(i).toString());
-                        //MultipartBody.Part part = uriToMultipart(uriList.get(i),Integer.toString((int) System.currentTimeMillis()).replace("-", ""),EditActivity.this.getContentResolver());
                         Log.d("uploadimg","reuploading");
-                        //RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), uriList.get(i).toString());
-                        //hashMap.put("image_urls",requestBody);
-                        //MultipartBody.Part.create()
                         upurl.add(MultipartBody.Part.createFormData("image_urls", uriList.get(i).toString()));
-                        //uplist.add(MultipartBody.Part.createFormData("image_urls","image_urls",requestBody));
-                        //j++;
 
                     }
-                    //files.add(file);
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            //Collections.reverse(uplist);
-            //uplist.addAll(upurl);
+
             Apiinterface apiinterface = Api.createService(Apiinterface.class, token, EditActivity.this);
             Call<ResponseBody> call = apiinterface.uploadImg(uplist, upurl,id);
             call.enqueue(new Callback<ResponseBody>() {

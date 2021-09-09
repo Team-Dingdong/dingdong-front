@@ -296,6 +296,7 @@ public class ShareDetailActivity extends AppCompatActivity {
                                 .into(img_profile);
                         tv_category.setText(share.getCategory());
                         List<String> hashtag = share.getHashtag();
+
                         String str="";
                         for(int i=0; i < hashtag.size(); i++){
                             str += hashtag.get(i);
