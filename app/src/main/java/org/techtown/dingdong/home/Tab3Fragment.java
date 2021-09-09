@@ -189,9 +189,9 @@ public class Tab3Fragment extends Fragment {
                             //String json = new Gson().toJson(res.getData().getShare());
                             setShareListRecycler(sharelistrecycler, endtimeList);}
                         else{
-                            endtimeList.addAll(res.getData().getShare());
+                            endtimeList = res.getData().getShare();
                             //String json = new Gson().toJson(res.getData().getShare());
-                            shareListAdpater.notifyDataSetChanged();
+                            setShareListRecycler(sharelistrecycler, endtimeList);
                         }
                         Log.d("성공", new Gson().toJson(response.raw().request()));
 
@@ -238,9 +238,9 @@ public class Tab3Fragment extends Fragment {
                             setShareListRecycler(sharelistrecycler, createdList);
                         }
                         else{
-                            createdList.addAll(res.getData().getShare());
+                            createdList = res.getData().getShare();
                             //String json = new Gson().toJson(res.getData().getShare());
-                            shareListAdpater.notifyDataSetChanged();
+                            setShareListRecycler(sharelistrecycler, createdList);
 
                         }
                         Log.d("성공", new Gson().toJson(response.raw().request()));

@@ -9,6 +9,7 @@ import org.techtown.dingdong.login_register.LoginResponse;
 import org.techtown.dingdong.login_register.Token;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Authenticator;
 import okhttp3.Interceptor;
@@ -45,6 +46,8 @@ public class Api {
 
     public static <S> S createService(Class<S> serviceClass, Token accessToken, Context c) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+                /*.readTimeout(100, TimeUnit.SECONDS)
+                .writeTimeout(100, TimeUnit.SECONDS);*/
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create());

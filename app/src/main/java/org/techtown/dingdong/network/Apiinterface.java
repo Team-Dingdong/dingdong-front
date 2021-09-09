@@ -82,7 +82,7 @@ public interface Apiinterface {
 
     @Multipart
     @PATCH("/api/v1/upload/post/{id}")
-    Call<ResponseBody> uploadImg(@Part ArrayList<MultipartBody.Part> files, @PartMap HashMap<String, RequestBody> partmap, @Path("id") int id);
+    Call<ResponseBody> uploadImg(@Part ArrayList<MultipartBody.Part> files, @Part ArrayList<MultipartBody.Part> urls,@Path("id") int id);
     //Call<ResponseBody> uploadImg(@PartMap HashMap<String, RequestBody> partmap, @Path("id") int id);
 
 
@@ -122,8 +122,14 @@ public interface Apiinterface {
     @GET("/api/v1/chat/promise/{id}")
     Call<ChatPromiseResponse> getPromise(@Path("id") int id);
 
-    @PATCH("/api/v1/chat/promise/{id}")
+    @POST("/api/v1/chat/promise/vote/{id}")
+    Call<ResponseBody> votePromise(@Path("id") int id);
+
+    @POST("/api/v1/chat/promise/{id}")
     Call<ResponseBody> setPromise(@Path("id") int id, @Body ChatPromiseRequest chatPromiseRequest);
+
+    @PATCH("/api/v1/chat/promise/{id}")
+    Call<ResponseBody> setPatchPromise(@Path("id") int id, @Body ChatPromiseRequest chatPromiseRequest);
 
 
     //@POST("/api/v1/auth")
@@ -144,6 +150,7 @@ public interface Apiinterface {
 
     @POST("/api/v1/rating/{userId}")
     Call<EstimateResponse> EstimateRequest(@Body EstimateRequset estimateRequset);
+
 
 
 

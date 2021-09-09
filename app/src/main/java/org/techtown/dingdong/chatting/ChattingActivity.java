@@ -50,6 +50,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -59,7 +60,7 @@ import ua.naiksoftware.stomp.dto.StompCommand;
 import ua.naiksoftware.stomp.dto.StompHeader;
 import ua.naiksoftware.stomp.dto.StompMessage;
 
-public class ChattingActivity extends AppCompatActivity implements ChattingBottomDialogFragment.onInteractionListener{
+public class ChattingActivity extends AppCompatActivity implements ChattingBottomDialogFragment.onInteractionListener, ChattingAdapter.onListItemSelectedInterface{
     private ArrayList<Chat> chats = new ArrayList<>();
     private RecyclerView recycler_chat;
     private LinearLayout sec_info;
@@ -404,7 +405,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
 
 
     private void setChatRecycler(RecyclerView recyclerView, ArrayList<Chat> chats){
-        chatAdapter = new ChattingAdapter(chats, username);
+        chatAdapter = new ChattingAdapter(chats, username, this);
         chatAdapter.setHasStableIds(true);
         recyclerView.setAdapter(chatAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
@@ -575,6 +576,39 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
 
     }
 
+    public void votePromise(Token token){
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, ChattingActivity.this);
+        Call<ResponseBody> call = apiinterface.votePromise(Integer.parseInt(id));
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    if (response.code() == 200) {
+                        ResponseBody res = response.body();
+                        Log.d("성공", new Gson().toJson(res));
+                        Toast.makeText(ChattingActivity.this,"약속에 동의하셨습니다.",Toast.LENGTH_LONG).show();
+
+                    }
+                }else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                    Toast.makeText(ChattingActivity.this,"이미 기동의한 약속입니다.",Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("외않되", String.valueOf(t));
+
+            }
+        });
+
+    }
+
     public void getInfo(Token token){
         Apiinterface apiinterface = Api.createService(Apiinterface.class, token, ChattingActivity.this);
         Call<ChatPromiseResponse> call = apiinterface.getPromise(Integer.parseInt(id));
@@ -636,4 +670,8 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
     }
 
 
+    @Override
+    public void onItemSelected(View v) {
+        votePromise(token);
+    }
 }

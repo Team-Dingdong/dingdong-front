@@ -70,6 +70,7 @@ public class LoginActivity extends AppCompatActivity {
         toolbar3 = (androidx.appcompat.widget.Toolbar) findViewById(R.id.toolbar3);
 
 
+        /*
         //인텐트, 객체 받아오기
         Intent intent = getIntent();
         String phoneNumber = intent.getStringExtra("phoneNumber");
@@ -99,6 +100,8 @@ public class LoginActivity extends AppCompatActivity {
         };
 
         countDownTimer.start();
+
+         */
 
 
         //인증번호 6자리 입력하면 버튼 활성화
@@ -134,7 +137,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-                //String phoneNumber = "01011111111";
+                String phoneNumber = "01011111111";
                 LoginRequest loginRequest = new LoginRequest(phoneNumber, authNumber);
                 Apiinterface apiinterface = Api.createService(Apiinterface.class);
                 Call<LoginResponse> call = apiinterface.LoginRequest(loginRequest);
