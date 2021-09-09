@@ -35,14 +35,7 @@ import retrofit2.Response;
 //과일채소탭
 public class Tab1Fragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private RecyclerView sharelistrecycler;
     ShareListAdpater shareListAdpater;
@@ -67,10 +60,6 @@ public class Tab1Fragment extends Fragment {
 
     public static Tab1Fragment newInstance(String param1, String param2) {
         Tab1Fragment fragment = new Tab1Fragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -93,7 +82,7 @@ public class Tab1Fragment extends Fragment {
         String expire = pref.getString("oauth.expire","");
         String tokentype = pref.getString("oauth.tokentype","");
 
-        Token token = new Token(access,refresh,expire,tokentype);
+        token = new Token(access,refresh,expire,tokentype);
 
         Log.d("토큰", String.valueOf(access));
 
@@ -103,14 +92,16 @@ public class Tab1Fragment extends Fragment {
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                 if(scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()){
-                    page ++;
+                    if(loading == false) page++;
                     pgbar.setVisibility(View.VISIBLE);
                     if(trans){
                         //최신순 병렬일때
+                        loading = true;
                         setCreatedData(token);
 
                     }else{
                         //마감임박순 병렬일때
+                        loading = true;
                         setEndTimeData(token);
                     }
 
@@ -141,11 +132,6 @@ public class Tab1Fragment extends Fragment {
 
 
 
-
-        //setDummy();
-
-        //setShareListRecycler(sharelistrecycler, sharelist_deadline);
-
         return v;
     }
 
@@ -163,7 +149,7 @@ public class Tab1Fragment extends Fragment {
     public void setEndTimeData(Token token){
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
-        Call<PostResponse> call = apiinterface.getEndCategoryData(1);
+        Call<PostResponse> call = apiinterface.getEndCategoryData(1, page);
         call.enqueue(new Callback<PostResponse>() {
             @Override
             public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
@@ -176,14 +162,14 @@ public class Tab1Fragment extends Fragment {
 
                         if(page == 0){
                             endtimeList = res.getData().getShare();
-                            //String json = new Gson().toJson(res.getData().getShare());
-                            setShareListRecycler(sharelistrecycler, endtimeList);}
+                            setShareListRecycler(sharelistrecycler, endtimeList);
+                            loading = false;
+                        }
                         else{
                             endtimeList = res.getData().getShare();
-                            setShareListRecycler(sharelistrecycler, endtimeList);}
-                            //endtimeList.addAll(res.getData().getShare());
-                            //String json = new Gson().toJson(res.getData().getShare());
-                            //shareListAdpater.notifyDataSetChanged();
+                            setShareListRecycler(sharelistrecycler, endtimeList);
+                            loading = false;}
+
 
                         Log.d("성공", new Gson().toJson(response.raw().request()));
 
@@ -213,7 +199,7 @@ public class Tab1Fragment extends Fragment {
     public void setCreatedData(Token token){
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
-        Call<PostResponse> call = apiinterface.getCreatedCategoryData(1);
+        Call<PostResponse> call = apiinterface.getCreatedCategoryData(1, page);
         call.enqueue(new Callback<PostResponse>() {
             @Override
             public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
@@ -226,13 +212,13 @@ public class Tab1Fragment extends Fragment {
 
                         if(page == 0){
                             createdList = res.getData().getShare();
-                            //String json = new Gson().toJson(res.getData().getShare());
                             setShareListRecycler(sharelistrecycler, createdList);
+                            loading = false;
                         }
                         else{
-                            createdList.addAll(res.getData().getShare());
-                            //String json = new Gson().toJson(res.getData().getShare());
-                            shareListAdpater.notifyDataSetChanged();
+                            createdList = res.getData().getShare();
+                            setShareListRecycler(sharelistrecycler, createdList);
+                            loading = false;
 
                         }
                         Log.d("성공", new Gson().toJson(response.raw().request()));

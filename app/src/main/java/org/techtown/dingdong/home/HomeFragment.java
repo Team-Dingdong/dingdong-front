@@ -148,14 +148,16 @@ public class HomeFragment extends Fragment {
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                 if(scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()){
-                    page ++;
+                    if(loading == false) page++;
                     pgbar.setVisibility(View.VISIBLE);
                     if(trans){
                         //최신순 병렬일때
+                        loading = true;
                         setCreatedData(token);
 
                     }else{
                         //마감임박순 병렬일때
+                        loading = true;
                         setEndTimeData(token);
                     }
 
@@ -311,7 +313,7 @@ public class HomeFragment extends Fragment {
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
 
-        Call<PostResponse> call = apiinterface.getCreatedData(0);
+        Call<PostResponse> call = apiinterface.getCreatedData(page);
 
         call.enqueue(new Callback<PostResponse>() {
             @Override
@@ -324,12 +326,16 @@ public class HomeFragment extends Fragment {
                         pgbar.setVisibility(View.GONE);
 
                         if(page == 0){
+                            createdList = new ArrayList<>();
                             createdList = res.getData().getShare();
                             setShareListRecycler(sharelistrecycler, createdList);
+                            loading = false;
                         }
                         else{
+                            createdList = new ArrayList<>();
                             createdList = res.getData().getShare();
                             setShareListRecycler(sharelistrecycler, createdList);
+                            loading = false;
                             //String json = new Gson().toJson(res.getData().getShare());
                            // shareListAdpater.notifyDataSetChanged();
 
@@ -361,7 +367,7 @@ public class HomeFragment extends Fragment {
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
 
-        Call<PostResponse> call = apiinterface.getEndData(0);
+        Call<PostResponse> call = apiinterface.getEndData(page);
 
         call.enqueue(new Callback<PostResponse>() {
             @Override
@@ -374,10 +380,12 @@ public class HomeFragment extends Fragment {
                         pgbar.setVisibility(View.GONE);
 
                         if(page == 0){
+                            endtimeList = new ArrayList<>();
                             endtimeList = res.getData().getShare();
                             //String json = new Gson().toJson(res.getData().getShare());
                             setShareListRecycler(sharelistrecycler, endtimeList);}
                         else{
+                            endtimeList = new ArrayList<>();
                             endtimeList = res.getData().getShare();
                             setShareListRecycler(sharelistrecycler, endtimeList);
                             //endtimeList.addAll(res.getData().getShare());

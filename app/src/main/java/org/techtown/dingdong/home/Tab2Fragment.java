@@ -35,18 +35,9 @@ import retrofit2.Response;
 //육류계란탭
 public class Tab2Fragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     private RecyclerView sharelistrecycler;
     ShareListAdpater shareListAdpater;
-    private ArrayList<Share> sharelist_data, sharelist_latest, sharelist_deadline;
+    private ArrayList<Share> sharelist_data;
     private LinearLayout btn_trans;
     private TextView tv_align;
     private Boolean trans = true;
@@ -54,40 +45,24 @@ public class Tab2Fragment extends Fragment {
     ArrayList<Share> endtimeList = new ArrayList<>();
     Token token;
     int page = 0;
-    Boolean loading = false;
     NestedScrollView nestedScrollView;
     ProgressBar pgbar;
+    Boolean loading;
 
 
     public Tab2Fragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Tab2Fragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static Tab2Fragment newInstance(String param1, String param2) {
         Tab2Fragment fragment = new Tab2Fragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -107,7 +82,7 @@ public class Tab2Fragment extends Fragment {
         String expire = pref.getString("oauth.expire","");
         String tokentype = pref.getString("oauth.tokentype","");
 
-        Token token = new Token(access,refresh,expire,tokentype);
+        token = new Token(access,refresh,expire,tokentype);
 
         Log.d("토큰", String.valueOf(access));
 
@@ -115,14 +90,16 @@ public class Tab2Fragment extends Fragment {
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                 if(scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()){
-                    page ++;
+                    if(loading == false) page++;
                     pgbar.setVisibility(View.VISIBLE);
                     if(trans){
                         //최신순 병렬일때
+                        loading = true;
                         setCreatedData(token);
 
                     }else{
                         //마감임박순 병렬일때
+                        loading = true;
                         setEndTimeData(token);
                     }
 
@@ -178,7 +155,7 @@ public class Tab2Fragment extends Fragment {
     public void setEndTimeData(Token token){
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
-        Call<PostResponse> call = apiinterface.getEndCategoryData(2);
+        Call<PostResponse> call = apiinterface.getEndCategoryData(2, page);
         call.enqueue(new Callback<PostResponse>() {
             @Override
             public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
@@ -191,12 +168,13 @@ public class Tab2Fragment extends Fragment {
 
                         if(page == 0){
                             endtimeList = res.getData().getShare();
-                            //String json = new Gson().toJson(res.getData().getShare());
-                            setShareListRecycler(sharelistrecycler, endtimeList);}
+                            setShareListRecycler(sharelistrecycler, endtimeList);
+                            loading = false;
+                        }
                         else{
                             endtimeList = res.getData().getShare();
-                            //String json = new Gson().toJson(res.getData().getShare());
                             setShareListRecycler(sharelistrecycler, endtimeList);
+                            loading = false;
                         }
                         Log.d("성공", new Gson().toJson(response.raw().request()));
 
@@ -226,7 +204,7 @@ public class Tab2Fragment extends Fragment {
     public void setCreatedData(Token token){
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
-        Call<PostResponse> call = apiinterface.getCreatedCategoryData(2);
+        Call<PostResponse> call = apiinterface.getCreatedCategoryData(2, page);
         call.enqueue(new Callback<PostResponse>() {
             @Override
             public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
@@ -239,13 +217,13 @@ public class Tab2Fragment extends Fragment {
 
                         if(page == 0){
                             createdList = res.getData().getShare();
-                            //String json = new Gson().toJson(res.getData().getShare());
                             setShareListRecycler(sharelistrecycler, createdList);
+                            loading = false;
                         }
                         else{
                             createdList = res.getData().getShare();
-                            //String json = new Gson().toJson(res.getData().getShare());
                             setShareListRecycler(sharelistrecycler, createdList);
+                            loading = false;
 
                         }
                         Log.d("성공", new Gson().toJson(response.raw().request()));
@@ -273,24 +251,4 @@ public class Tab2Fragment extends Fragment {
 
     }
 
-    public void setDummy(){/*
-        sharelist_latest = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            sharelist_latest.add(new Share("감자를 나누고 싶어요",new String[]{
-                    "https://cdn.pixabay.com/photo/2019/12/26/10/44/horse-4720178_1280.jpg",
-                    "https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                    "https://cdn.pixabay.com/photo/2014/03/03/16/15/mosque-279015_1280.jpg"
-            }, "감자를 제발 나눠주고 싶네요 \n 집에 너무 많아가지고 힘들어요...","7분전","#감자 #나눠요","20,000","노원구청앞",4,2));
-        }
-
-        sharelist_deadline = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            sharelist_deadline.add(new Share("양파를 나누고 싶어요",new String[]{
-                    "https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                    "https://cdn.pixabay.com/photo/2019/12/26/10/44/horse-4720178_1280.jpg",
-                    "https://cdn.pixabay.com/photo/2014/03/03/16/15/mosque-279015_1280.jpg"
-            }, "감자를 제발 나눠주고 싶네요 \n 집에 너무 많아가지고 힘들어요...","7분전","#양파 #나눠요","10,000","울집앞",4,3));
-        }*/
-
-    }
 }
