@@ -75,7 +75,8 @@
 
     <LinearLayout
         android:id="@+id/linearLayout9"
-        android:layout_width="wrap_content"
+        android:layout_width="265dp"
+        android:layout_marginTop="5dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="18dp"
         android:layout_marginLeft="18dp"
@@ -84,13 +85,13 @@
 
         <TextView
             android:id="@+id/tv_msg"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/noto_sans"
             android:text="감자를 나누고 싶어요진짜"
             android:textColor="#000000"
             android:textFontWeight="400"
-            android:textSize="17dp" />
+            android:textSize="13dp" />
 
 
     </LinearLayout>

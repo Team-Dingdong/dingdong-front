@@ -328,9 +328,10 @@ public class HomeFragment extends Fragment {
                             setShareListRecycler(sharelistrecycler, createdList);
                         }
                         else{
-                            createdList.addAll(res.getData().getShare());
+                            createdList = res.getData().getShare();
+                            setShareListRecycler(sharelistrecycler, createdList);
                             //String json = new Gson().toJson(res.getData().getShare());
-                            shareListAdpater.notifyDataSetChanged();
+                           // shareListAdpater.notifyDataSetChanged();
 
                         }
 
@@ -377,9 +378,11 @@ public class HomeFragment extends Fragment {
                             //String json = new Gson().toJson(res.getData().getShare());
                             setShareListRecycler(sharelistrecycler, endtimeList);}
                         else{
-                            endtimeList.addAll(res.getData().getShare());
+                            endtimeList = res.getData().getShare();
+                            setShareListRecycler(sharelistrecycler, endtimeList);
+                            //endtimeList.addAll(res.getData().getShare());
                             //String json = new Gson().toJson(res.getData().getShare());
-                            shareListAdpater.notifyDataSetChanged();
+                            //shareListAdpater.notifyDataSetChanged();
                         }
 
                     }

@@ -19,4 +19,5 @@ public class ChatPromiseRequest {
         this.promiseTime = promiseTime;
         this.promiseLocal = promiseLocal;
     }
+
 }

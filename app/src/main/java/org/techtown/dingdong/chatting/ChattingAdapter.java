@@ -32,12 +32,17 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
     private ArrayList<Chat> myChatList;
     private String prev = "0";
     private String username;
+    private onListItemSelectedInterface listener;
 
-    public ChattingAdapter(ArrayList<Chat> myChatList, String username) {
+    public ChattingAdapter(ArrayList<Chat> myChatList, String username, onListItemSelectedInterface listener ) {
         this.myChatList = myChatList;
         this.username = username;
+        this.listener = listener;
     }
 
+    public interface onListItemSelectedInterface{
+        void onItemSelected(View v);
+    }
 
     @NonNull
     @NotNull
@@ -182,6 +187,12 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
                     .load(myChatList.get(position).getProfile())
                     .into(((ChattingAdapter.LeftPLANViewHolder) holder).profile);
             ((ChattingAdapter.LeftPLANViewHolder)holder).tv_info.setText(myChatList.get(position).getContent());
+            ((LeftPLANViewHolder)holder).btn_ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemSelected(v);
+                }
+            });
             if(myChatList.get(position).getOwner().equals("TRUE")){
                 ((ChattingAdapter.LeftPLANViewHolder)holder).master.setVisibility(View.VISIBLE);
         } }
@@ -205,11 +216,26 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
 
     @Override
     public int getItemViewType(int position) {
-        if(myChatList.get(position).getType().equals("ENTER")){
+        if(myChatList.get(position).getType().equals("ENTER") || myChatList.get(position).getType().equals("PROMISE_CONFIRMED")){
             return ChatType.ViewType.CENTER_CONTENT;
         }
-        else if(myChatList.get(position).getName().equals(username)){
+        else if(myChatList.get(position).getName().equals(username) && myChatList.get(position).getType().equals("TALK")){
             return ChatType.ViewType.RIGHT_CONTENT;
+        }
+        else if(myChatList.get(position).getName().equals(username) && myChatList.get(position).getType().equals("PROMISE")){
+            return ChatType.ViewType.RIGHT_CONTENT_PLAN;
+        }
+        else if(!myChatList.get(position).getName().equals(username) && myChatList.get(position).getType().equals("PROMISE")){
+            return ChatType.ViewType.LEFT_CONTENT_PLAN;
+        }
+        else if(!myChatList.get(position).getName().equals(username) && myChatList.get(position).getType().equals("TALK")){
+            return ChatType.ViewType.LEFT_CONTENT;
+        }
+        else if(!myChatList.get(position).getName().equals(username) && myChatList.get(position).getType().equals("PROMISE_AGAIN")){
+            return ChatType.ViewType.LEFT_CONTENT_PLAN;
+        }
+        else if(myChatList.get(position).getName().equals(username) && myChatList.get(position).getType().equals("PROMISE_AGAIN")){
+            return ChatType.ViewType.RIGHT_CONTENT_PLAN;
         }
         return myChatList.get(position).getViewType();
     }

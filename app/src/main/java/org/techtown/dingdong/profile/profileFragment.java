@@ -160,7 +160,7 @@ public class profileFragment extends Fragment implements View.OnClickListener {
         startbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), LoginOrRegisterActivity.class));
+                startActivity(new Intent(getActivity(), LoginActivity.class));
                 //startActivity(new Intent(getActivity(), LoginOrRegisterActivity.class));
             }
         });
@@ -186,7 +186,7 @@ public class profileFragment extends Fragment implements View.OnClickListener {
         Token token = new Token(access,refresh,expire,tokentype);
         Log.d("토큰", String.valueOf(access));
 
-        Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
+        /*Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
         Call<UserProfileResponse> call = apiinterface.getUserProfile();
         call.enqueue(new Callback<UserProfileResponse>() {
                 @Override
@@ -224,7 +224,7 @@ public class profileFragment extends Fragment implements View.OnClickListener {
             }
 
 
-            });
+            });*/
 
             //name.setText(nickname);
 

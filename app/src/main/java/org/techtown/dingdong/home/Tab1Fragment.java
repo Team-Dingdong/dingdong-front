@@ -179,10 +179,12 @@ public class Tab1Fragment extends Fragment {
                             //String json = new Gson().toJson(res.getData().getShare());
                             setShareListRecycler(sharelistrecycler, endtimeList);}
                         else{
-                            endtimeList.addAll(res.getData().getShare());
+                            endtimeList = res.getData().getShare();
+                            setShareListRecycler(sharelistrecycler, endtimeList);}
+                            //endtimeList.addAll(res.getData().getShare());
                             //String json = new Gson().toJson(res.getData().getShare());
-                            shareListAdpater.notifyDataSetChanged();
-                        }
+                            //shareListAdpater.notifyDataSetChanged();
+
                         Log.d("성공", new Gson().toJson(response.raw().request()));
 
                     }

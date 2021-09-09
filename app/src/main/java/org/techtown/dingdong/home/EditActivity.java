@@ -740,9 +740,9 @@ public class EditActivity extends AppCompatActivity {
         if(uriList.size() != 0) {
             ArrayList<MultipartBody.Part> uplist = new ArrayList<>();
             HashMap<String, RequestBody> hashMap = new HashMap<>();
-            //ArrayList<MultipartBody.Part> upurl = new ArrayList<>();
+            ArrayList<MultipartBody.Part> upurl = new ArrayList<>();
             //ArrayList<File> files = new ArrayList<>();
-            for (int i = 0; i < uriList.size(); i++) {
+            for (int i = 0, j = 0; i < uriList.size(); i++) {
                 try {
                     if(!uriList.get(i).toString().contains("amazonaws")) {
                         Log.d("1",uriList.get(i).toString());
@@ -758,10 +758,12 @@ public class EditActivity extends AppCompatActivity {
                         Log.d("2",uriList.get(i).toString());
                         //MultipartBody.Part part = uriToMultipart(uriList.get(i),Integer.toString((int) System.currentTimeMillis()).replace("-", ""),EditActivity.this.getContentResolver());
                         Log.d("uploadimg","reuploading");
-                        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), uriList.get(i).toString());
+                        //RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), uriList.get(i).toString());
                         //hashMap.put("image_urls",requestBody);
-                        //uplist.add(MultipartBody.Part.createFormData("image_urls", String.valueOf(requestBody)));
-                        uplist.add(MultipartBody.Part.createFormData("image_urls",requestBody.toString()));
+                        //MultipartBody.Part.create()
+                        upurl.add(MultipartBody.Part.createFormData("image_urls", uriList.get(i).toString()));
+                        //uplist.add(MultipartBody.Part.createFormData("image_urls","image_urls",requestBody));
+                        //j++;
 
                     }
                     //files.add(file);
@@ -770,10 +772,10 @@ public class EditActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-            //Collections.reverse(hashMap);
+            //Collections.reverse(uplist);
             //uplist.addAll(upurl);
             Apiinterface apiinterface = Api.createService(Apiinterface.class, token, EditActivity.this);
-            Call<ResponseBody> call = apiinterface.uploadImg(uplist, id);
+            Call<ResponseBody> call = apiinterface.uploadImg(uplist, upurl,id);
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -782,6 +784,8 @@ public class EditActivity extends AppCompatActivity {
 
                         if (response.code() == 200) {
                             Log.d("이미지등록성공", new Gson().toJson(response.code()));
+                            Log.d("성공", String.valueOf(response.raw().request().url().url()));
+                            Log.d("성", new Gson().toJson(response.raw().request()));
 
                             onfinish(1);
 
