@@ -586,7 +586,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                     if (response.code() == 200) {
                         ResponseBody res = response.body();
                         Log.d("성공", new Gson().toJson(res));
-
+                        Toast.makeText(ChattingActivity.this,"약속에 동의하셨습니다.",Toast.LENGTH_LONG).show();
 
                     }
                 }else{
@@ -596,7 +596,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                     Log.d("실패", response.message());
                     Log.d("실패", String.valueOf(response.raw().request().url().url()));
                     Log.d("실패", new Gson().toJson(response.raw().request()));
-
+                    Toast.makeText(ChattingActivity.this,"이미 기동의한 약속입니다.",Toast.LENGTH_LONG).show();
                 }
             }
 
