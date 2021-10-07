@@ -50,6 +50,7 @@ public class Tab1Fragment extends Fragment {
     Token token;
     NestedScrollView nestedScrollView;
     ProgressBar pgbar;
+    ArrayList<Share> shareList = new ArrayList<>();
 
 
 
@@ -75,6 +76,10 @@ public class Tab1Fragment extends Fragment {
         nestedScrollView = v.findViewById(R.id.scrollView);
         pgbar = v.findViewById(R.id.pgbar);
 
+        sharelistrecycler.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL, false));
+        shareListAdpater = new ShareListAdpater(getActivity(), shareList);
+        sharelistrecycler.setAdapter(shareListAdpater);
+
 
         SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         String access = pref.getString("oauth.accesstoken","");
@@ -83,6 +88,7 @@ public class Tab1Fragment extends Fragment {
         String tokentype = pref.getString("oauth.tokentype","");
 
         token = new Token(access,refresh,expire,tokentype);
+        token.setContext(getActivity());
 
         Log.d("토큰", String.valueOf(access));
 
@@ -109,6 +115,8 @@ public class Tab1Fragment extends Fragment {
             }
         });
 
+        trans = true;
+
 
         tv_align.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,6 +125,10 @@ public class Tab1Fragment extends Fragment {
                     //최신순병렬일때 마감임박순을 불러오기
                     page = 0;
                     tv_align.setText("마감임박순");
+                    shareList = new ArrayList<>();
+                    shareListAdpater = new ShareListAdpater(getActivity(), shareList);
+                    sharelistrecycler.setAdapter(shareListAdpater);
+                    sharelistrecycler.scrollToPosition(0);
                     setEndTimeData(token);
                     trans = false; //마감임박순 병렬로 바꾸기
                 }
@@ -124,9 +136,42 @@ public class Tab1Fragment extends Fragment {
                     //마감임박순병렬일때 최신순을 불러오기
                     page = 0;
                     tv_align.setText("최신순");
+                    shareList = new ArrayList<>();
+                    shareListAdpater = new ShareListAdpater(getActivity(), shareList);
+                    sharelistrecycler.setAdapter(shareListAdpater);
+                    sharelistrecycler.scrollToPosition(0);
                     setCreatedData(token);
                     trans = true; //최신순병렬로 바꾸기
                 }
+            }
+        });
+
+        btn_trans.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(trans){
+                    //최신순병렬일때 마감임박순을 불러오기
+                    page = 0;
+                    tv_align.setText("마감임박순");
+                    shareList = new ArrayList<>();
+                    shareListAdpater = new ShareListAdpater(getActivity(), shareList);
+                    sharelistrecycler.setAdapter(shareListAdpater);
+                    sharelistrecycler.scrollToPosition(0);
+                    setEndTimeData(token);
+                    trans = false; //마감임박순 병렬로 바꾸기
+                }
+                else{
+                    //마감임박순병렬일때 최신순을 불러오기
+                    page = 0;
+                    tv_align.setText("최신순");
+                    shareList = new ArrayList<>();
+                    shareListAdpater = new ShareListAdpater(getActivity(), shareList);
+                    sharelistrecycler.setAdapter(shareListAdpater);
+                    sharelistrecycler.scrollToPosition(0);
+                    setCreatedData(token);
+                    trans = true; //최신순병렬로 바꾸기
+                }
+
             }
         });
 
@@ -158,17 +203,13 @@ public class Tab1Fragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
-                        pgbar.setVisibility(View.GONE);
-
-                        if(page == 0){
-                            endtimeList = res.getData().getShare();
-                            setShareListRecycler(sharelistrecycler, endtimeList);
-                            loading = false;
+                        if(page == 0 && !shareList.isEmpty()){
+                            shareList = new ArrayList<>();
                         }
-                        else{
-                            endtimeList = res.getData().getShare();
-                            setShareListRecycler(sharelistrecycler, endtimeList);
-                            loading = false;}
+
+                        pgbar.setVisibility(View.GONE);
+                        shareList.addAll(res.getData().getShare());
+                        shareListAdpater.notifyDataSetChanged();
 
 
                         Log.d("성공", new Gson().toJson(response.raw().request()));
@@ -192,6 +233,8 @@ public class Tab1Fragment extends Fragment {
 
             }
         });
+
+        loading = false;
 
 
     }
@@ -208,19 +251,13 @@ public class Tab1Fragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
+                        if(page == 0 && !shareList.isEmpty()){
+                            shareList = new ArrayList<>();
+                        }
+
                         pgbar.setVisibility(View.GONE);
-
-                        if(page == 0){
-                            createdList = res.getData().getShare();
-                            setShareListRecycler(sharelistrecycler, createdList);
-                            loading = false;
-                        }
-                        else{
-                            createdList = res.getData().getShare();
-                            setShareListRecycler(sharelistrecycler, createdList);
-                            loading = false;
-
-                        }
+                        shareList.addAll(res.getData().getShare());
+                        shareListAdpater.notifyDataSetChanged();
                         Log.d("성공", new Gson().toJson(response.raw().request()));
 
                     }
@@ -243,6 +280,7 @@ public class Tab1Fragment extends Fragment {
             }
         });
 
+        loading = false;
 
     }
 

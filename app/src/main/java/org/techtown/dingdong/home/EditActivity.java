@@ -139,6 +139,7 @@ public class EditActivity extends AppCompatActivity {
         String tokentype = pref.getString("oauth.tokentype", "");
 
         Token token = new Token(access, refresh, expire, tokentype);
+        token.setContext(EditActivity.this);
 
         Intent intent = getIntent();
         id = intent.getStringExtra("id");

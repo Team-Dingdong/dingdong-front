@@ -68,6 +68,7 @@ public class ChattingFragment extends Fragment {
         String tokentype = pref.getString("oauth.tokentype","");
 
         Token token = new Token(access,refresh,expire,tokentype);
+        token.setContext(getActivity());
 
         Log.d("토큰", String.valueOf(access));
 

@@ -1,6 +1,7 @@
 package org.techtown.dingdong.chatting;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.bumptech.glide.Glide;
 
 import org.jetbrains.annotations.NotNull;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.profile.UserProfileActivity;
 
 import java.util.ArrayList;
 
@@ -58,6 +60,15 @@ public class ChatUserAdapter extends RecyclerView.Adapter<ChatUserAdapter.ViewHo
                 .load(chatuser.getImgUrl())
                 .into(holder.img_profile);
         holder.tv_username.setText(chatuser.getUsername());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), UserProfileActivity.class);
+                intent.putExtra("id",chatUsers.get(position).getId());
+                context.startActivity(intent);
+            }
+        });
 
 
     }

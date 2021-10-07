@@ -17,26 +17,24 @@ import org.techtown.dingdong.login_register.AuthResponse;
 import org.techtown.dingdong.login_register.LoginRequest;
 import org.techtown.dingdong.login_register.LoginResponse;
 import org.techtown.dingdong.login_register.ProfileUploadResponse;
-import org.techtown.dingdong.mypage.EstimateRequset;
-import org.techtown.dingdong.mypage.EstimateResponse;
 import org.techtown.dingdong.mypage.SalesResponse;
+import org.techtown.dingdong.mypage.UserRatingResponse;
 import org.techtown.dingdong.profile.UserProfileResponse;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
-import retrofit2.http.PartMap;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -52,6 +50,10 @@ public interface Apiinterface {
 
     @GET("/api/v1/post/sorted_by=desc(endDate)")
     Call<PostResponse> getEndData(@Query("page") int num);
+
+    @FormUrlEncoded
+    @POST("/api/v1/auth/reissue")
+    Call<LoginResponse> getRefresh(@Field("accessToken")String accessToken, @Field("refreshToken")String refreshToken);
 
 
     @GET("/api/v1/post/category/{id}")
@@ -109,9 +111,15 @@ public interface Apiinterface {
     @GET("/api/v1/chat/room/{roomId}")
     Call<ChatRoomInformResponse> getChatRoom(@Path("roomId") int id);
 
-
     @GET("/api/v1/profile")
     Call<UserProfileResponse> getUserProfile();
+
+    @GET("/api/v1/chat/room/{userId}")
+    Call<UserProfileResponse> getOtherUserProfile(@Path("userId") int id);
+
+    @Multipart
+    @PATCH("/api/v1/profile")
+    Call<ResponseBody> setUpdateProfile(@Part MultipartBody.Part file, @Part MultipartBody.Part nickname);
 
     @DELETE("/api/v1/post/{id}")
     Call<ResponseBody> deleteShare(@Path("id") int id);
@@ -148,13 +156,18 @@ public interface Apiinterface {
     @GET("/api/v1/post/user/sell")
     Call<SalesResponse> getSales();
 
+    @FormUrlEncoded
     @POST("/api/v1/rating/{userId}")
-    Call<EstimateResponse> EstimateRequest(@Body EstimateRequset estimateRequset);
+    Call<ResponseBody> ratingUser(@Path("id") int id, @Field("type") String type);
 
+    @GET("/api/v1/rating")
+    Call<UserRatingResponse> getRating();
 
+    @GET("/api/v1/post/user/sell")
+    Call<PostResponse> getSalesHistory();
 
-
-
+    @GET("/api/v1/post/user/buy")
+    Call<PostResponse> getPurchasesHistory();
 
 
 }

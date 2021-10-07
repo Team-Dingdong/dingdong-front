@@ -56,8 +56,6 @@ public class HomeFragment extends Fragment {
     private ImageButton btn_edit, cat1, cat2, cat3, cat4, btn_trans, btn_search;
     private RecyclerView sharelistrecycler;
     ShareListAdpater shareListAdpater;
-    private List<Share> list = null;
-    private ArrayList<Share> sharelist_data, sharelist_latest, sharelist_deadline;
     private TextView tv_align, tv_region;
     private Spinner select_region;
     private String selected_region;
@@ -70,45 +68,19 @@ public class HomeFragment extends Fragment {
     Boolean loading = false;
     NestedScrollView nestedScrollView;
     ProgressBar pgbar;
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    ArrayList<Share> shareList = new ArrayList<>();
 
     public HomeFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment contentsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static HomeFragment newInstance(String param1, String param2) {
+    public static HomeFragment newInstance() {
         HomeFragment fragment = new HomeFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
-    private Button button;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
 
     }
 
@@ -132,6 +104,11 @@ public class HomeFragment extends Fragment {
         nestedScrollView = v.findViewById(R.id.scrollView);
         pgbar = v.findViewById(R.id.pgbar);
 
+        sharelistrecycler.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL, false));
+        shareListAdpater = new ShareListAdpater(getActivity(), shareList);
+        sharelistrecycler.setAdapter(shareListAdpater);
+
+
         SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         String access = pref.getString("oauth.accesstoken","");
         String refresh = pref.getString("oauth.refreshtoken","");
@@ -139,8 +116,10 @@ public class HomeFragment extends Fragment {
         String tokentype = pref.getString("oauth.tokentype","");
 
         token = new Token(access,refresh,expire,tokentype);
+        token.setContext(getActivity());
 
         Log.d("토큰", String.valueOf(access));
+
 
         setCreatedData(token);
 
@@ -165,6 +144,8 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        trans = true;
+
 
 
         tv_align.setOnClickListener(new View.OnClickListener() {
@@ -174,6 +155,10 @@ public class HomeFragment extends Fragment {
                     //최신순병렬일때 마감임박순을 불러오기
                     page = 0;
                     tv_align.setText("마감임박순");
+                    shareList = new ArrayList<>();
+                    shareListAdpater = new ShareListAdpater(getActivity(), shareList);
+                    sharelistrecycler.setAdapter(shareListAdpater);
+                    sharelistrecycler.scrollToPosition(0);
                     setEndTimeData(token);
                     trans = false; //마감임박순 병렬로 바꾸기
                 }
@@ -181,6 +166,10 @@ public class HomeFragment extends Fragment {
                     //마감임박순병렬일때 최신순을 불러오기
                     page = 0;
                     tv_align.setText("최신순");
+                    shareList = new ArrayList<>();
+                    shareListAdpater = new ShareListAdpater(getActivity(), shareList);
+                    sharelistrecycler.setAdapter(shareListAdpater);
+                    sharelistrecycler.scrollToPosition(0);
                     setCreatedData(token);
                     trans = true; //최신순병렬로 바꾸기
                 }
@@ -244,6 +233,28 @@ public class HomeFragment extends Fragment {
         btn_trans.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(trans){
+                    //최신순병렬일때 마감임박순을 불러오기
+                    page = 0;
+                    tv_align.setText("마감임박순");
+                    shareList = new ArrayList<>();
+                    shareListAdpater = new ShareListAdpater(getActivity(), shareList);
+                    sharelistrecycler.setAdapter(shareListAdpater);
+                    sharelistrecycler.scrollToPosition(0);
+                    setEndTimeData(token);
+                    trans = false; //마감임박순 병렬로 바꾸기
+                }
+                else{
+                    //마감임박순병렬일때 최신순을 불러오기
+                    page = 0;
+                    tv_align.setText("최신순");
+                    shareList = new ArrayList<>();
+                    shareListAdpater = new ShareListAdpater(getActivity(), shareList);
+                    sharelistrecycler.setAdapter(shareListAdpater);
+                    sharelistrecycler.scrollToPosition(0);
+                    setCreatedData(token);
+                    trans = true; //최신순병렬로 바꾸기
+                }
 
             }
         });
@@ -304,7 +315,7 @@ public class HomeFragment extends Fragment {
 
 
         sharelistrecycler.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL, false));
-        shareListAdpater = new ShareListAdpater(getActivity(), sharelist);
+        shareListAdpater = new ShareListAdpater(getActivity(), shareList);
         sharelistrecycler.setAdapter(shareListAdpater);
 
     }
@@ -323,23 +334,13 @@ public class HomeFragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
+                        if(page == 0 && !shareList.isEmpty()){
+                            shareList = new ArrayList<>();
+                        }
+
                         pgbar.setVisibility(View.GONE);
-
-                        if(page == 0){
-                            createdList = new ArrayList<>();
-                            createdList = res.getData().getShare();
-                            setShareListRecycler(sharelistrecycler, createdList);
-                            loading = false;
-                        }
-                        else{
-                            createdList = new ArrayList<>();
-                            createdList = res.getData().getShare();
-                            setShareListRecycler(sharelistrecycler, createdList);
-                            loading = false;
-                            //String json = new Gson().toJson(res.getData().getShare());
-                           // shareListAdpater.notifyDataSetChanged();
-
-                        }
+                        shareList.addAll(res.getData().getShare());
+                        shareListAdpater.notifyDataSetChanged();
 
                     }
 
@@ -359,6 +360,8 @@ public class HomeFragment extends Fragment {
 
             }
         });
+
+        loading = false;
 
 
     }
@@ -377,21 +380,13 @@ public class HomeFragment extends Fragment {
                         PostResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
-                        pgbar.setVisibility(View.GONE);
-
-                        if(page == 0){
-                            endtimeList = new ArrayList<>();
-                            endtimeList = res.getData().getShare();
-                            //String json = new Gson().toJson(res.getData().getShare());
-                            setShareListRecycler(sharelistrecycler, endtimeList);}
-                        else{
-                            endtimeList = new ArrayList<>();
-                            endtimeList = res.getData().getShare();
-                            setShareListRecycler(sharelistrecycler, endtimeList);
-                            //endtimeList.addAll(res.getData().getShare());
-                            //String json = new Gson().toJson(res.getData().getShare());
-                            //shareListAdpater.notifyDataSetChanged();
+                        if(page == 0 && !shareList.isEmpty()){
+                            shareList = new ArrayList<>();
                         }
+
+                        pgbar.setVisibility(View.GONE);
+                        shareList.addAll(res.getData().getShare());
+                        shareListAdpater.notifyDataSetChanged();
 
                     }
 
@@ -411,6 +406,8 @@ public class HomeFragment extends Fragment {
 
             }
         });
+
+        loading = false;
 
 
     }

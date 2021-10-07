@@ -25,7 +25,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Dingdong"
         android:usesCleartextTraffic="true">
-        <activity android:name=".mypage.LeaveActivity"></activity>
+        <activity android:name=".profile.UserProfileActivity"></activity>
+        <activity android:name=".mypage.MyhistoryActivity" />
+        <activity android:name=".login_register.SetProfileActivity" />
+        <activity android:name=".mypage.RatingActivity" />
+        <activity android:name=".mypage.LeaveActivity" />
         <activity android:name=".mypage.ModifyInfoActivity" />
         <activity android:name=".home.TabActivity" />
         <activity android:name=".mytown.TownRecyclActivity" />
@@ -41,17 +45,17 @@
         <activity android:name=".mytown.changetownActivity" />
         <activity android:name=".login_register.RegisterActivity" />
         <activity android:name=".login_register.LoginOrRegisterActivity" />
-        <activity android:name=".login_register.LoginActivity" />
-        <activity android:name=".home.ShareDetailActivity" />
-        <activity android:name=".home.EditActivity" />
-        <activity android:name=".chatting.ChattingActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".login_register.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".home.ShareDetailActivity" />
+        <activity android:name=".home.EditActivity" />
+        <activity android:name=".chatting.ChattingActivity" />
+        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>

@@ -23,6 +23,7 @@ import androidx.fragment.app.FragmentManager;
 import com.google.gson.Gson;
 
 import org.techtown.dingdong.BuildConfig;
+import org.techtown.dingdong.MainActivity;
 import org.techtown.dingdong.R;
 import org.techtown.dingdong.home.HomeFragment;
 import org.techtown.dingdong.network.Api;
@@ -99,9 +100,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
 
-        countDownTimer.start();
+        countDownTimer.start();*/
 
-         */
 
 
         //인증번호 6자리 입력하면 버튼 활성화
@@ -135,8 +135,6 @@ public class LoginActivity extends AppCompatActivity {
 
                 authNumber= edt_number_validation.getText().toString();
 
-
-
                 String phoneNumber = "01011111111";
                 LoginRequest loginRequest = new LoginRequest(phoneNumber, authNumber);
                 Apiinterface apiinterface = Api.createService(Apiinterface.class);
@@ -149,35 +147,39 @@ public class LoginActivity extends AppCompatActivity {
 
                         if(response.isSuccessful()){
 
+                            SharedPreferences preferences = getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+
+
+                            Log.d("로그인성공", new Gson().toJson(response.body()));
+                            LoginResponse.Data mToken = response.body().data;
+                            Log.d("로그인성공", mToken.getAccessToken());
+                            Token token = new Token(mToken.getAccessToken(),mToken.getRefreshToken(),mToken.getExpireIn(),mToken.getTokentype());
+                            preferences.edit().putBoolean("oauth.loggedin",true).apply();
+                            preferences.edit().putString("oauth.accesstoken", token.getAccessToken()).apply();
+                            preferences.edit().putString("oauth.refreshtoken", token.getRefreshToken()).apply();
+                            preferences.edit().putString("oauth.expire", token.getExpireIn()).apply();
+                            preferences.edit().putString("oauth.tokentype", token.getGrantType()).apply();
+
                             if(response.body().result.equals("SIGNUP_SUCCESS")){
 
                                 Log.d("회원가입성공", String.valueOf(response));
-                                String token = response.body().data.accessToken;
-                                Intent intent_signup = new Intent(LoginActivity.this, SingupActivity.class);
-
-
+                                Intent intent_signup = new Intent(LoginActivity.this, SetProfileActivity.class);
+                                intent_signup.putExtra("state","signup");
+                                startActivity(intent_signup);
                             }
+
                             else if(response.body().result.equals("LOGIN_SUCCESS")){
 
-                                SharedPreferences preferences = getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
 
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(intent);
 
-                                Log.d("로그인성공", new Gson().toJson(response.body()));
-                                LoginResponse.Data mToken = response.body().data;
-                                Log.d("로그인성공", mToken.getAccessToken());
-                                Token token = new Token(mToken.getAccessToken(),mToken.getRefreshToken(),mToken.getExpireIn(),mToken.getTokentype());
-                                preferences.edit().putBoolean("oauth.loggedin",true).apply();
-                                preferences.edit().putString("oauth.accesstoken", token.getAccessToken()).apply();
-                                preferences.edit().putString("oauth.refreshtoken", token.getRefreshToken()).apply();
-                                preferences.edit().putString("oauth.expire", token.getExpireIn()).apply();
-                                preferences.edit().putString("oauth.tokentype", token.getGrantType()).apply();
-
-                                Fragment fragment = new profileFragment();
+                                /*Fragment fragment = new profileFragment();
                                 FragmentManager fragmentManager = getSupportFragmentManager();
                                 fragmentManager.beginTransaction().replace(R.id.logincontainer, fragment).commit();
                                 edt_number_validation.setVisibility(GONE);
                                 tv_timer.setVisibility(GONE);
-                                toolbar3.setVisibility(GONE);
+                                toolbar3.setVisibility(GONE);*/
                                 return;
 
 

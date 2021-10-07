@@ -17,6 +17,8 @@ public class ChatUser {
     @SerializedName("userId")
     @Expose
     private String id;
+    private String rating = "NONE";
+
 
     public ChatUser(String username, String imgUrl, String ismaster) {
         this.username = username;
@@ -53,5 +55,13 @@ public class ChatUser {
 
     public void setIsmaster(String ismaster) {
         this.ismaster = ismaster;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
     }
 }

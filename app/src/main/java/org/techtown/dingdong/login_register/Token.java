@@ -1,10 +1,13 @@
 package org.techtown.dingdong.login_register;
 
+import android.content.Context;
+
 public class Token {
     private String accessToken;
     private String refreshToken;
     private String expireIn;
     private String grantType;
+    private Context context;
 
     public Token(String accessToken, String refreshToken, String expireIn, String grantType) {
         this.accessToken = accessToken;
@@ -43,5 +46,13 @@ public class Token {
 
     public void setGrantType(String grantType) {
         this.grantType = grantType;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 }

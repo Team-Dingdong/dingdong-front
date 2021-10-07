@@ -19,11 +19,6 @@ public class slideActivity extends AppCompatActivity {
 
         PageAdapter adapter = new PageAdapter(getSupportFragmentManager(), 1);
 
-        mySalesFragment mySalesFragment = new mySalesFragment();
-        adapter.addItem(mySalesFragment);
-
-        myPurchaseFragment myPurchaseFragment = new myPurchaseFragment();
-        adapter.addItem(myPurchaseFragment);
 
         pager.setAdapter(adapter);
 
