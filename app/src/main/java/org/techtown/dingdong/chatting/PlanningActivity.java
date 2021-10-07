@@ -66,6 +66,7 @@ public class PlanningActivity extends AppCompatActivity {
         String tokentype = pref.getString("oauth.tokentype","");
 
         token  = new Token(access,refresh,expire,tokentype);
+        token.setContext(PlanningActivity.this);
 
 
         Intent intent = getIntent();

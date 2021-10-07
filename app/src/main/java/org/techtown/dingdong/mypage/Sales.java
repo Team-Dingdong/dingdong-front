@@ -20,7 +20,7 @@ public class Sales {
     @SerializedName("id")
     String id;
 
-    public Sales(String date, String title, String img1, String nickname, String people ){
+    public Sales(String date, String title, String img1, String people ){
         this.date = date;
         this.img1 = img1;
         this.title = title;

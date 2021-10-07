@@ -57,6 +57,7 @@ public class SearchResultActivity extends AppCompatActivity {
         String tokentype = pref.getString("oauth.tokentype", "");
 
         Token token = new Token(access, refresh, expire, tokentype);
+        token.setContext(SearchResultActivity.this);
 
         //SearchRequest searchRequest = new SearchRequest(searchword);
 

@@ -72,7 +72,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
     private final int OPEN_GALLERY = 201;
     ChattingAdapter chatAdapter;
     Uri imageUri;
-    private String message, username, userprofile, isowner="false";
+    private String message="hi", username="다루", userprofile="", isowner="false";
     private String id = "1";
     private Boolean ismaster = true, isvisible = false;
     ChattingBottomDialogFragment chattingBottomDialogFragment;
@@ -99,9 +99,8 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         String expire = pref.getString("oauth.expire","");
         String tokentype = pref.getString("oauth.tokentype","");
 
-
-
         token  = new Token(access,refresh,expire,tokentype);
+        token.setContext(ChattingActivity.this);
 
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
@@ -109,8 +108,6 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         Log.d("토큰", String.valueOf(access));
 
         getUser(token);
-
-
 
 
         List<StompHeader> header = new ArrayList<>();
@@ -133,7 +130,6 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                     switch (lifecycleEvent.getType()) {
                         case OPENED:
                             Log.d("lifecycle","###########online");
-                            //toast("Stomp connection opened");
                             break;
                         case ERROR:
                             Log.d("lifecycle", String.valueOf(lifecycleEvent.getException()));
@@ -141,15 +137,12 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                             if(lifecycleEvent.getException().getMessage().contains("EOF")){
                                 isUnexpectedClosed=true;
                             }
-                            //toast("Stomp connection error");
                             break;
                         case CLOSED:
-                            //toast("Stomp connection closed");
                             Log.d("lifecycle","###########offline");
                             resetSubscriptions();
                             break;
                         case FAILED_SERVER_HEARTBEAT:
-                            //toast("Stomp failed server heartbeat");
                             Log.d("lifecycle","failedserverheartbeat");
                             break;
                     }
@@ -178,41 +171,44 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
             String sender = jsonObject.getString("sender");
             String profileUrl = jsonObject.getString("profileImageUrl");
             Log.d("onnext",jsonObject.toString());
-            //Log.d("onnext",stomp);
 
 
             if(type.equals("TALK") && !sender.equals(username)){
-                //isowner = (sender.equals(ownername)) ? "TRUE" : "FALSE";
                 Chat chat = new Chat(msg,sender,profileUrl,new Timestamp(System.currentTimeMillis()).toString(), "FALSE", ChatType.ViewType.LEFT_CONTENT);
                 addItem(chat);
                 Log.d("talk","get");
-                }else if(type.equals("ENTER")){
+                }
+            else if(type.equals("ENTER")){
                 Chat chat = new Chat(msg,sender,profileUrl,new Timestamp(System.currentTimeMillis()).toString(), "FALSE", ChatType.ViewType.CENTER_CONTENT);
                 addItem(chat);
+                initChatRoom(token);
             }
+            else if(type.equals("PROMISE")){
+                Chat chat = new Chat(msg, sender,profileUrl,new Timestamp(System.currentTimeMillis()).toString(), "FALSE", ChatType.ViewType.LEFT_CONTENT_PLAN);
+                addItem(chat);
+            }
+            else if(type.equals("PROMISE_CONFIRMED")) {
+                Chat chat = new Chat(msg, sender, profileUrl, new Timestamp(System.currentTimeMillis()).toString(), "FALSE", ChatType.ViewType.CENTER_CONTENT);
+                addItem(chat);
+                getInfo(token);
+            }
+            else if(type.equals("QUIT")){
+                Chat chat = new Chat(msg, sender,profileUrl,new Timestamp(System.currentTimeMillis()).toString(), "FALSE", ChatType.ViewType.CENTER_CONTENT);
+                addItem(chat);
+                initChatRoom(token);
+            }
+
             }, throwable -> { Log.e("chat", "Error on subscribe topic", throwable); }
         );
 
 
-
-        /*Disposable disTopi = stompClient.topic("/topic/chat/room/1")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(stompMessage -> {
-                    Log.d("distop", "Received " + stompMessage.getPayload());
-
-                }, throwable -> {
-                    Log.e("distop", "Error on subscribe topic", throwable);
-                });*/
 
 
         compositeDisposable.add(disposable);
         compositeDisposable.add(dispTopic);
 
         stompClient.connect(header);
-        //setDummy();
         recycler_chat = findViewById(R.id.chatting_recycler);
-        //setChatRecycler(recycler_chat, chats);
         btn_plus = findViewById(R.id.btn_plus);
         btn_send = findViewById(R.id.btn_send);
         et_message = findViewById(R.id.et_chat);
@@ -223,6 +219,12 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         tv_info = findViewById(R.id.tv_info);
         sec_info = findViewById(R.id.sec_info);
         btn_alarm = findViewById(R.id.btn_alarm);
+
+        chatAdapter = new ChattingAdapter(chats, username, this);
+        chatAdapter.setHasStableIds(true);
+        recycler_chat.setAdapter(chatAdapter);
+        recycler_chat.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+        recycler_chat.scrollToPosition(chatAdapter.getItemCount()-1);
 
         initChatRoom(token);
         setChats(token);
@@ -276,7 +278,6 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
 
 
         btn_send.setOnClickListener(new View.OnClickListener()
-
                     {
                         @Override
                         public void onClick (View v){
@@ -287,10 +288,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            //Chat chat = new Chat(message, "다루", "아", "2021-08-24 17:00:33.822", Boolean.TRUE, ChatType.ViewType.RIGHT_CONTENT);
-                        //chatAdapter.addItem(chat);
-                        //recycler_chat.scrollToPosition(chatAdapter.getItemCount() - 1);
-                    }
+                        }
                     });
         btn_alarm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -424,8 +422,8 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
 
                         ChatResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
-                        chats = res.getChats();
-                        setChatRecycler(recycler_chat, chats);
+                        chats.addAll(res.getChats());
+                        chatAdapter.notifyDataSetChanged();
 
                     }
                 }else{

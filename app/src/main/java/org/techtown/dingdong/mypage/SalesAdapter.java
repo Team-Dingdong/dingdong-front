@@ -96,8 +96,8 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.ViewHolder> 
                 }
                 else if(holder.btn_mypage_sales.getText().toString().equals("평가하기")){
                     MainActivity activity = (MainActivity)context;
-                    EstimateFragment estimateFragment = new EstimateFragment();
-                    activity.replaceFragment(estimateFragment);
+                   // EstimateFragment estimateFragment = new EstimateFragment();
+                   // activity.replaceFragment(estimateFragment);
                 }
             }
 

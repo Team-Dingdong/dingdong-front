@@ -56,6 +56,7 @@ public class UserListActivity extends AppCompatActivity {
         String tokentype = pref.getString("oauth.tokentype","");
 
         Token token  = new Token(access,refresh,expire,tokentype);
+        token.setContext(UserListActivity.this);
 
         Intent intent = getIntent();
         id = intent.getStringExtra("id");

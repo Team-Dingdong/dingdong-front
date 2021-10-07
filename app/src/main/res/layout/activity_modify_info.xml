@@ -50,7 +50,7 @@
         android:id="@+id/linearLayout13"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="100dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
 
@@ -60,6 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="34dp"
             android:text="전화번호"
+            android:textFontWeight="800"
             android:fontFamily="@font/noto_sans"
             android:textColor="@color/black"
             android:textSize="18dp" />
@@ -72,7 +73,7 @@
             android:text="01011111111"
             android:fontFamily="@font/noto_sans"
             android:textColor="@color/black"
-            android:textFontWeight="800"
+            android:textFontWeight="500"
             android:textSize="20dp" />
 
         <Button
@@ -80,6 +81,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
+            android:backgroundTint="#c5c5c5"
+            android:fontFamily="@font/noto_sans"
+            android:textColor="#000000"
+            android:textFontWeight="700"
+            android:textSize="16dp"
             android:text="수정하기" />
 
     </LinearLayout>
@@ -108,6 +114,11 @@
             android:id="@+id/btn_modify"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="#c5c5c5"
+            android:fontFamily="@font/noto_sans"
+            android:textColor="#000000"
+            android:textFontWeight="700"
+            android:textSize="16dp"
             android:layout_marginLeft="10dp"
             android:text="인증번호받기" />
 
@@ -139,6 +150,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
+            android:backgroundTint="#c5c5c5"
+            android:fontFamily="@font/noto_sans"
+            android:textColor="#000000"
+            android:textFontWeight="700"
+            android:textSize="16dp"
             android:text="확인" />
 
 
@@ -149,6 +165,11 @@
         android:layout_width="285dp"
         android:layout_height="wrap_content"
         android:text="탈퇴하기"
+        android:fontFamily="@font/noto_sans"
+        android:backgroundTint="#c5c5c5"
+        android:textColor="#000000"
+        android:textFontWeight="700"
+        android:textSize="16dp"
         android:layout_marginTop="150dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -160,6 +181,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="로그아웃"
+        android:fontFamily="@font/noto_sans"
+        android:textColor="#000000"
+        android:backgroundTint="#c5c5c5"
+        android:textFontWeight="800"
+        android:textSize="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_quit" />

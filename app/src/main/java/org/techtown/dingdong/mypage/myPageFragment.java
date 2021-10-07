@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 
 import org.techtown.dingdong.BuildConfig;
@@ -21,10 +22,13 @@ import org.techtown.dingdong.MainActivity;
 import org.techtown.dingdong.R;
 import org.techtown.dingdong.login_register.LoginRequest;
 import org.techtown.dingdong.login_register.LoginResponse;
+import org.techtown.dingdong.login_register.SetProfileActivity;
 import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.mytown.changetownActivity;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
+import org.techtown.dingdong.profile.UserProfileActivity;
+import org.techtown.dingdong.profile.UserProfileResponse;
 import org.techtown.dingdong.profile.profileFragment;
 
 import retrofit2.Call;
@@ -32,58 +36,25 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class myPageFragment extends Fragment implements View.OnClickListener{
+public class myPageFragment extends Fragment{
 
-    Button btn;
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    Button btn_mypage,btn_town, btn_history, btn_change_userdata, btn_setting;
-    ImageView iv_mypage;
-    TextView tv_mypage, tv_goobnum, tv_badnum;
-    int get_id;
-
-    mySalesFragment mySalesFragment = new mySalesFragment();
-    changeUserDataFragment changeUserDataFragment = new changeUserDataFragment();
-    settingFragment settingFragment = new settingFragment();
-    profileFragment profileFragment = new profileFragment();
+    Button btn_mypage, btn_town, btn_history, btn_change, btn_setting;
+    ImageView img_profile;
+    TextView tv_nickname, tv_like, tv_dislike;
+    Token token;
 
     public myPageFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment contentsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static myPageFragment newInstance(String param1, String param2) {
         myPageFragment fragment = new myPageFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
-    private Button button;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
 
     }
 
@@ -95,39 +66,14 @@ public class myPageFragment extends Fragment implements View.OnClickListener{
         View v = inflater.inflate(R.layout.fragment_mypage, container, false);
 
         TextView tv = v.findViewById(R.id.textView);
-        Button btn_mypage,btn_town, btn_history, btn_change_userdata, btn_setting;
-        ImageView iv_mypage;
-        TextView tv_mypage, tv_goobnum, tv_badnum;
-
-
         btn_mypage= v.findViewById(R.id.btn_mypage);
         btn_town = v.findViewById(R.id.btn_town);
         btn_history = v.findViewById(R.id.btn_history);
-        btn_change_userdata = v.findViewById(R.id.btn_change_userdata);
-        btn_setting = v.findViewById(R.id.btn_setting);
-        iv_mypage = v.findViewById(R.id.iv_mypage);
-        tv_mypage = v.findViewById(R.id.tv_mypage);
-        tv_goobnum = v.findViewById(R.id.tv_goobnum);
-        tv_badnum = v.findViewById(R.id.tv_badnum);
-        iv_mypage = v.findViewById(R.id.iv_mypage);
-
-        btn_mypage.setOnClickListener(this::onClick);
-        iv_mypage.setOnClickListener(this::onClick); //작은
-        btn_town.setOnClickListener(this::onClick);
-        btn_history.setOnClickListener(this::onClick);
-        btn_change_userdata.setOnClickListener(this::onClick);
-        btn_setting.setOnClickListener(this::onClick);
-
-        btn = v.findViewById(R.id.btn);
-
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getActivity(), ModifyInfoActivity.class));
-            }
-        });
-
-
+        btn_change = v.findViewById(R.id.btn_change);
+        tv_nickname = v.findViewById(R.id.tv_nickname);
+        tv_like = v.findViewById(R.id.tv_like);
+        tv_dislike = v.findViewById(R.id.tv_dislike);
+        img_profile = v.findViewById(R.id.img_profile);
 
         SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         String access = pref.getString("oauth.accesstoken","");
@@ -135,53 +81,102 @@ public class myPageFragment extends Fragment implements View.OnClickListener{
         String expire = pref.getString("oauth.expire","");
         String tokentype = pref.getString("oauth.tokentype","");
 
-        Token token = new Token(access,refresh,expire,tokentype);
+        token = new Token(access,refresh,expire,tokentype);
+        token.setContext(getActivity());
 
-        Log.d("토큰", String.valueOf(access));
+        getProfile(token);
+        getRating(token);
 
-        Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
-        Call<LoginResponse> call = apiinterface.LoginRequest(new LoginRequest("01011111111","123456"));
-        call.enqueue(new Callback<LoginResponse>() {
+
+        btn_history.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                Log.d("불러오기성공", new Gson().toJson(response.body()));
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), MyhistoryActivity.class));
             }
+        });
 
+
+        btn_change.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFailure(Call<LoginResponse> call, Throwable t) {
+            public void onClick(View v) {
+
+                startActivity(new Intent(getActivity(), ModifyInfoActivity.class));
 
             }
         });
 
 
-
-
-
         return v;
     }
 
+    public void getProfile(Token token){
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, getActivity());
+        Call<UserProfileResponse> call = apiinterface.getUserProfile();
+        call.enqueue(new Callback<UserProfileResponse>() {
+            @Override
+            public void onResponse(Call<UserProfileResponse> call, Response<UserProfileResponse> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    if(response.body().getResult().equals("PROFILE_READ_SUCCESS")) {
+                        UserProfileResponse.Data res = response.body().getData();
+                        tv_nickname.setText(res.getNickname());
+                        Glide.with(getActivity())
+                                .load(res.getProfileImg())
+                                .into(img_profile);
+                    }
+                }
+                else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                }
+            }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.btn_mypage:{
-                ((MainActivity) getActivity()).replaceFragment(profileFragment);
+            @Override
+            public void onFailure(Call<UserProfileResponse> call, Throwable t) {
+
+                Log.d("외않되", String.valueOf(t));
+
             }
-            case R.id.iv_mypage: {
-                ((MainActivity) getActivity()).replaceFragment(profileFragment);
-            }
-            case R.id.btn_town: {
-                getActivity().startActivity(new Intent(getActivity(), changetownActivity.class));
-            }
-            case R.id.btn_history:{
-                getActivity().startActivity(new Intent(getActivity(), slideActivity.class));
-            }
-            case R.id.btn_change_userdata:{
-                ((MainActivity) getActivity()).replaceFragment(changeUserDataFragment);
-            }
-            case R.id.btn_setting:{
-                ((MainActivity) getActivity()).replaceFragment(settingFragment);
-            }
-        }
+        });
+
+
     }
+
+    public void getRating(Token token){
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, getActivity());
+        Call<UserRatingResponse> call = apiinterface.getRating();
+        call.enqueue(new Callback<UserRatingResponse>() {
+            @Override
+            public void onResponse(Call<UserRatingResponse> call, Response<UserRatingResponse> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    if(response.body().getResult().equals("RATING_READ_SUCCESS")) {
+                        UserRatingResponse.Data res = response.body().getData();
+                        tv_like.setText(res.getGood());
+                        tv_dislike.setText(res.getBad());
+                    }
+                }
+                else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<UserRatingResponse> call, Throwable t) {
+                Log.d("외않되", String.valueOf(t));
+            }
+        });
+    }
+
+
+
+
 }

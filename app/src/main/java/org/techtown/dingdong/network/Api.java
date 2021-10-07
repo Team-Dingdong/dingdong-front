@@ -45,7 +45,8 @@ public class Api {
     }
 
     public static <S> S createService(Class<S> serviceClass, Token accessToken, Context c) {
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
+                .addInterceptor(new AccessTokenInterceptor(accessToken));
                 /*.readTimeout(100, TimeUnit.SECONDS)
                 .writeTimeout(100, TimeUnit.SECONDS);*/
         Retrofit.Builder builder = new Retrofit.Builder()

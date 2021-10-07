@@ -192,7 +192,7 @@
                 android:backgroundTint="#000000"
                 android:ems="10"
                 android:fontFamily="@font/noto_sans"
-                android:hint="(선택)"
+                android:hint="(필수)"
                 android:inputType="textPersonName"
                 android:maxLength="10"
                 android:textColor="#000000"

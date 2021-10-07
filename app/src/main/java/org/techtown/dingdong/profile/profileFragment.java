@@ -1,15 +1,12 @@
 package org.techtown.dingdong.profile;
 
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -23,158 +20,78 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
+
 import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.MainActivity;
 import org.techtown.dingdong.R;
-import org.techtown.dingdong.login_register.LoginActivity;
-import org.techtown.dingdong.login_register.LoginOrRegisterActivity;
+import org.techtown.dingdong.home.PostResponse;
+import org.techtown.dingdong.home.Share;
+import org.techtown.dingdong.login_register.SetProfileActivity;
 import org.techtown.dingdong.login_register.Token;
+import org.techtown.dingdong.mypage.HistoryAdapter;
+import org.techtown.dingdong.mypage.RatingActivity;
 import org.techtown.dingdong.mypage.Sales;
 import org.techtown.dingdong.mypage.SalesAdapter;
-import org.techtown.dingdong.mypage.mySalesFragment;
-import org.techtown.dingdong.mytown.changetownActivity;
-
+import org.techtown.dingdong.mypage.UserRatingResponse;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
+
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.http.Url;
-
 
 import static android.app.Activity.RESULT_OK;
 
-public class profileFragment extends Fragment implements View.OnClickListener {
+public class profileFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    Button startbtn, townbtn , sale;
-
-    Button btn_img;
-    TextView name, number_good, number_bad;
-    ImageView profile_img;
-    private String TAG;
-    String nickname, img, bio;
-    int good, bad;
-    private int id_view;
-    RecyclerView rv_sell;
-    SalesAdapter salesAdapter;
-    ArrayList<Sales> saleslist= new ArrayList<>();
+    Button btn_setprofile;
+    TextView tv_like, tv_dislike, tv_nickname;
+    ImageView img_profile;
+    RecyclerView recyclerView;
     Token token;
-
-    private static final int PICK_FROM_CAMERA = 0;
-
-    private static final int PICK_FROM_ALBUM = 1;
-
-    private static final int CROP_FROM_IMAGE = 2;
-
-    private Uri mImageCaptureUri;
-    private String absoultePath;
-
+    ArrayList<Share> salesList = new ArrayList<>();
+    HistoryAdapter historyAdapter;
 
 
     public profileFragment() {
-        // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment contentsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static profileFragment newInstance(String param1, String param2) {
+    public static profileFragment newInstance() {
         profileFragment fragment = new profileFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        ArrayList<Sales> saleslist= new ArrayList<>();
         return fragment;
     }
-    private Button button;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_profile, container, false);
-        startbtn= rootView.findViewById(R.id.button);
-        townbtn= rootView.findViewById(R.id.changetown);
-        sale =rootView.findViewById(R.id.button2);
-        btn_img= rootView.findViewById(R.id.btn_img);
-        name = rootView.findViewById(R.id.name);
-        profile_img = rootView.findViewById(R.id.profile_img);
-        number_good = rootView.findViewById(R.id.number_good);
-        number_bad = rootView.findViewById(R.id.number_bad);
-        rv_sell = rootView.findViewById(R.id.rv_sell);
+        View v = inflater.inflate(R.layout.fragment_profile, container, false);
 
-
-        mySalesFragment mySalesFragment = new mySalesFragment();
-        MainActivity mainActivity =new MainActivity();
-
-
-        sale.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                ((MainActivity) getActivity()).replaceFragment(mySalesFragment);
-            }
-        });
-        startbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getActivity(), LoginActivity.class));
-                //startActivity(new Intent(getActivity(), LoginOrRegisterActivity.class));
-            }
-        });
-
-
-        townbtn.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getActivity(), changetownActivity.class));
-            }
-        });
-
-
+        btn_setprofile = v.findViewById(R.id.btn_setprofile);
+        tv_dislike = v.findViewById(R.id.tv_dislike);
+        tv_like = v.findViewById(R.id.tv_like);
+        tv_nickname = v.findViewById(R.id.tv_nickname);
+        img_profile = v.findViewById(R.id.img_profile);
+        recyclerView = v.findViewById(R.id.recycler_sales);
 
         SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         String access = pref.getString("oauth.accesstoken","");
@@ -182,346 +99,145 @@ public class profileFragment extends Fragment implements View.OnClickListener {
         String expire = pref.getString("oauth.expire","");
         String tokentype = pref.getString("oauth.tokentype","");
 
+        token = new Token(access,refresh,expire,tokentype);
+        token.setContext(getActivity());
 
-        Token token = new Token(access,refresh,expire,tokentype);
         Log.d("토큰", String.valueOf(access));
 
-        /*Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        historyAdapter = new HistoryAdapter(salesList,getActivity(),"profile");
+        recyclerView.setAdapter(historyAdapter);
+
+        getHistory(token);
+        getProfile(token);
+        getRating(token);
+
+        btn_setprofile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), SetProfileActivity.class);
+                intent.putExtra("state","correct");
+                startActivity(intent);
+            }
+        });
+
+        return v;
+
+        }
+
+    public void setDummy(){
+        salesList = new ArrayList<>();
+        salesList.add(new Share("hhi","","","","apdls","2021-08-25T23:55:11","20000","","5","3"));
+        salesList.add(new Share("hhi","","","","apdls","2021-08-25T23:55:11","20000","","5","5"));
+        salesList.add(new Share("hhi","","","","apdls","2021-08-25T23:55:11","20000","","5","3"));
+        salesList.add(new Share("hhi","","","","apdls","2021-08-25T23:55:11","20000","","5","1"));
+
+        }
+
+    public void getProfile(Token token){
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, getActivity());
         Call<UserProfileResponse> call = apiinterface.getUserProfile();
         call.enqueue(new Callback<UserProfileResponse>() {
-                @Override
-                public void onResponse(Call<UserProfileResponse> call, Response<UserProfileResponse> response) {
-                    if (response.isSuccessful()) {
-                        if (response.body().getResult().equals("PROFILE_READ_SUCCESS")) {
-                            Log.d(TAG, "프로필 조회 성공");
-                            nickname = response.body().getData().nickname;
-                            img = response.body().getData().profileImg;
-                            if(img != null) {
-                                try {
-                                    URL url = new URL(img);
-                                    Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                                    profile_img.setImageBitmap(bmp);
-
-                                } catch (IOException ex) {
-
-                                }
-                            }
-
-
-
-                        } else {
-                            Log.d(TAG, "프로필 조회 실패");
-                        }
-                    }
-                    else{
-                        Log.d(TAG,"UserProfileResponse실패");
+            @Override
+            public void onResponse(Call<UserProfileResponse> call, Response<UserProfileResponse> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    if(response.body().getResult().equals("PROFILE_READ_SUCCESS")) {
+                        UserProfileResponse.Data res = response.body().getData();
+                        tv_nickname.setText(res.getNickname());
+                        Glide.with(getActivity())
+                                .load(res.getProfileImg())
+                                .into(img_profile);
                     }
                 }
+                else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                }
+            }
 
             @Override
             public void onFailure(Call<UserProfileResponse> call, Throwable t) {
 
-            }
-
-
-            });*/
-
-            //name.setText(nickname);
-
-
-            /*
-            Call<MyLatingResponse> callLate = apiinterface.getLating();
-            callLate.enqueue(new Callback<MyLatingResponse>() {
-                @Override
-                public void onResponse(Call<MyLatingResponse> call, Response<MyLatingResponse> response) {
-                    if(response.isSuccessful()){
-                    if(response.body().getCode().equals("RATING_READ_SUCCESS")) {
-                        Log.d(TAG, "평가 조회 성공");
-                        good = response.body().getData().good;
-                        bad = response.body().getData().bad;
-
-                    }
-                    else{Log.d(TAG, "평가 조회 실패");}
-                }
-                }
-
-                @Override
-                public void onFailure(Call<MyLatingResponse> call, Throwable t) {
-
-                }
-            });
-            number_good.setText(String.valueOf(good));
-            number_bad.setText(String.valueOf(bad));
-
-
-            btn_img.setOnClickListener(this);*/
-
-            setDummy();
-
-            return rootView;
-        }
-
-        public void setRecycler(RecyclerView recyclerView, ArrayList<Sales> saleslist){
-
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL, false));
-            SalesAdapter salesAdapter = new SalesAdapter(getActivity(), saleslist); //어댑터 수정해야함
-            recyclerView.setAdapter(salesAdapter);
-        }
-
-
-        public void onClick(View v){
-            id_view = v.getId();
-            if(v.getId() == R.id.btn_img){
-                DialogInterface.OnClickListener cameraListener = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int which) {
-                        doTakePhotoAction();
-                    }
-                };
-                DialogInterface.OnClickListener albumListener = new DialogInterface.OnClickListener() {
-
-                    @Override
-
-                    public void onClick(DialogInterface dialog, int which) {
-                        doTakeAlbumAction();
-                    }
-                };
-                DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener() {
-
-                    @Override
-
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                };
-
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("프로필 이미지 선택")
-                        .setNegativeButton("사진촬영", cameraListener)
-
-                        .setNeutralButton("앨범선택", albumListener)
-
-                        .setPositiveButton("취소", cancelListener)
-
-                        .show();
-
+                Log.d("외않되", String.valueOf(t));
 
             }
-            else if(v.getId() == R.id.btn_nickname){
-                //닉네임 변경
-
-                return;
-            }
-        }
-        public void doTakePhotoAction(){ // 카메라 촬영 후 이미지 가져오기{
-
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        });
 
 
-            // 임시로 사용할 파일의 경로를 생성
+    }
 
-            String url = "tmp_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
-
-            mImageCaptureUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), url));
-
-
-            intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
-
-            startActivityForResult(intent, PICK_FROM_CAMERA);
-
-        }
-
-        public void doTakeAlbumAction() // 앨범에서 이미지 가져오기
-         {
-
-            // 앨범 호출
-
-            Intent intent = new Intent(Intent.ACTION_PICK);
-
-            intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
-
-            startActivityForResult(intent, PICK_FROM_ALBUM);
-
-        }
-        @Override
-        public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-            super.onActivityResult(requestCode,resultCode,data);
-
-
-            if(resultCode != RESULT_OK)
-
-                return;
-
-
-            switch(requestCode)
-
-            {
-
-                case PICK_FROM_ALBUM:
-
-                {
-                    mImageCaptureUri = data.getData();
-
-                    Log.d("SmartWheel",mImageCaptureUri.getPath().toString());
-                }
-
-
-                case PICK_FROM_CAMERA:
-
-                {
-                    // 이미지를 가져온 이후의 리사이즈할 이미지 크기를 결정합니다.
-
-                    // 이후에 이미지 크롭 어플리케이션을 호출하게 됩니다.
-
-                    Intent intent = new Intent("com.android.camera.action.CROP");
-
-                    intent.setDataAndType(mImageCaptureUri, "image/*");
-
-
-                    // CROP할 이미지를 200*200 크기로 저장
-
-                    intent.putExtra("outputX", 200); // CROP한 이미지의 x축 크기
-
-                    intent.putExtra("outputY", 200); // CROP한 이미지의 y축 크기
-
-                    intent.putExtra("aspectX", 1); // CROP 박스의 X축 비율
-
-                    intent.putExtra("aspectY", 1); // CROP 박스의 Y축 비율
-
-                    intent.putExtra("scale", true);
-
-                    intent.putExtra("return-data", true);
-
-                    startActivityForResult(intent, CROP_FROM_IMAGE); // CROP_FROM_CAMERA case문 이동
-
-                    break;
-
-                }
-
-                case CROP_FROM_IMAGE :
-                {
-                    // 크롭이 된 이후의 이미지를 넘겨 받습니다.
-
-                    // 이미지뷰에 이미지를 보여준다거나 부가적인 작업 이후에
-
-                    // 임시 파일을 삭제합니다.
-
-                    if(resultCode != RESULT_OK) {
-
-                        return;
-
+    public void getRating(Token token){
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, getActivity());
+        Call<UserRatingResponse> call = apiinterface.getRating();
+        call.enqueue(new Callback<UserRatingResponse>() {
+            @Override
+            public void onResponse(Call<UserRatingResponse> call, Response<UserRatingResponse> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    if(response.body().getResult().equals("RATING_READ_SUCCESS")) {
+                        UserRatingResponse.Data res = response.body().getData();
+                        tv_like.setText(res.getGood());
+                        tv_dislike.setText(res.getBad());
                     }
-
-
-                    final Bundle extras = data.getExtras();
-
-
-                    // CROP된 이미지를 저장하기 위한 FILE 경로
-
-                    String filePath = Environment.getExternalStorageDirectory().getAbsolutePath()+
-
-                            "/SmartWheel/"+System.currentTimeMillis()+".jpg";
-
-
-                    if(extras != null)
-
-                    {
-
-                        Bitmap photo = extras.getParcelable("data"); // CROP된 BITMAP
-
-                        profile_img.setImageBitmap(photo); // 레이아웃의 이미지칸에 CROP된 BITMAP을 보여줌
-
-
-                        storeCropImage(photo, filePath); // CROP된 이미지를 외부저장소, 앨범에 저장한다.
-
-                        absoultePath = filePath;
-
-                        break;
-
-
-                    }
-
-                    // 임시 파일 삭제
-
-                    File f = new File(mImageCaptureUri.getPath());
-
-                    if(f.exists())
-
-                    {
-
-                        f.delete();
-
-                    }
-
                 }
-
+                else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                }
 
             }
 
+            @Override
+            public void onFailure(Call<UserRatingResponse> call, Throwable t) {
+                Log.d("외않되", String.valueOf(t));
+            }
+        });
+    }
 
+    public void getHistory(Token token){
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, getActivity());
+        Call<PostResponse> call = apiinterface.getSalesHistory();
+        call.enqueue(new Callback<PostResponse>() {
+            @Override
+            public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    if(response.body().getResult().equals("POST_READ_SUCCESS")){
+                        PostResponse res = response.body();
+                        Log.d("성공", new Gson().toJson(res));
 
-        }
+                        if(!salesList.isEmpty()){
+                            salesList = new ArrayList<>();
+                        }
 
-        private void storeCropImage(Bitmap bitmap, String filePath) {
+                        salesList.addAll(res.getData().getShare());
+                        historyAdapter.notifyDataSetChanged();
+                    }
 
-            // SmartWheel 폴더를 생성하여 이미지를 저장하는 방식이다.
-
-            String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/SmartWheel";
-
-            File directory_SmartWheel = new File(dirPath);
-
-
-            if(!directory_SmartWheel.exists()) // SmartWheel 디렉터리에 폴더가 없다면 (새로 이미지를 저장할 경우에 속한다.)
-
-                directory_SmartWheel.mkdir();
-
-
-            File copyFile = new File(filePath);
-
-            BufferedOutputStream out = null;
-
-
-            try {
-
-
-                copyFile.createNewFile();
-
-                out = new BufferedOutputStream(new FileOutputStream(copyFile));
-
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-
-
-                // sendBroadcast를 통해 Crop된 사진을 앨범에 보이도록 갱신한다.
-
-                getActivity().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-
-                        Uri.fromFile(copyFile)));
-
-
-
-                out.flush();
-
-                out.close();
-
-            } catch (Exception e) {
-
-                e.printStackTrace();
-
+                }else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                }
             }
 
-        }
+            @Override
+            public void onFailure(Call<PostResponse> call, Throwable t) {
 
-        public void setDummy(){
-            ArrayList<Sales> dummy = new ArrayList<>();
-            dummy.add(new Sales("2021-01-01","감자를 나누고 싶어요","이미지","ㅇㅇ","5"));
-            dummy.add(new Sales("2021-01-01","감자를 나누고 싶어요","이미지","ㅇㅇ","5"));
-            dummy.add(new Sales("2021-01-01","감자를 나누고 싶어요","이미지","ㅇㅇ","5"));
-            dummy.add(new Sales("2021-01-01","감자를 나누고 싶어요","이미지","ㅇㅇ","5"));
-            dummy.add(new Sales("2021-01-01","감자를 나누고 싶어요","이미지","ㅇㅇ","5"));
+            }
+        });
+    }
 
-            setRecycler(rv_sell, dummy);
-        }
     }
 
 
