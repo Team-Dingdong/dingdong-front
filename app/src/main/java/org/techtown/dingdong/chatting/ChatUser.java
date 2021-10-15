@@ -11,7 +11,7 @@ public class ChatUser {
     @SerializedName("profileImageUrl")
     @Expose
     private String imgUrl;
-    @SerializedName("owner")
+    @SerializedName("isOwner")
     @Expose
     private String ismaster;
     @SerializedName("userId")

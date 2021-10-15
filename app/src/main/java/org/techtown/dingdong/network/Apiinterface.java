@@ -48,11 +48,11 @@ public interface Apiinterface {
     Call<PostResponse> getData(@Query("page") int num);
 
 
-    @GET("/api/v1/post/sorted_by=desc(createdDate)")
+    @GET("/api/v1/post/sorted-by=desc(createdDate)")
     Call<PostResponse> getCreatedData(@Query("page") int num);
 
 
-    @GET("/api/v1/post/sorted_by=desc(endDate)")
+    @GET("/api/v1/post/sorted-by=desc(endDate)")
     Call<PostResponse> getEndData(@Query("page") int num);
 
     @POST("/api/v1/auth/reissue")
@@ -62,10 +62,10 @@ public interface Apiinterface {
     Call<PostResponse> getCategoryData(@Path("id") int id);
 
 
-    @GET("/api/v1/post/category/sorted_by=desc(endDate)/{id}")
+    @GET("/api/v1/post/category/sorted-by=desc(endDate)/{id}")
     Call<PostResponse> getEndCategoryData(@Path("id") int id, @Query("page") int num);
 
-    @GET("/api/v1/post/category/sorted_by=desc(createdDate)/{id}")
+    @GET("/api/v1/post/category/sorted-by=desc(createdDate)/{id}")
     Call<PostResponse> getCreatedCategoryData(@Path("id") int id, @Query("page") int num);
 
     @Multipart

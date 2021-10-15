@@ -19,7 +19,7 @@ public class Chat {
     @SerializedName("sendTime")
     @Expose
     private String time;
-    @SerializedName("owner")
+    @SerializedName("isOwner")
     @Expose
     private String owner;
     private int viewType = 0;

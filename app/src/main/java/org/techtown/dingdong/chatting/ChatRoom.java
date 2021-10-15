@@ -26,7 +26,7 @@ public class ChatRoom {
     @SerializedName("lastChatTime")
     @Expose
     private String lastChatTime = null;
-    @SerializedName("owner")
+    @SerializedName("isOwner")
     @Expose
     private String isOwner;
     //private ArrayList<User> users;

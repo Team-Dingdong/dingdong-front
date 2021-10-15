@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.home.Share;
 import org.techtown.dingdong.login_register.AuthResponse;
@@ -61,7 +63,12 @@ public class AccessTokenInterceptor implements Interceptor {
                         }
                     }
                     else{
-                        Log.d("문제발생", String.valueOf(response));
+                        Log.d("실패", new Gson().toJson(response.errorBody()));
+                        Log.d("실패", response.toString());
+                        Log.d("실패", String.valueOf(response.code()));
+                        Log.d("실패", response.message());
+                        Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                        Log.d("실패", new Gson().toJson(response.raw().request()));
                     }
                 }
 
