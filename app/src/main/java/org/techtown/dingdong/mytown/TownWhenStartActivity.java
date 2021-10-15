@@ -30,7 +30,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
-import org.techtown.dingdong.login_register.LoginResponse;
 import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
@@ -60,6 +59,8 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
 
     double latitude;
     double longtitude;
+
+    Token token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,43 +98,18 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
         String expire = pref.getString("oauth.expire","");
         String tokentype = pref.getString("oauth.tokentype","");
 
-        //Token token = new Token(access, refresh, expire, tokentype);
-        //token.setContext(TownWhenStartActivity.this);
+        token = new Token(access, refresh, expire, tokentype);
+        token.setContext(TownWhenStartActivity.this);
 
         Log.d(">??", String.valueOf(access));
 
 
-        Apiinterface apiinterface = Api.createService(Apiinterface.class);
-        Call<LoginResponse> re = apiinterface.getRefresh(access, refresh);
-        re.enqueue(new Callback<LoginResponse>() {
-            @Override
-            public void onResponse(Call<LoginResponse> call, retrofit2.Response<LoginResponse> response) {
 
-                if(response.isSuccessful()) {
-                    SharedPreferences preferences = getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
 
-                    LoginResponse.Data mToken = response.body().data;
-                    Log.d("리프레쉬 성공", mToken.getAccessToken());
-                    Token token = new Token(mToken.getAccessToken(), mToken.getRefreshToken(), mToken.getExpireIn(), mToken.getTokentype());
-                    preferences.edit().putString("oauth.accesstoken", token.getAccessToken()).apply();
-                    preferences.edit().putString("oauth.refreshtoken", token.getRefreshToken()).apply();
-                    preferences.edit().putString("oauth.expire", token.getExpireIn()).apply();
-                    preferences.edit().putString("oauth.tokentype", token.getGrantType()).apply();
-                }
-            }
 
-            @Override
-            public void onFailure(Call<LoginResponse> call, Throwable t) {
-                Log.d("refresh실패", String.valueOf(t));
-
-            }
-        });
-
-        Token token1 = new Token(access, refresh, expire, tokentype);
-        token1.setContext(TownWhenStartActivity.this);
 
         startLocationService();
-        findlocal(token1);
+        findlocal(token);
 
 
 
@@ -185,7 +161,7 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
             @Override
             public void onClick(View view) {
                 startLocationService();
-                findlocal(token1);
+                findlocal(token);
             }
         });
 
@@ -212,7 +188,7 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
     }
 
     private ArrayList<TownItem> getData() {
-        ArrayList<TownItem> test = new ArrayList<>();
+        /*ArrayList<TownItem> test = new ArrayList<>();
         TownItem townitem1 = new TownItem("1","성북동");
         test.add(0,townitem1);
         TownItem townitem2 = new TownItem("2","삼선동");
@@ -232,12 +208,12 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
         TownItem townitem9 = new TownItem("9","정릉2동");
         test.add(8,townitem9);
         TownItem townitem10 = new TownItem("10","정릉3동");
-        test.add(9,townitem10);
+        test.add(9,townitem10);*/
 
 
-        /*ArrayList<TownItem> result = new ArrayList<>();
+        ArrayList<TownItem> result = new ArrayList<>();
 
-        Apiinterface apiinterface = Api.createService(Apiinterface.class);
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, TownWhenStartActivity.this);
         Call<localResponse> call = apiinterface.getLocal(city, district);
         call.enqueue(new Callback<localResponse>() {
             @Override
@@ -255,8 +231,8 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
                 Log.d("TAG", String.valueOf(t));
              }
         });
-        return result;*/
-       return test;
+        return result;
+      // return test;
 
     }
 
