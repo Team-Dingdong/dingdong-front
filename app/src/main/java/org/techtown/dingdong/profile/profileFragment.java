@@ -1,15 +1,9 @@
 package org.techtown.dingdong.profile;
 
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.net.Uri;
 
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,9 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,31 +23,22 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 
 import org.techtown.dingdong.BuildConfig;
-import org.techtown.dingdong.MainActivity;
 import org.techtown.dingdong.R;
 import org.techtown.dingdong.home.PostResponse;
 import org.techtown.dingdong.home.Share;
 import org.techtown.dingdong.login_register.SetProfileActivity;
 import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.mypage.HistoryAdapter;
-import org.techtown.dingdong.mypage.RatingActivity;
-import org.techtown.dingdong.mypage.Sales;
-import org.techtown.dingdong.mypage.SalesAdapter;
 import org.techtown.dingdong.mypage.UserRatingResponse;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static android.app.Activity.RESULT_OK;
 
 public class profileFragment extends Fragment {
 

@@ -13,6 +13,8 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.network.Api;
+import org.techtown.dingdong.network.Apiinterface;
 
 public class LeaveActivity extends AppCompatActivity {
     Button btn_quit;

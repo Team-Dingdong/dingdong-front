@@ -1,11 +1,9 @@
 package org.techtown.dingdong.mytown;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,135 +14,86 @@ import org.techtown.dingdong.R;
 
 import java.util.ArrayList;
 
-public class TownAdapter extends RecyclerView.Adapter<TownAdapter.ViewHolder>
-        implements Filterable
-{
-    private final boolean what;
-    ArrayList<TownItem> townlist;
-    ArrayList<TownItem> filteredList;
-
-    int num;
-    TownItem townItem;
-
-
-
-    public TownAdapter(Context context, ArrayList<TownItem> townlist, boolean what){
-
-
-        this.townlist = new ArrayList<>(townlist);
-        this.what = what;
-        this.filteredList = townlist;
-
-    }
-
-
-    public interface OnItemClickListener{
-
-        void onItemClick(View view,TownItem townItem);
-    }
-
-    private OnItemClickListener mListener;
-    public void setOnItemClickListener(OnItemClickListener listener){
-        mListener =listener;
-    }
-
-    public void dataSetChanged(ArrayList<TownItem> exampleList) {
-        filteredList = exampleList;
-        notifyDataSetChanged();
-    }
-
+public class TownAdapter extends RecyclerView.Adapter<TownAdapter.ViewHoldder>
+                        implements OnTownItemClickListener { //어댑터 클래스가 리스너 인터페이스 구현
+    ArrayList<Town> items = new ArrayList<Town>();
+    OnTownItemClickListener listener;
 
     @NonNull
     @NotNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup viewGroup, int viewType) {
+    public ViewHoldder onCreateViewHolder(@NonNull @NotNull ViewGroup viewGroup, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-        View itemview = inflater.inflate(R.layout.item_town, viewGroup, false);
-        ViewHolder holder = new ViewHolder(itemview);
+        View itemview = inflater.inflate(R.layout.town_item, viewGroup, false);
 
-        return holder;
+        return new ViewHoldder(itemview);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull @NotNull final ViewHolder viewholder,final int position) {
-        TownItem currentItem = filteredList.get(position);
-        viewholder.textView.setText(currentItem.getName());
-        viewholder.tv_num.setText(currentItem.getId());
+    public void onBindViewHolder(@NonNull @NotNull ViewHoldder viewholder, int position) {
 
-        if (mListener != null) {
-            final int pos = position;
-            //final ItemModel item = mItems.get(viewHolder.getAdapterPosition());
-            viewholder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mListener.onItemClick(v, currentItem);
-                    //mListener.onItemClicked(item);
-                }
-            });
-        }
+        Town item= items.get(position);
+        viewholder.setItem(item);
     }
 
     @Override
     public int getItemCount() {
-        return filteredList.size();
+        return items.size();
     }
 
-    //검색 기능
-   /* public void filterList(ArrayList<Town> filterList){
-        items = filterList;
-        notifyDataSetChanged();
+    public void addItem(Town item){
+        items.add(item);
     }
-    */
 
+    public void setItems(ArrayList<Town> items){
+        this.items = items;
+    }
+    public Town getItem(int position){
+        return items.get(position);
+    }
+    public void setItem(int position, Town item){
+        items.set(position, item);
+    }
 
-
-    class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textView, tv_num;
-
-
-        public ViewHolder(View itemview) {
-            super(itemview);
-            textView = itemView.findViewById(R.id.tv_townitem);
-            tv_num = itemView.findViewById(R.id.tv_num);
-
-
-        }
-
-
+    public void setOnItemClickListener(OnTownItemClickListener listener){ //외부에서 리스너를 설정할 수 있도록 메서드 추가
+        this.listener = listener;
     }
 
     @Override
-    public Filter getFilter() {
-        return exampleFilter;
+    public void onItemClick(ViewHoldder holder, View view, int position) {
+        if(listener != null){
+            listener.onItemClick(holder, view, position);
+        }
     }
-        private Filter exampleFilter = new Filter() {
-            @Override
-            protected FilterResults performFiltering(CharSequence constraint) {
-                ArrayList<TownItem> filteredList = new ArrayList<>();
-                if(constraint == null || constraint.length() == 0) {
-                    filteredList.addAll(townlist);
-                } else {
-                    String filterPattern = constraint.toString().toLowerCase().trim();
 
-                    for(TownItem item : townlist) {
-                        if(item.getName().toLowerCase().contains(filterPattern)) { //스트링 형식아니라 다른
-                            filteredList.add(item);
-                        }
+
+    public class ViewHoldder extends RecyclerView.ViewHolder {
+        Button button;
+
+        public ViewHoldder(@NonNull @NotNull View itemView) {
+            super(itemView);
+
+            button = itemView.findViewById(R.id.town_btn);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = getAdapterPosition();
+
+                    if(listener != null){
+                        listener.onItemClick(ViewHoldder.this, view, position);
+
                     }
                 }
-                FilterResults filterResults = new FilterResults();
-                filterResults.values = filteredList;
-                return filterResults;
-            }
+            });
+        }
 
-            @Override
-            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-               filteredList.clear();
-                filteredList.addAll((ArrayList)filterResults.values);
-                notifyDataSetChanged();
-
-
-            }
-        };
+        public void setItem(Town item){
+            button.setText(item.getName());
+        }
     }
 
+
+
+
+}

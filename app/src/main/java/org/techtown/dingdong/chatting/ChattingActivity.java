@@ -238,6 +238,8 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                             Intent intent = new Intent(ChattingActivity.this, UserListActivity.class);
                             intent.putExtra("id", id);
                             startActivity(intent);
+                            stompClient.disconnect();
+
                     }
                     });
 
@@ -251,6 +253,8 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                         Intent intent = new Intent(ChattingActivity.this, UserListActivity.class);
                         intent.putExtra("id", id);
                         startActivity(intent);
+                        stompClient.disconnect();
+
 
                     }
                     });
@@ -404,7 +408,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
 
     private void setChatRecycler(RecyclerView recyclerView, ArrayList<Chat> chats){
         chatAdapter = new ChattingAdapter(chats, username, this);
-        chatAdapter.setHasStableIds(true);
+        chatAdapter.setHasStableIds(false);
         recyclerView.setAdapter(chatAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         recyclerView.scrollToPosition(chatAdapter.getItemCount()-1);
@@ -423,7 +427,9 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                         ChatResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
                         chats.addAll(res.getChats());
-                        chatAdapter.notifyDataSetChanged();
+                        /*chatAdapter.notifyDataSetChanged();
+                        recycler_chat.scrollToPosition(chatAdapter.getItemCount()-1);*/
+                        setChatRecycler(recycler_chat, chats);
 
                     }
                 }else{

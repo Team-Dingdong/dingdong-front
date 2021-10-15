@@ -10,6 +10,7 @@ import org.techtown.dingdong.login_register.AuthResponse;
 import org.techtown.dingdong.login_register.LoginActivity;
 import org.techtown.dingdong.login_register.LoginResponse;
 import org.techtown.dingdong.login_register.Token;
+import org.techtown.dingdong.login_register.TokenRefreshRequest;
 
 import java.io.IOException;
 
@@ -37,8 +38,9 @@ public class AccessTokenInterceptor implements Interceptor {
             String accessToken = tokenRepo.getAccessToken();
             String refreshToken = tokenRepo.getRefreshToken();
             Context context = tokenRepo.getContext();
+            TokenRefreshRequest tokenRefreshRequest = new TokenRefreshRequest(accessToken, refreshToken);
             Apiinterface apiinterface = Api.createService(Apiinterface.class);
-            Call<LoginResponse> call = apiinterface.getRefresh(accessToken, refreshToken);
+            Call<LoginResponse> call = apiinterface.getRefresh(tokenRefreshRequest);
             call.enqueue(new Callback<LoginResponse>() {
                 @Override
                 public void onResponse(Call<LoginResponse> call, retrofit2.Response<LoginResponse> response) {

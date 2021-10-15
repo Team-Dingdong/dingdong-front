@@ -56,7 +56,7 @@ public class ChatUserAdapter extends RecyclerView.Adapter<ChatUserAdapter.ViewHo
             holder.ismaster.setVisibility(View.VISIBLE);
         }
 
-        Glide.with(holder.img_profile.getContext())
+        Glide.with(context)
                 .load(chatuser.getImgUrl())
                 .into(holder.img_profile);
         holder.tv_username.setText(chatuser.getUsername());
@@ -66,6 +66,7 @@ public class ChatUserAdapter extends RecyclerView.Adapter<ChatUserAdapter.ViewHo
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), UserProfileActivity.class);
                 intent.putExtra("id",chatUsers.get(position).getId());
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 context.startActivity(intent);
             }
         });

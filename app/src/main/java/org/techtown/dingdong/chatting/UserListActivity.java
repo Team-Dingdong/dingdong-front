@@ -82,8 +82,6 @@ public class UserListActivity extends AppCompatActivity {
                         recyclerView.setLayoutManager(new LinearLayoutManager(UserListActivity.this, LinearLayoutManager.VERTICAL, false));
                         chatUserAdapter = new ChatUserAdapter(chatUsers, UserListActivity.this);
                         recyclerView.setAdapter(chatUserAdapter);
-
-
                     }
                 }else{
                     Log.d("실패", new Gson().toJson(response.errorBody()));
@@ -166,7 +164,10 @@ public class UserListActivity extends AppCompatActivity {
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Intent intent = new Intent(UserListActivity.this, ChattingActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("id",id);
+                startActivity(intent);
             }
         });
     }

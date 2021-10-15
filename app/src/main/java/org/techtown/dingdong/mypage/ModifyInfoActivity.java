@@ -3,8 +3,10 @@ package org.techtown.dingdong.mypage;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,7 +17,20 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.home.EditActivity;
+import org.techtown.dingdong.login_register.LoginOrRegisterActivity;
+import org.techtown.dingdong.login_register.Token;
+import org.techtown.dingdong.network.Api;
+import org.techtown.dingdong.network.Apiinterface;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ModifyInfoActivity extends AppCompatActivity {
 
@@ -42,6 +57,15 @@ public class ModifyInfoActivity extends AppCompatActivity {
         ln_auth = findViewById(R.id.auth);
         et_auth = findViewById(R.id.et_auth);
         btn_auth = findViewById(R.id.btn_auth);
+
+        SharedPreferences pref = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+        String access = pref.getString("oauth.accesstoken", "");
+        String refresh = pref.getString("oauth.refreshtoken", "");
+        String expire = pref.getString("oauth.expire", "");
+        String tokentype = pref.getString("oauth.tokentype", "");
+
+        Token token = new Token(access, refresh, expire, tokentype);
+        token.setContext(ModifyInfoActivity.this);
 
 
         btn_correct.setOnClickListener(new View.OnClickListener() {
@@ -71,7 +95,56 @@ public class ModifyInfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //탈퇴하기 액티비티로
-                startActivity(new Intent(ModifyInfoActivity.this, LeaveActivity.class));
+                //startActivity(new Intent(ModifyInfoActivity.this, LeaveActivity.class));
+
+                //탈퇴하기 다이얼로그를 띄운다
+                AlertDialog.Builder dialog = new AlertDialog.Builder(ModifyInfoActivity.this);
+
+                dialog.setMessage("계정의 모든 정보가 삭제됩니다. \n탈퇴하시겠습니까?")
+                        .setTitle("탈퇴하기")
+                        .setPositiveButton("아니오", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Log.i("Dialog", "아니오");
+                            }
+                        })
+                        .setNegativeButton("네", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //네를 눌렀을시
+                                Log.i("Dialog", "네");
+                                Apiinterface apiinterface = Api.createService(Apiinterface.class, token, ModifyInfoActivity.this);
+                                Call<ResponseBody> call = apiinterface.leaveUser();
+                                call.enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        if (response.isSuccessful()) {
+                                            if (response.code() == 200) {
+                                                Intent intent = new Intent(ModifyInfoActivity.this, LoginOrRegisterActivity.class);
+                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                startActivity(intent);
+                                            }
+
+                                        } else {
+
+                                            Log.d("실패", new Gson().toJson(response.errorBody()));
+                                            Log.d("실패", response.toString());
+                                            Log.d("실패", String.valueOf(response.code()));
+                                            Log.d("실패", response.message());
+                                            Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                                            Log.d("실패", new Gson().toJson(response.raw().request()));
+
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                    }
+                                });
+
+                            }
+                        }).show();
             }
         });
 
