@@ -21,11 +21,12 @@ import org.techtown.dingdong.login_register.TokenRefreshRequest;
 import org.techtown.dingdong.mypage.UserRatingRequest;
 import org.techtown.dingdong.mypage.UserRatingResponse;
 import org.techtown.dingdong.profile.UserProfileRequest;
+import org.techtown.dingdong.mytown.AuthLocalRequest;
+import org.techtown.dingdong.mytown.AuthLocalResponse;
+import org.techtown.dingdong.mytown.localResponse;
 import org.techtown.dingdong.profile.UserProfileResponse;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -57,6 +58,10 @@ public interface Apiinterface {
     @POST("/api/v1/auth/reissue")
     Call<LoginResponse> getRefresh(@Body TokenRefreshRequest tokenRefreshRequest);
 
+    @GET("/api/v1/post/category/{id}")
+    Call<PostResponse> getCategoryData(@Path("id") int id);
+
+
     @GET("/api/v1/post/category/sorted_by=desc(endDate)/{id}")
     Call<PostResponse> getEndCategoryData(@Path("id") int id, @Query("page") int num);
 
@@ -82,7 +87,7 @@ public interface Apiinterface {
 
     @Multipart
     @PATCH("/api/v1/upload/post/{id}")
-    Call<ResponseBody> uploadImg(@Part ArrayList<MultipartBody.Part> files, @Part ArrayList<MultipartBody.Part> urls,@Path("id") int id);
+    Call<ResponseBody> uploadImg(@Part ArrayList<MultipartBody.Part> files, @Part ArrayList<MultipartBody.Part> urls, @Path("id") int id);
 
     @POST("/api/v1/auth")
     Call<LoginResponse> LoginRequest(@Body LoginRequest loginRequest);
@@ -161,4 +166,10 @@ public interface Apiinterface {
     Call<ResponseBody> setProfile(@Body UserProfileRequest userProfileRequest);
 
 
+    @GET("/api/v1/auth/local")
+    Call<localResponse> getLocal(@Query("city") String city,
+                                 @Query("district") String district);
+
+    @POST("/api/v1/auth/local")
+    Call<AuthLocalResponse> authLocal(@Body AuthLocalRequest authLocalRequest);
 }
