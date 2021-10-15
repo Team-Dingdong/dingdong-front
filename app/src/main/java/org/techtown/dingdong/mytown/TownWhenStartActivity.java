@@ -105,11 +105,8 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
 
 
 
-
-
-
         startLocationService();
-        findlocal(token);
+        //findlocal(token);
 
 
 
@@ -161,7 +158,7 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
             @Override
             public void onClick(View view) {
                 startLocationService();
-                findlocal(token);
+               // findlocal(token);
             }
         });
 
@@ -218,7 +215,7 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
         call.enqueue(new Callback<localResponse>() {
             @Override
             public void onResponse(Call<localResponse> call, Response<localResponse> response) {
-                if(response.isSuccessful() && response.body().getCode().equals("LOCAL_READ_SUCCESS")) {
+                if(response.body().getCode().equals("LOCAL_READ_SUCCESS")) {
 
                    // ArrayList<TownItem> result = new ArrayList<>();
                     for(int i=0; i<response.body().code.length(); i++) {
@@ -279,7 +276,7 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
 
                         //----------여기에 서버연결-----------------------------
                        //서버에서 동데이터 받아와서 getdata()에서 추가해주기
-                        setUpRecyclerView();
+                        //setUpRecyclerView();
 
 
                     }

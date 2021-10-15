@@ -24,7 +24,7 @@ import org.techtown.dingdong.login_register.LoginRequest;
 import org.techtown.dingdong.login_register.LoginResponse;
 import org.techtown.dingdong.login_register.SetProfileActivity;
 import org.techtown.dingdong.login_register.Token;
-import org.techtown.dingdong.mytown.changetownActivity;
+import org.techtown.dingdong.mytown.TownActivity;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
 import org.techtown.dingdong.profile.UserProfileActivity;
@@ -102,6 +102,13 @@ public class myPageFragment extends Fragment{
 
                 startActivity(new Intent(getActivity(), ModifyInfoActivity.class));
 
+            }
+        });
+
+        btn_town.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), TownActivity.class));
             }
         });
 
