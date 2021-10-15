@@ -32,17 +32,17 @@
         <activity android:name=".mypage.LeaveActivity" />
         <activity android:name=".mypage.ModifyInfoActivity" />
         <activity android:name=".home.TabActivity" />
-        <activity android:name=".mytown.TownRecyclActivity" />
         <activity android:name=".home.SearchResultActivity" />
         <activity android:name=".home.SearchBarActivity" />
         <activity android:name=".chatting.UserListActivity" />
         <activity android:name=".chatting.PlanningActivity" />
+        <activity android:name=".mytown.TownWhenStartActivity" />
+        <activity android:name=".mytown.TownActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAfg07uT1VaOf-53XrkMSXw4Z3e1mZGWdg" />
 
-        <activity android:name=".mytown.changetownActivity" />
         <activity android:name=".login_register.RegisterActivity" />
         <activity android:name=".login_register.LoginOrRegisterActivity" />
         <activity android:name=".login_register.LoginActivity">

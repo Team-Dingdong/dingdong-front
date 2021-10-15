@@ -19,6 +19,9 @@ import org.techtown.dingdong.login_register.LoginResponse;
 import org.techtown.dingdong.login_register.ProfileUploadResponse;
 import org.techtown.dingdong.mypage.SalesResponse;
 import org.techtown.dingdong.mypage.UserRatingResponse;
+import org.techtown.dingdong.mytown.AuthLocalRequest;
+import org.techtown.dingdong.mytown.AuthLocalResponse;
+import org.techtown.dingdong.mytown.localResponse;
 import org.techtown.dingdong.profile.UserProfileResponse;
 
 import java.util.ArrayList;
@@ -53,7 +56,7 @@ public interface Apiinterface {
 
     @FormUrlEncoded
     @POST("/api/v1/auth/reissue")
-    Call<LoginResponse> getRefresh(@Field("accessToken")String accessToken, @Field("refreshToken")String refreshToken);
+    Call<LoginResponse> getRefresh(@Field("accessToken") String accessToken, @Field("refreshToken") String refreshToken);
 
 
     @GET("/api/v1/post/category/{id}")
@@ -84,7 +87,7 @@ public interface Apiinterface {
 
     @Multipart
     @PATCH("/api/v1/upload/post/{id}")
-    Call<ResponseBody> uploadImg(@Part ArrayList<MultipartBody.Part> files, @Part ArrayList<MultipartBody.Part> urls,@Path("id") int id);
+    Call<ResponseBody> uploadImg(@Part ArrayList<MultipartBody.Part> files, @Part ArrayList<MultipartBody.Part> urls, @Path("id") int id);
     //Call<ResponseBody> uploadImg(@PartMap HashMap<String, RequestBody> partmap, @Path("id") int id);
 
 
@@ -143,7 +146,7 @@ public interface Apiinterface {
     //@POST("/api/v1/auth")
     //Call<LoginResponse> LoginRequest(@Body LoginRequest loginRequest);
 
-   // @PATCH("/api/v1/upload/profile/:id")
+    // @PATCH("/api/v1/upload/profile/:id")
     //Call<ProfileImgResponse>
 
     @Multipart
@@ -169,5 +172,10 @@ public interface Apiinterface {
     @GET("/api/v1/post/user/buy")
     Call<PostResponse> getPurchasesHistory();
 
+    @GET("/api/v1/auth/local")
+    Call<localResponse> getLocal(@Query("city") String city,
+                                 @Query("district") String district);
 
+    @POST("/api/v1/auth/local")
+    Call<AuthLocalResponse> authLocal(@Body AuthLocalRequest authLocalRequest);
 }
