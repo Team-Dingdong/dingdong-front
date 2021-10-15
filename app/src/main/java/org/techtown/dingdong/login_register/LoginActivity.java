@@ -148,8 +148,8 @@ public class LoginActivity extends AppCompatActivity {
 
                         if(response.isSuccessful()){
 
+                            //기기 내부에 토큰 정보 저장
                             SharedPreferences preferences = getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
-
 
                             Log.d("로그인성공", new Gson().toJson(response.body()));
                             LoginResponse.Data mToken = response.body().data;

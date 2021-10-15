@@ -33,6 +33,8 @@ import org.techtown.dingdong.home.ShareResponse;
 import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
+import org.techtown.dingdong.profile.UserProfileActivity;
+import org.techtown.dingdong.profile.UserProfileResponse;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -56,6 +58,7 @@ public class RatingActivity extends AppCompatActivity {
     ImageButton btn_back;
     Token token;
     String id;
+    String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +90,40 @@ public class RatingActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(RatingActivity.this, LinearLayoutManager.VERTICAL, false));
         userRatingAdapter = new UserRatingAdapter(chatUsers, RatingActivity.this);
         recyclerView.setAdapter(userRatingAdapter);
+
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, RatingActivity.this);
+        Call<UserProfileResponse> call = apiinterface.getUserProfile();
+        call.enqueue(new Callback<UserProfileResponse>() {
+            @Override
+            public void onResponse(Call<UserProfileResponse> call, Response<UserProfileResponse> response) {
+
+                if(response.isSuccessful() && response.body() != null) {
+                    if (response.body().getResult().equals("PROFILE_READ_SUCCESS")) {
+                        UserProfileResponse res = response.body();
+                        Log.d("성공", new Gson().toJson(res));
+                        username = res.getData().getNickname();
+                    }
+                }else{
+
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<UserProfileResponse> call, Throwable t) {
+
+                Log.d("외않되", String.valueOf(t));
+
+            }
+        });
 
         getUserList(token);
         setShare(token);
@@ -154,7 +191,8 @@ public class RatingActivity extends AppCompatActivity {
 
     private void rateUser(Token token, int i){
         Apiinterface apiinterface = Api.createService(Apiinterface.class, token, RatingActivity.this);
-        Call<ResponseBody> call = apiinterface.ratingUser(Integer.parseInt(chatUsers.get(i).getId()),chatUsers.get(i).getRating());
+        UserRatingRequest userRatingRequest = new UserRatingRequest(chatUsers.get(i).getRating());
+        Call<ResponseBody> call = apiinterface.ratingUser(Integer.parseInt(chatUsers.get(i).getId()), userRatingRequest);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -192,7 +230,13 @@ public class RatingActivity extends AppCompatActivity {
                     if (response.body().getResult().equals("CHAT_ROOM_USER_READ_SUCCESS")) {
                         ChatUserResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
-                        chatUsers = res.getChatUsers();
+                        ArrayList<ChatUser> temp = new ArrayList<>();
+                        for(int i=0; i < res.getChatUsers().size() ; i++){
+                            if(!res.getChatUsers().get(i).getUsername().equals(username)){
+                                temp.add(res.getChatUsers().get(i));
+                            }
+                        }
+                        chatUsers.addAll(temp);
                         userRatingAdapter.notifyDataSetChanged();
 
                     }
@@ -248,6 +292,8 @@ public class RatingActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     public String priceFormat(String price){
 

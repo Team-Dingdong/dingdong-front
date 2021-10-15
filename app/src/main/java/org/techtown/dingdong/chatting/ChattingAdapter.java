@@ -1,6 +1,7 @@
 package org.techtown.dingdong.chatting;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import org.techtown.dingdong.R;
 import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
+import org.techtown.dingdong.profile.UserProfileActivity;
 import org.techtown.dingdong.profile.UserProfileResponse;
 
 import java.util.ArrayList;
@@ -105,6 +107,7 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
         }
         Log.d("비교",prev + cur);
 
+
         if(holder instanceof ChattingAdapter.LeftViewHolder){
             if(!cur.equals(prev)){
                 //latestdate = myChatList.get(position).getTime().substring(8,10);
@@ -120,6 +123,18 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
             if(myChatList.get(position).getOwner().equals("TRUE")){
                 ((ChattingAdapter.LeftViewHolder)holder).master.setVisibility(View.VISIBLE);
             }
+
+            ((ChattingAdapter.LeftViewHolder) holder).profile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(v.getContext(), UserProfileActivity.class);
+                    intent.putExtra("id",myChatList.get(position).getUserId());
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    v.getContext().startActivity(intent);
+
+                }
+            });
+
 
         }
         else if(holder instanceof ChattingAdapter.RightViewHolder){
@@ -139,7 +154,7 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
                 ((ChattingAdapter.CenterViewHolder)holder).tv_date.setText(mydate);
             }
             ((ChattingAdapter.CenterViewHolder)holder).tv_content.setText(myChatList.get(position).getContent());
-            if(myChatList.get(position).getType().equals("ENTER")){
+            if(myChatList.get(position).getType().equals("ENTER") || myChatList.get(position).getType().equals("QUIT")){
                 ((ChattingAdapter.CenterViewHolder)holder).tv_time.setVisibility(View.GONE);
             }
             else{
@@ -216,7 +231,7 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
 
     @Override
     public int getItemViewType(int position) {
-        if(myChatList.get(position).getType().equals("ENTER") || myChatList.get(position).getType().equals("PROMISE_CONFIRMED")){
+        if(myChatList.get(position).getType().equals("QUIT") || myChatList.get(position).getType().equals("ENTER") || myChatList.get(position).getType().equals("PROMISE_CONFIRMED")){
             return ChatType.ViewType.CENTER_CONTENT;
         }
         else if(myChatList.get(position).getName().equals(username) && myChatList.get(position).getType().equals("TALK")){
@@ -237,7 +252,9 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
         else if(myChatList.get(position).getName().equals(username) && myChatList.get(position).getType().equals("PROMISE_AGAIN")){
             return ChatType.ViewType.RIGHT_CONTENT_PLAN;
         }
-        return myChatList.get(position).getViewType();
+        else{
+            return myChatList.get(position).getViewType();
+        }
     }
 
     public class ChatViewHolder extends RecyclerView.ViewHolder {

@@ -109,6 +109,7 @@ public class HomeFragment extends Fragment {
         sharelistrecycler.setAdapter(shareListAdpater);
 
 
+        //토큰 불러오고 context 저장
         SharedPreferences pref = getActivity().getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         String access = pref.getString("oauth.accesstoken","");
         String refresh = pref.getString("oauth.refreshtoken","");
@@ -215,18 +216,13 @@ public class HomeFragment extends Fragment {
         });
 
 
-        //setDummy();
-        //setShareListRecycler(sharelistrecycler, mList);
-
 
         btn_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), EditActivity.class);
                 intent.putExtra("id","0");
-                //intent.putExtra("id", sharelist.get(position).getId());
                 startActivity(intent);
-                //startActivity(new Intent(getActivity(), ShareDetailActivity.class));
             }
         });
 

@@ -414,29 +414,43 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private void setPatch(Token token){
+        ArrayList<MultipartBody.Part> uplist = new ArrayList<>();
+        for (int i = 0, j = 0; i < uriList.size(); i++) {
+            try {
+                Log.d("1",uriList.get(i).toString());
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(EditActivity.this.getContentResolver(), uriList.get(i));
+                File file = getResize(bitmap, Integer.toString((int) System.currentTimeMillis()).replace("-", ""));
+                Log.d("uploadimg","resizing");
+                Log.d("uploadimg", "file == " + file.getName());
+                RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                uplist.add(MultipartBody.Part.createFormData("postImages", file.getName(), requestBody));
 
-        //리퀘스트 생성
-        PostRequest postRequest = new PostRequest(et_title.getText().toString(), selected_personnel,
-                Integer.parseInt(res_price), et_detail.getText().toString(),
-                et_place.getText().toString(), category, res_hash);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        ArrayList<MultipartBody.Part> input = new ArrayList<>();
+        input.add(MultipartBody.Part.createFormData("title", et_title.getText().toString()));
+        input.add(MultipartBody.Part.createFormData("people", Integer.toString(selected_personnel)));
+        input.add(MultipartBody.Part.createFormData("cost", res_price));
+        input.add(MultipartBody.Part.createFormData("bio",et_detail.getText().toString()));
+        input.add(MultipartBody.Part.createFormData("local",et_place.getText().toString()));
+        input.add(MultipartBody.Part.createFormData("categoryId",Integer.toString(category)));
+        input.add(MultipartBody.Part.createFormData("postTag",res_hash));
 
 
         //토큰을 이용해 통신하도록 레트로핏 통신 클래스에 전달
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,EditActivity.this);
+        Call<ResponseBody> call = apiinterface.setPatch(input, uplist, Integer.parseInt(id));
 
-        Call<ResponseBody> call = apiinterface.setPatch(postRequest, Integer.parseInt(id));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if(response.isSuccessful()){
                     Log.d("성공","수정이완료됨");
-
-                    try {
-                        uploadImage(token, Integer.parseInt(id));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        onfinish(1);
-                    }
+                    onfinish(1);
 
                 }else{
                     Log.d("실패", new Gson().toJson(response.errorBody()));
@@ -461,14 +475,39 @@ public class EditActivity extends AppCompatActivity {
     private void setPost(Token token){
 
         //리퀘스트 생성
-        PostRequest postRequest = new PostRequest(et_title.getText().toString(), selected_personnel,
+        /*PostRequest postRequest = new PostRequest(et_title.getText().toString(), selected_personnel,
                 Integer.parseInt(res_price), et_detail.getText().toString(),
-                et_place.getText().toString(), category, res_hash);
+                et_place.getText().toString(), category, res_hash);*/
 
+        ArrayList<MultipartBody.Part> uplist = new ArrayList<>();
+        for (int i = 0, j = 0; i < uriList.size(); i++) {
+            try {
+                    Log.d("1",uriList.get(i).toString());
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(EditActivity.this.getContentResolver(), uriList.get(i));
+                    File file = getResize(bitmap, Integer.toString((int) System.currentTimeMillis()).replace("-", ""));
+                    Log.d("uploadimg","resizing");
+                    Log.d("uploadimg", "file == " + file.getName());
+                    RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                    uplist.add(MultipartBody.Part.createFormData("postImages", file.getName(), requestBody));
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        ArrayList<MultipartBody.Part> input = new ArrayList<>();
+        input.add(MultipartBody.Part.createFormData("title", et_title.getText().toString()));
+        input.add(MultipartBody.Part.createFormData("people", Integer.toString(selected_personnel)));
+        input.add(MultipartBody.Part.createFormData("cost", res_price));
+        input.add(MultipartBody.Part.createFormData("bio",et_detail.getText().toString()));
+        input.add(MultipartBody.Part.createFormData("local",et_place.getText().toString()));
+        input.add(MultipartBody.Part.createFormData("categoryId",Integer.toString(category)));
+        input.add(MultipartBody.Part.createFormData("postTag",res_hash));
 
         //토큰을 이용해 통신하도록 레트로핏 통신 클래스에 전달
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,EditActivity.this);
-        Call<EditResponse> call = apiinterface.setPost(postRequest);
+        Call<EditResponse> call = apiinterface.setPost(input, uplist);
         call.enqueue(new Callback<EditResponse>() {
             @Override
             public void onResponse(Call<EditResponse> call, Response<EditResponse> response) {
@@ -478,13 +517,7 @@ public class EditActivity extends AppCompatActivity {
                    EditResponse res = response.body();
                    String resId = res.getId();
                    Log.d("성공",resId);
-
-                    try {
-                        uploadImage(token, Integer.parseInt(resId));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        onfinish(1);
-                    }
+                   onfinish(1);
 
                 }else{
                     Log.d("실패", new Gson().toJson(response.errorBody()));
@@ -512,6 +545,7 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private void setShare(Token token){
+        //게시물 수정일 경우 기존 정보 가져오기
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,EditActivity.this);
 
@@ -576,7 +610,7 @@ public class EditActivity extends AppCompatActivity {
                                 break;
                         }
 
-                        if(share.getImage1()!=null){
+                        /*if(share.getImage1()!=null){
                         if(!share.getImage1().contains("default_post.png")){
 
                             imgList.add(share.getImage1());
@@ -593,7 +627,7 @@ public class EditActivity extends AppCompatActivity {
                             recycler_image.setAdapter(imageUploadAdapter);
                             recycler_image.setLayoutManager(new LinearLayoutManager(EditActivity.this, LinearLayoutManager.HORIZONTAL, false));
 
-                        }}
+                        }}*/
                     }
 
                 }else{

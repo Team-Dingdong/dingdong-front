@@ -2,6 +2,7 @@ package org.techtown.dingdong.login_register;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -28,12 +29,14 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 
 import org.techtown.dingdong.BuildConfig;
+import org.techtown.dingdong.MainActivity;
 import org.techtown.dingdong.R;
 import org.techtown.dingdong.chatting.Chat;
 import org.techtown.dingdong.chatting.ChatType;
 import org.techtown.dingdong.chatting.ChattingActivity;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
+import org.techtown.dingdong.profile.UserProfileRequest;
 import org.techtown.dingdong.profile.UserProfileResponse;
 
 import java.io.File;
@@ -60,6 +63,7 @@ public class SetProfileActivity extends AppCompatActivity {
     Uri imageuri;
     private String state;
     Boolean doiimgcorrect;
+    CardView cardView;
 
 
     @Override
@@ -71,6 +75,7 @@ public class SetProfileActivity extends AppCompatActivity {
         btn_back = findViewById(R.id.ic_back);
         et_nickname = findViewById(R.id.et_nickname);
         btn_finish = findViewById(R.id.btn_finish);
+        cardView = findViewById(R.id.cardView);
 
         SharedPreferences pref = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         String access = pref.getString("oauth.accesstoken", "");
@@ -86,6 +91,8 @@ public class SetProfileActivity extends AppCompatActivity {
 
         if(state.equals("signup")){
             btn_back.setVisibility(View.GONE);
+            cardView.setVisibility(View.GONE);
+            btn_upload.setVisibility(View.GONE);
         }
         else{
             getProfile(token);
@@ -123,10 +130,10 @@ public class SetProfileActivity extends AppCompatActivity {
         btn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(state.equals("signup")){
-
+                if(state.equals("signup") && et_nickname.getText().toString().length() > 0){
+                    setProfile(token);
                 }
-                else{
+                else if(state.equals("correct") && et_nickname.getText().toString().length() > 0){
                     updateProfile(token);
                 }
             }
@@ -240,7 +247,8 @@ public class SetProfileActivity extends AppCompatActivity {
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                finish();
+                                Intent intent = new Intent(SetProfileActivity.this, MainActivity.class);
+                                startActivity(intent);
                             }
                         }, 1000);
                     }
@@ -252,6 +260,42 @@ public class SetProfileActivity extends AppCompatActivity {
                     Log.d("실패", response.message());
                     Log.d("실패", String.valueOf(response.raw().request().url().url()));
                     Log.d("실패", new Gson().toJson(response.raw().request()));
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("외않되", String.valueOf(t));
+            }
+        });
+
+
+    }
+
+    private void setProfile(Token token){
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, SetProfileActivity.this);
+        UserProfileRequest userProfileRequest = new UserProfileRequest(et_nickname.getText().toString());
+        Call<ResponseBody> call = apiinterface.setProfile(userProfileRequest);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    if(response.code() == 200) {
+                        Log.d("성공", new Gson().toJson(response.code()));
+                        Log.d("성공", String.valueOf(response.raw().request().url().url()));
+                        Log.d("성공", new Gson().toJson(response.raw().request()));
+
+                        Toast.makeText(SetProfileActivity.this,"프로필 설정이 완료되었습니다.",Toast.LENGTH_LONG).show();
+
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                finish();
+                            }
+                        }, 1000);
+                    }
                 }
 
             }

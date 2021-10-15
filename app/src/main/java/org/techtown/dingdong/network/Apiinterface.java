@@ -17,11 +17,14 @@ import org.techtown.dingdong.login_register.AuthResponse;
 import org.techtown.dingdong.login_register.LoginRequest;
 import org.techtown.dingdong.login_register.LoginResponse;
 import org.techtown.dingdong.login_register.ProfileUploadResponse;
-import org.techtown.dingdong.mypage.SalesResponse;
+import org.techtown.dingdong.login_register.TokenRefreshRequest;
+import org.techtown.dingdong.mypage.UserRatingRequest;
 import org.techtown.dingdong.mypage.UserRatingResponse;
+import org.techtown.dingdong.profile.UserProfileRequest;
 import org.techtown.dingdong.profile.UserProfileResponse;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
@@ -51,15 +54,8 @@ public interface Apiinterface {
     @GET("/api/v1/post/sorted_by=desc(endDate)")
     Call<PostResponse> getEndData(@Query("page") int num);
 
-    @FormUrlEncoded
     @POST("/api/v1/auth/reissue")
-    Call<LoginResponse> getRefresh(@Field("accessToken")String accessToken, @Field("refreshToken")String refreshToken);
-
-
-    @GET("/api/v1/post/category/{id}")
-    Call<PostResponse> getCategoryData(@Path("id") int id);
-    //Call<AuthResponse> setAuth(@Body AuthRequest authRequest);
-    //Call<AuthResponse> setAuth(@Field("to") String ID);
+    Call<LoginResponse> getRefresh(@Body TokenRefreshRequest tokenRefreshRequest);
 
     @GET("/api/v1/post/category/sorted_by=desc(endDate)/{id}")
     Call<PostResponse> getEndCategoryData(@Path("id") int id, @Query("page") int num);
@@ -67,8 +63,9 @@ public interface Apiinterface {
     @GET("/api/v1/post/category/sorted_by=desc(createdDate)/{id}")
     Call<PostResponse> getCreatedCategoryData(@Path("id") int id, @Query("page") int num);
 
+    @Multipart
     @POST("/api/v1/post")
-    Call<EditResponse> setPost(@Body PostRequest postRequest);
+    Call<EditResponse> setPost(@Part ArrayList<MultipartBody.Part> input, @Part ArrayList<MultipartBody.Part> files);
 
 
     @GET("/api/v1/post/{id}")
@@ -78,15 +75,14 @@ public interface Apiinterface {
     Call<AuthResponse> setAuth(@Body AuthRequest authRequest);
 
 
+    @Multipart
     @PATCH("/api/v1/post/{id}")
-    Call<ResponseBody> setPatch(@Body PostRequest postRequest, @Path("id") int id);
+    Call<ResponseBody> setPatch(@Part ArrayList<MultipartBody.Part> input, @Part ArrayList<MultipartBody.Part> files, @Path("id") int id);
 
 
     @Multipart
     @PATCH("/api/v1/upload/post/{id}")
     Call<ResponseBody> uploadImg(@Part ArrayList<MultipartBody.Part> files, @Part ArrayList<MultipartBody.Part> urls,@Path("id") int id);
-    //Call<ResponseBody> uploadImg(@PartMap HashMap<String, RequestBody> partmap, @Path("id") int id);
-
 
     @POST("/api/v1/auth")
     Call<LoginResponse> LoginRequest(@Body LoginRequest loginRequest);
@@ -114,7 +110,7 @@ public interface Apiinterface {
     @GET("/api/v1/profile")
     Call<UserProfileResponse> getUserProfile();
 
-    @GET("/api/v1/chat/room/{userId}")
+    @GET("/api/v1/profile/{userId}")
     Call<UserProfileResponse> getOtherUserProfile(@Path("userId") int id);
 
     @Multipart
@@ -139,13 +135,6 @@ public interface Apiinterface {
     @PATCH("/api/v1/chat/promise/{id}")
     Call<ResponseBody> setPatchPromise(@Path("id") int id, @Body ChatPromiseRequest chatPromiseRequest);
 
-
-    //@POST("/api/v1/auth")
-    //Call<LoginResponse> LoginRequest(@Body LoginRequest loginRequest);
-
-   // @PATCH("/api/v1/upload/profile/:id")
-    //Call<ProfileImgResponse>
-
     @Multipart
     @PATCH("/api/v1/upload/profile/{id}")
     Call<ProfileUploadResponse> ProfileUploadRequest(@Part MultipartBody.Part file, @Path("id") int id);
@@ -153,12 +142,11 @@ public interface Apiinterface {
     @POST("/api/v1/auth/nickname")
     Call<AuthNickResponse> AuthNickRequest(@Body AuthNickRequset authNickRequset);
 
-    @GET("/api/v1/post/user/sell")
-    Call<SalesResponse> getSales();
+    @PATCH("/api/v1/auth/unsubscribe")
+    Call<ResponseBody> leaveUser();
 
-    @FormUrlEncoded
-    @POST("/api/v1/rating/{userId}")
-    Call<ResponseBody> ratingUser(@Path("id") int id, @Field("type") String type);
+    @POST("/api/v1/rating/{id}")
+    Call<ResponseBody> ratingUser(@Path("id") int id, @Body UserRatingRequest userRatingRequest);
 
     @GET("/api/v1/rating")
     Call<UserRatingResponse> getRating();
@@ -168,6 +156,9 @@ public interface Apiinterface {
 
     @GET("/api/v1/post/user/buy")
     Call<PostResponse> getPurchasesHistory();
+
+    @POST("/api/v1/auth/nickname")
+    Call<ResponseBody> setProfile(@Body UserProfileRequest userProfileRequest);
 
 
 }
