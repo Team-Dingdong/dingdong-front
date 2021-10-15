@@ -7,7 +7,6 @@ import org.techtown.dingdong.chatting.ChatRoomInformResponse;
 import org.techtown.dingdong.chatting.ChatRoomResponse;
 import org.techtown.dingdong.chatting.ChatUserResponse;
 import org.techtown.dingdong.home.EditResponse;
-import org.techtown.dingdong.home.PostRequest;
 import org.techtown.dingdong.home.PostResponse;
 import org.techtown.dingdong.home.ShareResponse;
 import org.techtown.dingdong.login_register.AuthNickRequset;
@@ -20,20 +19,19 @@ import org.techtown.dingdong.login_register.ProfileUploadResponse;
 import org.techtown.dingdong.login_register.TokenRefreshRequest;
 import org.techtown.dingdong.mypage.UserRatingRequest;
 import org.techtown.dingdong.mypage.UserRatingResponse;
-import org.techtown.dingdong.profile.UserProfileRequest;
 import org.techtown.dingdong.mytown.AuthLocalRequest;
 import org.techtown.dingdong.mytown.AuthLocalResponse;
 import org.techtown.dingdong.mytown.localResponse;
+import org.techtown.dingdong.profile.UserProfileRequest;
 import org.techtown.dingdong.profile.UserProfileResponse;
+
 import java.util.ArrayList;
-import java.util.HashMap;
+
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.PATCH;
@@ -167,8 +165,8 @@ public interface Apiinterface {
 
 
     @GET("/api/v1/auth/local")
-    Call<localResponse> getLocal(@Query("city") String city,
-                                 @Query("district") String district);
+    Call<localResponse> getLocal(@Query(value = "city") String city,
+                                 @Query(value = "district") String district);
 
     @POST("/api/v1/auth/local")
     Call<AuthLocalResponse> authLocal(@Body AuthLocalRequest authLocalRequest);
