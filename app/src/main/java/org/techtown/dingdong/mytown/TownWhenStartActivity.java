@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -78,6 +79,11 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
+        ActionBar actionBar= getSupportActionBar();
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+
 
         recyclerView = (RecyclerView)findViewById(R.id.revi_TownList);
 
@@ -115,7 +121,6 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
 
         Log.d(">??", String.valueOf(access));
 
-        // ㄹ;싱;ㅋ,ㄹ라뷰2. 위도경도 3. 서버에 넘겨서 동데이터 받아오기 리사이클러뷰
 
         startLocationService();
        // setUpRecyclerView();
@@ -386,8 +391,28 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
                 return false;
             }
         });
+
         return super.onCreateOptionsMenu(menu);
     }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:{
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("town","");
+                if(what ==true ) {
+                    setResult(1,resultIntent );
+                }
+                else{
+                    setResult(2, resultIntent);
+                }
+                finish();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public void onItemClick(View view, TownItem item) {
         view.setBackgroundColor(Color.GRAY);
         String num = item.getId();
