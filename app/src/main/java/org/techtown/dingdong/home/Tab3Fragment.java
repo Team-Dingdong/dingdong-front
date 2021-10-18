@@ -49,6 +49,7 @@ public class Tab3Fragment extends Fragment {
     ProgressBar pgbar;
     Boolean loading;
     ArrayList<Share> shareList = new ArrayList<>();
+    int Id;
 
 
     public Tab3Fragment() {
@@ -56,9 +57,11 @@ public class Tab3Fragment extends Fragment {
     }
 
 
-    public static Tab3Fragment newInstance(String param1, String param2) {
+    public static Tab3Fragment newInstance(int region) {
         Tab3Fragment fragment = new Tab3Fragment();
-
+        Bundle args = new Bundle();
+        args.putInt("region",region);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -73,6 +76,7 @@ public class Tab3Fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_tab3, container, false);
+        Id = this.getArguments().getInt("region");
         sharelistrecycler = v.findViewById(R.id.sharelist);
         btn_trans = v.findViewById(R.id.trans);
         tv_align = v.findViewById(R.id.tv_align);
@@ -195,7 +199,7 @@ public class Tab3Fragment extends Fragment {
     public void setEndTimeData(Token token){
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
-        Call<PostResponse> call = apiinterface.getEndCategoryData(3, page);
+        Call<PostResponse> call = apiinterface.getEndCategoryData(3, Id,page);
         call.enqueue(new Callback<PostResponse>() {
             @Override
             public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
@@ -241,7 +245,7 @@ public class Tab3Fragment extends Fragment {
     public void setCreatedData(Token token){
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
-        Call<PostResponse> call = apiinterface.getCreatedCategoryData(3, page);
+        Call<PostResponse> call = apiinterface.getCreatedCategoryData(3, Id,page);
         call.enqueue(new Callback<PostResponse>() {
             @Override
             public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {

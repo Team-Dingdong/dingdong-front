@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <ImageView
+        android:id="@+id/iv_img"
+        android:layout_width="match_parent"
+        android:layout_height="450dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/sample"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:fontFamily="@font/noto_sans"
+        android:layout_marginLeft="20dp"
+        android:text="주변 사람들과 물건들을 나눠보세요."
+        android:textColor="#4d4d4d"
+        android:textFontWeight="800"
+        android:textSize="22dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_img" />
+
+    <TextView
+        android:id="@+id/tv_bio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat_bold"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:text="싱싱한 식재료와 완제품만 거래할 수 있어요."
+        android:textColor="#c5c5c5"
+        android:textFontWeight="800"
+        android:textSize="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

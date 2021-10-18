@@ -48,25 +48,23 @@ public interface Apiinterface {
     Call<PostResponse> getData(@Query("page") int num);
 
 
-    @GET("/api/v1/post/sorted-by=desc(createdDate)")
-    Call<PostResponse> getCreatedData(@Query("page") int num);
+    @GET("/api/v1/post/sort=desc&sortby=createdDate&local/{id}")
+    Call<PostResponse> getCreatedData(@Path("id") int id, @Query("page") int num);
 
-
-    @GET("/api/v1/post/sorted-by=desc(endDate)")
-    Call<PostResponse> getEndData(@Query("page") int num);
+    @GET("/api/v1/post/sort=desc&sortby=endDate&local/{id}")
+    Call<PostResponse> getEndData(@Path("id") int id, @Query("page") int num);
 
     @POST("/api/v1/auth/reissue")
     Call<LoginResponse> getRefresh(@Body TokenRefreshRequest tokenRefreshRequest);
 
-    @GET("/api/v1/post/category/{id}")
+    @GET("/api/v1/post/sort=desc&sortby=category&endDate&local/{id}/{regionid}")
     Call<PostResponse> getCategoryData(@Path("id") int id);
 
+    @GET("/api/v1/post/sort=desc&sortby=category&endDate&local/{id}/{regionid}")
+    Call<PostResponse> getEndCategoryData(@Path("id") int id, @Path("regionid") int regionid, @Query("page") int num);
 
-    @GET("/api/v1/post/category/sorted-by=desc(endDate)/{id}")
-    Call<PostResponse> getEndCategoryData(@Path("id") int id, @Query("page") int num);
-
-    @GET("/api/v1/post/category/sorted-by=desc(createdDate)/{id}")
-    Call<PostResponse> getCreatedCategoryData(@Path("id") int id, @Query("page") int num);
+    @GET("/api/v1/post/sort=desc&sortby=category&createdDate&local/{id}/{regionid}")
+    Call<PostResponse> getCreatedCategoryData(@Path("id") int id, @Path("regionid") int regionid, @Query("page") int num);
 
     @Multipart
     @POST("/api/v1/post")
@@ -172,4 +170,11 @@ public interface Apiinterface {
 
     @POST("/api/v1/auth/local")
     Call<AuthLocalResponse> authLocal(@Body AuthLocalRequest authLocalRequest);
+
+    @GET("/api/v1/auth/logout")
+    Call<ResponseBody> logoutUser();
+
+    @Multipart
+    @POST("/api/v1/profile/report/{id}")
+    Call<ResponseBody> reportUser(@Path("id") int id, @Part MultipartBody.Part nickname);
 }

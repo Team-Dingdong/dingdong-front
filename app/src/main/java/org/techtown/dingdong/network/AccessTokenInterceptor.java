@@ -54,7 +54,7 @@ public class AccessTokenInterceptor implements Interceptor {
 
                             SharedPreferences pref = context.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
 
-                            pref.edit().putBoolean("oauth.loggedin",true).apply();
+                            //pref.edit().putBoolean("oauth.loggedin",true).apply();
                             pref.edit().putString("oauth.accesstoken", token.getAccessToken()).apply();
                             pref.edit().putString("oauth.refreshtoken", token.getRefreshToken()).apply();
                             pref.edit().putString("oauth.expire", token.getExpireIn()).apply();

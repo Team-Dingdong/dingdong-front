@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
     View toolbar3;
     EditText edt_number_validation;
     Button btn_validation;
-    String authNumber;
+    String authNumber, phoneNumber;
     Button startbutton;
     private TextView tv_timer;
     private static final int MILLISINFUTURE = 301;
@@ -72,10 +72,11 @@ public class LoginActivity extends AppCompatActivity {
         toolbar3 = (androidx.appcompat.widget.Toolbar) findViewById(R.id.toolbar3);
 
 
+
         /*
         //인텐트, 객체 받아오기
         Intent intent = getIntent();
-        String phoneNumber = intent.getStringExtra("phoneNumber");
+        phoneNumber = intent.getStringExtra("phoneNumber");
         time = intent.getStringExtra("time");
         
         //timestamp 형식에 맞게 변환함
@@ -101,7 +102,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
 
-        countDownTimer.start();*/
+        countDownTimer.start();
+        */
 
 
 
@@ -135,8 +137,8 @@ public class LoginActivity extends AppCompatActivity {
                 //서버로 폰번호,인증번호 전달
 
                 authNumber= edt_number_validation.getText().toString();
+                phoneNumber = "01022222222";
 
-                String phoneNumber = "01011111111";
                 LoginRequest loginRequest = new LoginRequest(phoneNumber, authNumber);
                 Apiinterface apiinterface = Api.createService(Apiinterface.class);
                 Call<LoginResponse> call = apiinterface.LoginRequest(loginRequest);
