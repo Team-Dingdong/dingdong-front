@@ -57,7 +57,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     public void onBindViewHolder(@NonNull @NotNull HistoryAdapter.ViewHolder holder, int position) {
         share = historyList.get(position);
 
-        if(state.equals("profile")){
+        if(state.equals("profile")||state.equals("mypurchases")){
             holder.tv_confirm.setVisibility(View.GONE);
         }
 

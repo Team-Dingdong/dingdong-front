@@ -55,12 +55,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        homeFragment = new HomeFragment();
+        homeFragment = new HomeFragment().newInstance(1);
         chattingFragment = new ChattingFragment();
         profileFragment = new profileFragment();
         myPageFragment = new myPageFragment();
 
-        setFrag(2); //첫 프래그먼트 화면을 무엇으로 지정해줄 것인지 결정
+        setFrag(0); //첫 프래그먼트 화면을 무엇으로 지정해줄 것인지 결정
     }
 
 

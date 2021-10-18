@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
 import org.techtown.dingdong.home.EditActivity;
+import org.techtown.dingdong.login_register.LoginActivity;
 import org.techtown.dingdong.login_register.LoginOrRegisterActivity;
 import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.network.Api;
@@ -120,6 +121,8 @@ public class ModifyInfoActivity extends AppCompatActivity {
                                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                         if (response.isSuccessful()) {
                                             if (response.code() == 200) {
+                                                pref.edit().putBoolean("oauth.loggedin",false).apply();
+                                                Toast.makeText(ModifyInfoActivity.this, "탈퇴가 완료되었습니다.", Toast.LENGTH_LONG).show();
                                                 Intent intent = new Intent(ModifyInfoActivity.this, LoginOrRegisterActivity.class);
                                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                                 startActivity(intent);
@@ -189,6 +192,39 @@ public class ModifyInfoActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Log.i("Dialog", "네");
+
+                                Apiinterface apiinterface = Api.createService(Apiinterface.class, token, ModifyInfoActivity.this);
+                                Call<ResponseBody> call = apiinterface.logoutUser();
+                                call.enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        if (response.isSuccessful()) {
+                                            if (response.code() == 200) {
+                                                pref.edit().putBoolean("oauth.loggedin",false).apply();
+                                                Toast.makeText(ModifyInfoActivity.this, "로그아웃이 완료되었습니다.", Toast.LENGTH_LONG).show();
+                                                Intent intent = new Intent(ModifyInfoActivity.this, LoginActivity.class);
+                                                //Intent intent = new Intent(ModifyInfoActivity.this, LoginOrRegisterActivity.class);
+                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                startActivity(intent);
+                                            }
+
+                                        } else {
+
+                                            Log.d("실패", new Gson().toJson(response.errorBody()));
+                                            Log.d("실패", response.toString());
+                                            Log.d("실패", String.valueOf(response.code()));
+                                            Log.d("실패", response.message());
+                                            Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                                            Log.d("실패", new Gson().toJson(response.raw().request()));
+
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                    }
+                                });
                             }
                         }).show();
             }

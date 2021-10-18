@@ -55,6 +55,8 @@ import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.chatting.ChattingActivity;
+import org.techtown.dingdong.chatting.UserListActivity;
 import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
@@ -415,16 +417,22 @@ public class EditActivity extends AppCompatActivity {
 
     private void setPatch(Token token){
         ArrayList<MultipartBody.Part> uplist = new ArrayList<>();
-        for (int i = 0, j = 0; i < uriList.size(); i++) {
+        if(imgList.size()!=0){
+            uriList = new ArrayList<>();
+            for (int i=0; i<imgList.size(); i++){
+                Uri uri = Uri.parse(imgList.get(i));
+                uriList.add(uri);
+            }
+        }
+        for (int i = 0, j = 0; i < imgList.size(); i++) {
             try {
-                Log.d("1",uriList.get(i).toString());
+                Log.d("1",imgList.get(i).toString());
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(EditActivity.this.getContentResolver(), uriList.get(i));
                 File file = getResize(bitmap, Integer.toString((int) System.currentTimeMillis()).replace("-", ""));
                 Log.d("uploadimg","resizing");
                 Log.d("uploadimg", "file == " + file.getName());
                 RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                 uplist.add(MultipartBody.Part.createFormData("postImages", file.getName(), requestBody));
-
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -474,12 +482,15 @@ public class EditActivity extends AppCompatActivity {
 
     private void setPost(Token token){
 
-        //리퀘스트 생성
-        /*PostRequest postRequest = new PostRequest(et_title.getText().toString(), selected_personnel,
-                Integer.parseInt(res_price), et_detail.getText().toString(),
-                et_place.getText().toString(), category, res_hash);*/
-
         ArrayList<MultipartBody.Part> uplist = new ArrayList<>();
+
+        if(imgList.size()!=0){
+            uriList = new ArrayList<>();
+            for (int i=0; i<imgList.size(); i++){
+                Uri uri = Uri.parse(imgList.get(i));
+                uriList.add(uri);
+            }
+        }
         for (int i = 0, j = 0; i < uriList.size(); i++) {
             try {
                     Log.d("1",uriList.get(i).toString());
@@ -812,7 +823,11 @@ public class EditActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                finish();
+                //finish();
+                Intent intent = new Intent(EditActivity.this, ShareDetailActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("id",id);
+                startActivity(intent);
             }
         }, 1000);
 

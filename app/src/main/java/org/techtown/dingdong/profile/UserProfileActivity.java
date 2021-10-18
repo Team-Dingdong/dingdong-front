@@ -1,10 +1,12 @@
 package org.techtown.dingdong.profile;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -23,6 +26,7 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 
 import org.techtown.dingdong.BuildConfig;
+import org.techtown.dingdong.MainActivity;
 import org.techtown.dingdong.R;
 import org.techtown.dingdong.chatting.ChattingActivity;
 import org.techtown.dingdong.home.Share;
@@ -35,6 +39,8 @@ import org.techtown.dingdong.network.Apiinterface;
 
 import java.util.ArrayList;
 
+import okhttp3.MultipartBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -111,6 +117,55 @@ public class UserProfileActivity extends AppCompatActivity {
 
                                 case R.id.report:
                                     popupMenu.dismiss();
+                                    final EditText editText = new EditText(UserProfileActivity.this);
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(UserProfileActivity.this);
+                                    builder.setTitle("신고 사유를 입력하세요.");
+                                    builder.setView(editText);
+                                    builder.setPositiveButton("입력", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Log.d("신고사유",editText.getText().toString());
+                                            if(editText.getText().toString().length() > 0){
+                                            Apiinterface apiinterface = Api.createService(Apiinterface.class, token, UserProfileActivity.this);
+                                            MultipartBody.Part reason = MultipartBody.Part.createFormData("reason", editText.getText().toString());
+                                            Call<ResponseBody> call = apiinterface.reportUser(Integer.parseInt(id), reason);
+                                            call.enqueue(new Callback<ResponseBody>() {
+                                                @Override
+                                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                                    if(response.isSuccessful() && response.body() != null){
+                                                        if(response.code() == 200) {
+
+                                                            Toast.makeText(UserProfileActivity.this, "신고가 완료되었습니다.", Toast.LENGTH_SHORT).show();
+
+                                                            Handler handler = new Handler();
+                                                            handler.postDelayed(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    finish();
+                                                                }
+                                                            }, 1000);
+                                                        }
+                                                    }
+                                                    else{
+                                                        Log.d("실패", new Gson().toJson(response.errorBody()));
+                                                        Log.d("실패", response.toString());
+                                                        Log.d("실패", String.valueOf(response.code()));
+                                                        Log.d("실패", response.message());
+                                                        Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                                                        Log.d("실패", new Gson().toJson(response.raw().request()));
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                                }
+                                            });
+                                        }
+                                        else{
+                                                Toast.makeText(UserProfileActivity.this, "사유를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                                            }}
+                                    }).show();
                                     break;
                             }
 
@@ -229,6 +284,7 @@ public class UserProfileActivity extends AppCompatActivity {
         });
 
     }
+
 
     public void setDummy(){
         salesList = new ArrayList<>();
