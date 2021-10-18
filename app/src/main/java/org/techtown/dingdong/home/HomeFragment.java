@@ -60,7 +60,7 @@ public class HomeFragment extends Fragment {
     private Spinner select_region;
     private String selected_region;
     private Boolean trans = true; //버튼 선택시 true(최신순) -> false(마감임)
-    String[] region = {"미아2동", "안암동"};
+    String[] region = {"동네선택","미아2동", "안암동"};
     ArrayList<Share> createdList = new ArrayList<>();
     ArrayList<Share> endtimeList = new ArrayList<>();
     Token token;
@@ -69,13 +69,17 @@ public class HomeFragment extends Fragment {
     NestedScrollView nestedScrollView;
     ProgressBar pgbar;
     ArrayList<Share> shareList = new ArrayList<>();
+    int Id = 0;
 
     public HomeFragment() {
         // Required empty public constructor
     }
 
-    public static HomeFragment newInstance() {
+    public static HomeFragment newInstance(int id) {
         HomeFragment fragment = new HomeFragment();
+        Bundle args = new Bundle();
+        args.putInt("regionid",id);
+        fragment.setArguments(args);
         return fragment;
     }
     @Override
@@ -88,6 +92,8 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+        Id = this.getArguments().getInt("regionid");
 
         View v = inflater.inflate(R.layout.fragment_home, container, false);
         btn_edit = v.findViewById(R.id.btn_edit);
@@ -120,6 +126,8 @@ public class HomeFragment extends Fragment {
         token.setContext(getActivity());
 
         Log.d("토큰", String.valueOf(access));
+
+        tv_region.setText(region[Id]);
 
 
         setCreatedData(token);
@@ -204,9 +212,25 @@ public class HomeFragment extends Fragment {
         select_region.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selected_region = region[position];
-                tv_region.setText(selected_region);
+                //selected_region = region[position];
+                //tv_region.setText(selected_region);
+                if(position != 0){
+                Id = position;
+                Log.d("selectid",Integer.toString(Id));
 
+                Fragment fragment = new HomeFragment().newInstance(Id);
+                MainActivity activity = (MainActivity) getActivity();
+                activity.replaceFragment(fragment);
+                }
+
+                /*shareList = new ArrayList<>();
+                shareListAdpater = new ShareListAdpater(getActivity(), shareList);
+                sharelistrecycler.setAdapter(shareListAdpater);
+                sharelistrecycler.scrollToPosition(0);
+                //page = 0;
+                tv_align.setText("최신순");
+                trans = true;
+                setCreatedData(token);*/
             }
 
             @Override
@@ -214,6 +238,8 @@ public class HomeFragment extends Fragment {
 
             }
         });
+        select_region.setSelection(0);
+
 
 
 
@@ -261,6 +287,7 @@ public class HomeFragment extends Fragment {
 
                 Intent intent = new Intent(getActivity(),TabActivity.class);
                 intent.putExtra("id","0");
+                intent.putExtra("region",Id);
                 startActivity(intent);
 
             }
@@ -271,6 +298,7 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(),TabActivity.class);
                 intent.putExtra("id","1");
+                intent.putExtra("region",Id);
                 startActivity(intent);
 
             }
@@ -281,6 +309,7 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(),TabActivity.class);
                 intent.putExtra("id","2");
+                intent.putExtra("region",Id);
                 startActivity(intent);
 
             }
@@ -291,6 +320,7 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(),TabActivity.class);
                 intent.putExtra("id","3");
+                intent.putExtra("region",Id);
                 startActivity(intent);
 
             }
@@ -320,7 +350,7 @@ public class HomeFragment extends Fragment {
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
 
-        Call<PostResponse> call = apiinterface.getCreatedData(page);
+        Call<PostResponse> call = apiinterface.getCreatedData(Id, page);
 
         call.enqueue(new Callback<PostResponse>() {
             @Override
@@ -366,7 +396,7 @@ public class HomeFragment extends Fragment {
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
 
-        Call<PostResponse> call = apiinterface.getEndData(page);
+        Call<PostResponse> call = apiinterface.getEndData(Id, page);
 
         call.enqueue(new Callback<PostResponse>() {
             @Override

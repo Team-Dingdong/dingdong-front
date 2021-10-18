@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -20,8 +21,10 @@ public class TabActivity extends AppCompatActivity {
     ImageButton btn_back, btn_search;
     ViewPager2 viewPager;
     PagerAdapter pagerAdapter;
-    int pos;
+    TextView tv_region;
+    int pos, Id;
     private String[] tabs = new String[]{"과일·채소", "육류·계란", "간식", "생필품", "기타"};
+    String[] region = {"미아2동", "안암동"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,17 +33,21 @@ public class TabActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String getpos = intent.getStringExtra("id");
+        Id = intent.getIntExtra("region",0);
         pos = Integer.parseInt(getpos);
 
-        Fragment fragment1 = new Tab1Fragment().newInstance("", "");
-        Fragment fragment2 = new Tab2Fragment().newInstance("", "");
-        Fragment fragment3 = new Tab3Fragment().newInstance("", "");
-        Fragment fragment4 = new Tab4Fragment().newInstance("", "");
+        Fragment fragment1 = new Tab1Fragment().newInstance(Id);
+        Fragment fragment2 = new Tab2Fragment().newInstance(Id);
+        Fragment fragment3 = new Tab3Fragment().newInstance(Id);
+        Fragment fragment4 = new Tab4Fragment().newInstance(Id);
 
         TabLayout tabLayout = findViewById(R.id.tablayout);
         btn_back = findViewById(R.id.btn_back);
         btn_search = findViewById(R.id.btn_search);
         viewPager = findViewById(R.id.pager);
+        tv_region = findViewById(R.id.tv_region);
+
+        tv_region.setText(region[Id-1]);
 
         pagerAdapter = new PagerAdapter(this);
         pagerAdapter.addFrag(fragment1);

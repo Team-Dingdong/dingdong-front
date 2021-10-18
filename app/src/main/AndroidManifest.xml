@@ -25,7 +25,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Dingdong"
         android:usesCleartextTraffic="true">
-        <activity android:name=".profile.UserProfileActivity"></activity>
+        <activity android:name=".TutorialActivity">
+            <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
+        <activity android:name=".profile.UserProfileActivity" />
         <activity android:name=".mypage.MyhistoryActivity" />
         <activity android:name=".login_register.SetProfileActivity" />
         <activity android:name=".mypage.RatingActivity" />
@@ -38,24 +44,18 @@
         <activity android:name=".chatting.PlanningActivity" />
         <activity android:name=".mytown.TownWhenStartActivity" />
         <activity android:name=".mytown.TownActivity" />
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAfg07uT1VaOf-53XrkMSXw4Z3e1mZGWdg" />
-
         <activity android:name=".login_register.RegisterActivity" />
         <activity android:name=".login_register.LoginOrRegisterActivity" />
         <activity android:name=".login_register.LoginActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".home.ShareDetailActivity" />
         <activity android:name=".home.EditActivity" />
         <activity android:name=".chatting.ChattingActivity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity">
+        </activity>
     </application>
 
 </manifest>
