@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -78,7 +79,24 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
-        startLocationService();
+        ActionBar actionBar= getSupportActionBar();
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+
+
+        recyclerView = (RecyclerView)findViewById(R.id.revi_TownList);
+
+
+        adapter = new TownAdapter(getApplicationContext(), townlist, what);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.VERTICAL, false ));
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL); //밑줄
+        recyclerView.addItemDecoration(dividerItemDecoration);
+
+        adapter.setOnItemClickListener(this);
+
+
 
         //token.setContext(TownWhenStartActivity.this);
 
@@ -93,7 +111,7 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
 
 
         SharedPreferences pref = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
-        String access = pref.getString("oauth.acesstoken","");
+        String access = pref.getString("oauth.accesstoken","");
         String refresh = pref.getString("oauth.refreshtoken","");
         String expire = pref.getString("oauth.expire","");
         String tokentype = pref.getString("oauth.tokentype","");
@@ -104,13 +122,8 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
         Log.d(">??", String.valueOf(access));
 
 
-
         startLocationService();
-        //findlocal(token);
-
-
-
-
+       // setUpRecyclerView();
 
         //recyclerView.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
 
@@ -158,7 +171,7 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
             @Override
             public void onClick(View view) {
                 startLocationService();
-               // findlocal(token);
+
             }
         });
 
@@ -167,24 +180,14 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
 
     }
     private  void setUpRecyclerView(){
-        recyclerView = (RecyclerView)findViewById(R.id.revi_TownList);
 
-        townlist = getData();
 
         adapter = new TownAdapter(getApplicationContext(), townlist, what);
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.VERTICAL, false ));
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL); //밑줄
-        recyclerView.addItemDecoration(dividerItemDecoration);
-
-        adapter.setOnItemClickListener(this);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(layoutManager);
 
     }
 
-    private ArrayList<TownItem> getData() {
+     /*   private ArrayList<TownItem> getData() {
         /*ArrayList<TownItem> test = new ArrayList<>();
         TownItem townitem1 = new TownItem("1","성북동");
         test.add(0,townitem1);
@@ -208,7 +211,7 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
         test.add(9,townitem10);*/
 
 
-        ArrayList<TownItem> result = new ArrayList<>();
+       /* ArrayList<TownItem> result = new ArrayList<>();
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class, token, TownWhenStartActivity.this);
         Call<localResponse> call = apiinterface.getLocal(city, district);
@@ -229,9 +232,10 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
              }
         });
         return result;
-      // return test;
+       // return test;
 
-    }
+        }
+        */
 
     private void startLocationService() { //현재위치 주소로 변환하고 서버로 구 데이터 보내기
         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE); //LocationManager객체 참조
@@ -276,7 +280,13 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
 
                         //----------여기에 서버연결-----------------------------
                        //서버에서 동데이터 받아와서 getdata()에서 추가해주기
-                        //setUpRecyclerView();
+                        if(!city.isEmpty()){
+                            Log.d("LOG","startlocation");
+                            findlocal(token);
+                        }
+                        else {
+
+                        }
 
 
                     }
@@ -345,10 +355,9 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
                 if(response.isSuccessful() && response.body()!= null){
                     if(response.body().getCode().equals("LOCAL_READ_SUCCESS")) {
                         localResponse res = response.body();
-                        townlist = (ArrayList<TownItem>) res.getData();
-                        Log.d("log", townlist.toString()+"제대로 실행됨");
-                        adapter = new TownAdapter(getApplicationContext(), townlist, what);
-                        recyclerView.setAdapter(adapter);
+                        townlist.addAll(res.getData());
+                        //townlist = (ArrayList<TownItem>) res.getData();
+                        Log.d("log", "제대로 실행됨");
                         adapter.notifyDataSetChanged();
                     }
                 }
@@ -382,8 +391,28 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
                 return false;
             }
         });
+
         return super.onCreateOptionsMenu(menu);
     }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:{
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("town","");
+                if(what ==true ) {
+                    setResult(1,resultIntent );
+                }
+                else{
+                    setResult(2, resultIntent);
+                }
+                finish();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public void onItemClick(View view, TownItem item) {
         view.setBackgroundColor(Color.GRAY);
         String num = item.getId();

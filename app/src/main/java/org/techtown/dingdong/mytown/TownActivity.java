@@ -31,7 +31,7 @@ public class TownActivity extends AppCompatActivity {
 
 
     Button button;
-    ImageButton imgbtn_1, imgbtn_2, imgbtn_AddTown1, imgbtn_AddTown2;
+    ImageButton imgbtn_1, imgbtn_2, imgbtn_AddTown1, imgbtn_AddTown2 , btn_back;
     TextView tv_town1, tv_town2;
     String town1, town2;
     String num_town1, num_town2;
@@ -39,12 +39,13 @@ public class TownActivity extends AppCompatActivity {
 
 
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_town);
 
-
+        //btn_back = findViewById(R.id.ic_back);
         button = findViewById(R.id.button);
         imgbtn_1 = findViewById(R.id.imgbtn_1);
         imgbtn_2 = findViewById(R.id.imgbtn_2);
@@ -52,6 +53,7 @@ public class TownActivity extends AppCompatActivity {
         imgbtn_AddTown2 = findViewById(R.id.imgbtn_AddTown2);
         tv_town1 = findViewById(R.id.tv_town1);
         tv_town2 = findViewById(R.id.tv_town2);
+        btn_back = findViewById(R.id.ic_back);
 
 
         SharedPreferences pref = getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
@@ -61,6 +63,46 @@ public class TownActivity extends AppCompatActivity {
         String tokentype = pref.getString("oauth.tokentype","");
 
         Token token = new Token(access,refresh,expire,tokentype);
+
+        town1="";
+        town2="";
+
+       if(town1.equals("")){
+            imgbtn_AddTown1.setVisibility(View.VISIBLE);
+            imgbtn_1.setEnabled(false);
+            imgbtn_1.setVisibility(View.INVISIBLE);
+            tv_town1.setVisibility(View.INVISIBLE);
+       }
+       else {
+            imgbtn_AddTown1.setVisibility(View.INVISIBLE);
+            imgbtn_1.setEnabled(true);
+            imgbtn_1.setVisibility(View.VISIBLE);
+            tv_town1.setVisibility(View.VISIBLE);
+        }
+
+        if(town2.equals("")){
+            imgbtn_AddTown2.setVisibility(View.VISIBLE);
+            imgbtn_2.setEnabled(false);
+            imgbtn_2.setVisibility(View.INVISIBLE);
+            tv_town2.setVisibility(View.INVISIBLE);
+        }
+        else {
+            imgbtn_AddTown2.setVisibility(View.INVISIBLE);
+            imgbtn_2.setEnabled(true);
+            imgbtn_2.setVisibility(View.VISIBLE);
+            tv_town2.setVisibility(View.VISIBLE);
+            button.setClickable(true);
+            button.setBackgroundTintList(getResources().getColorStateList(R.color.blue));
+        }
+
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
+
 
 
         imgbtn_AddTown1.setOnClickListener(new View.OnClickListener() {
@@ -94,7 +136,7 @@ public class TownActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View view) {
-              tv_town1.setText(null);
+              tv_town1.setText("");
               tv_town1.setVisibility(View.INVISIBLE);
               imgbtn_1.setEnabled(false);
               imgbtn_1.setVisibility(View.INVISIBLE);
@@ -108,7 +150,7 @@ public class TownActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View view) {
-                tv_town2.setText(null);
+                tv_town2.setText("");
                 tv_town2.setVisibility(View.INVISIBLE);
                 imgbtn_2.setEnabled(false);
                 imgbtn_2.setVisibility(View.INVISIBLE);
@@ -148,6 +190,7 @@ public class TownActivity extends AppCompatActivity {
 
                     }
                 });
+
                 //화면전환
                 Intent intent = new Intent(TownActivity.this, MainActivity.class);
                 startActivity(intent);
@@ -169,9 +212,16 @@ public class TownActivity extends AppCompatActivity {
                     imgbtn_1.setEnabled(true);
                     imgbtn_AddTown2.setEnabled(true);
                     imgbtn_AddTown1.setVisibility(View.INVISIBLE);
+                    if(town1.equals("")){
+                        imgbtn_AddTown1.setVisibility(View.VISIBLE);
+                        imgbtn_1.setEnabled(false);
+                        imgbtn_1.setVisibility(View.INVISIBLE);
+                        tv_town1.setVisibility(View.INVISIBLE);
+                    }
                     break;
                 case 2:
                     String pre = intent.getStringExtra("town");
+
                     if(town1.equals(pre)){
                         //diglog로 변경할지
 
@@ -185,7 +235,7 @@ public class TownActivity extends AppCompatActivity {
 
 
                     }
-                    else if(!town1.equals(pre)) {
+                    else if(!town1.equals(pre) &&!pre.equals("")) {
                         town2= intent.getStringExtra("town");
                         num_town2= intent.getStringExtra("num");
                         tv_town2.setText(town2);
@@ -196,6 +246,14 @@ public class TownActivity extends AppCompatActivity {
                         button.setBackgroundTintList(getResources().getColorStateList(R.color.blue));
                         Log.d("동 확인",town2 + num_town2);
                     }
+                    else if(pre.equals("")) {
+                            imgbtn_AddTown2.setVisibility(View.VISIBLE);
+                            imgbtn_2.setEnabled(false);
+                            imgbtn_2.setVisibility(View.INVISIBLE);
+                            tv_town2.setVisibility(View.INVISIBLE);
+
+                    }
+
                     break;
 
 
@@ -204,5 +262,7 @@ public class TownActivity extends AppCompatActivity {
         }
 
     }
+
+
 
 }

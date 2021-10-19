@@ -24,6 +24,7 @@
             android:layout_marginStart="9dp"
             android:layout_marginLeft="9dp"
             android:background="@android:color/transparent"
+            android:clickable="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
