@@ -64,6 +64,9 @@ public class Share {
     @SerializedName("category")
     @Expose
     private String category;
+    @SerializedName("done")
+    @Expose
+    private String done;
 
     public Share(String title, String image1, String image2, String image3, String maintext, String date, String price, String place, String personnelcapacity, String id) {
         this.title = title;
@@ -76,6 +79,15 @@ public class Share {
         this.place = place;
         this.personnelcapacity = personnelcapacity;
         this.id = id;
+    }
+
+
+    public String getDone() {
+        return done;
+    }
+
+    public void setDone(String done) {
+        this.done = done;
     }
 
     public String getProfileImg() {

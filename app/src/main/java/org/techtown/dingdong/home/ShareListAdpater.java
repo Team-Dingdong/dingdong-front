@@ -65,11 +65,18 @@ public class ShareListAdpater extends RecyclerView.Adapter<ShareListAdpater.shar
             }
         });
 
+        if(share.getDone().equals("true")){
+            holder.done.setVisibility(View.VISIBLE);
+        }
 
         holder.place.setText(share.getPlace());
-        //holder.personnel.setText(share.getPersonnelcapacity());
-        holder.personnel.setText(share.getGatheredPeople() + " /" + share.getPersonnelcapacity());
-        //holder.hashtags.setText(share.getHashtag());
+        holder.personnel.setText(share.getGatheredPeople() + "/" + share.getPersonnelcapacity());
+        /*List<String> hashtag = share.getHashtag();
+        String str="";
+        for(int i=0; i < hashtag.size(); i++){
+            str += hashtag.get(i);
+        }
+        holder.hashtags.setText(str);*/
         Glide.with(holder.image.getContext())
                 .load(share.getImage1())
                 .into(holder.image);
@@ -87,7 +94,7 @@ public class ShareListAdpater extends RecyclerView.Adapter<ShareListAdpater.shar
 
     public class sharelistViewHolder extends RecyclerView.ViewHolder{
 
-        public TextView place, title, hashtags, price, personnel, date;
+        public TextView place, title, hashtags, price, personnel, date, done;
         public ImageView image;
 
         public sharelistViewHolder(@NonNull @NotNull View itemView) {
@@ -100,6 +107,7 @@ public class ShareListAdpater extends RecyclerView.Adapter<ShareListAdpater.shar
             price = itemView.findViewById(R.id.tv_price);
             image = itemView.findViewById(R.id.imageView);
             date = itemView.findViewById(R.id.tv_date);
+            done = itemView.findViewById(R.id.done);
         }
     }
 

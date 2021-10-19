@@ -7,6 +7,7 @@ import org.techtown.dingdong.chatting.ChatRoomInformResponse;
 import org.techtown.dingdong.chatting.ChatRoomResponse;
 import org.techtown.dingdong.chatting.ChatUserResponse;
 import org.techtown.dingdong.home.EditResponse;
+import org.techtown.dingdong.home.LocalResponse;
 import org.techtown.dingdong.home.PostRequest;
 import org.techtown.dingdong.home.PostResponse;
 import org.techtown.dingdong.home.ShareResponse;
@@ -117,7 +118,7 @@ public interface Apiinterface {
     Call<UserProfileResponse> getOtherUserProfile(@Path("userId") int id);
 
     @Multipart
-    @PATCH("/api/v1/profile")
+    @POST("/api/v1/profile")
     Call<ResponseBody> setUpdateProfile(@Part MultipartBody.Part file, @Part MultipartBody.Part nickname);
 
     @DELETE("/api/v1/post/{id}")
@@ -173,6 +174,9 @@ public interface Apiinterface {
 
     @GET("/api/v1/auth/logout")
     Call<ResponseBody> logoutUser();
+
+    @GET("/api/v1/profile/local")
+    Call<LocalResponse> getLocal();
 
     @Multipart
     @POST("/api/v1/profile/report/{id}")

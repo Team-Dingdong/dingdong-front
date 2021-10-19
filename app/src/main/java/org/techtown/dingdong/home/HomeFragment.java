@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,7 +38,9 @@ import org.json.JSONObject;
 import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.MainActivity;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.login_register.LoginActivity;
 import org.techtown.dingdong.login_register.Token;
+import org.techtown.dingdong.mypage.ModifyInfoActivity;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
 
@@ -46,6 +49,7 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -60,7 +64,6 @@ public class HomeFragment extends Fragment {
     private Spinner select_region;
     private String selected_region;
     private Boolean trans = true; //버튼 선택시 true(최신순) -> false(마감임)
-    String[] region = {"동네선택","미아2동", "안암동"};
     ArrayList<Share> createdList = new ArrayList<>();
     ArrayList<Share> endtimeList = new ArrayList<>();
     Token token;
@@ -94,6 +97,9 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
 
         Id = this.getArguments().getInt("regionid");
+        List<String> where = new ArrayList<String>();
+        where.add("동네선택");
+
 
         View v = inflater.inflate(R.layout.fragment_home, container, false);
         btn_edit = v.findViewById(R.id.btn_edit);
@@ -126,8 +132,86 @@ public class HomeFragment extends Fragment {
         token.setContext(getActivity());
 
         Log.d("토큰", String.valueOf(access));
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, getActivity());
+        Call<LocalResponse> call = apiinterface.getLocal();
+        call.enqueue(new Callback<LocalResponse>() {
+            @Override
+            public void onResponse(Call<LocalResponse> call, Response<LocalResponse> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    if(response.body().getResult().equals("LOCAL_READ_SUCCESS")){
+                        LocalResponse res = response.body();
+                        LocalResponse.Data data1 = res.getData().get(0);
+                        LocalResponse.Data data2 = res.getData().get(1);
+                        where.add(data1.getName());
+                        where.add(data2.getName());
+                        String[] region = new String[where.size()];
+                        where.toArray(region);
+                        tv_region.setText(region[Id]);
+                        //동네 선택 스피너 세팅
+                        ArrayAdapter<String> regionadapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, region){
+                            @NonNull
+                            @Override
+                            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                                View v =  super.getView(position, convertView, parent);
 
-        tv_region.setText(region[Id]);
+                                ((TextView) v).setTextColor(Color.WHITE);
+
+                                return v;
+                            }
+
+                            @Override
+                            public View getDropDownView(int position, @Nullable @org.jetbrains.annotations.Nullable View convertView, @NonNull @NotNull ViewGroup parent) {
+                                View v =  super.getDropDownView(position, convertView, parent);
+
+
+                                return v;
+                            }
+                        };
+                        regionadapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+                        select_region.setAdapter(regionadapter);
+                        select_region.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                //selected_region = region[position];
+                                //tv_region.setText(selected_region);
+                                if(position != 0){
+                                    Id = position;
+                                    Log.d("selectid",Integer.toString(Id));
+
+                                    Fragment fragment = new HomeFragment().newInstance(Id);
+                                    MainActivity activity = (MainActivity) getActivity();
+                                    activity.replaceFragment(fragment);
+                                }
+
+                /*shareList = new ArrayList<>();
+                shareListAdpater = new ShareListAdpater(getActivity(), shareList);
+                sharelistrecycler.setAdapter(shareListAdpater);
+                sharelistrecycler.scrollToPosition(0);
+                //page = 0;
+                tv_align.setText("최신순");
+                trans = true;
+                setCreatedData(token);*/
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
+
+                            }
+                        });
+                        select_region.setSelection(0);
+                    }
+                }else{
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<LocalResponse> call, Throwable t) {
+
+            }
+        });
+
 
 
         setCreatedData(token);
@@ -187,58 +271,7 @@ public class HomeFragment extends Fragment {
 
 
 
-        //동네 선택 스피너 세팅
-        ArrayAdapter<String> regionadapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, region){
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                View v =  super.getView(position, convertView, parent);
 
-                ((TextView) v).setTextColor(Color.WHITE);
-
-                return v;
-            }
-
-            @Override
-            public View getDropDownView(int position, @Nullable @org.jetbrains.annotations.Nullable View convertView, @NonNull @NotNull ViewGroup parent) {
-                View v =  super.getDropDownView(position, convertView, parent);
-
-
-                return v;
-            }
-        };
-        regionadapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
-        select_region.setAdapter(regionadapter);
-        select_region.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //selected_region = region[position];
-                //tv_region.setText(selected_region);
-                if(position != 0){
-                Id = position;
-                Log.d("selectid",Integer.toString(Id));
-
-                Fragment fragment = new HomeFragment().newInstance(Id);
-                MainActivity activity = (MainActivity) getActivity();
-                activity.replaceFragment(fragment);
-                }
-
-                /*shareList = new ArrayList<>();
-                shareListAdpater = new ShareListAdpater(getActivity(), shareList);
-                sharelistrecycler.setAdapter(shareListAdpater);
-                sharelistrecycler.scrollToPosition(0);
-                //page = 0;
-                tv_align.setText("최신순");
-                trans = true;
-                setCreatedData(token);*/
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-        select_region.setSelection(0);
 
 
 

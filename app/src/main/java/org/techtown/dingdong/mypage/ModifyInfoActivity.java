@@ -122,6 +122,11 @@ public class ModifyInfoActivity extends AppCompatActivity {
                                         if (response.isSuccessful()) {
                                             if (response.code() == 200) {
                                                 pref.edit().putBoolean("oauth.loggedin",false).apply();
+                                                pref.edit().putString("oauth.accesstoken", "").apply();
+                                                pref.edit().putString("oauth.refreshtoken", "").apply();
+                                                pref.edit().putString("oauth.expire", "").apply();
+                                                pref.edit().putString("oauth.tokentype", "").apply();
+
                                                 Toast.makeText(ModifyInfoActivity.this, "탈퇴가 완료되었습니다.", Toast.LENGTH_LONG).show();
                                                 Intent intent = new Intent(ModifyInfoActivity.this, LoginOrRegisterActivity.class);
                                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

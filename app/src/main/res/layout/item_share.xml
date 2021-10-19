@@ -10,8 +10,8 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="83dp"
+        android:layout_height="83dp"
         android:layout_marginLeft="35dp"
         android:background="#c5c5c5"
         android:scaleType="centerCrop"
@@ -20,6 +20,27 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:layout_marginTop="5dp"
+        android:id="@+id/done"
+        android:visibility="gone"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="35dp"
+        android:text="거래완료"
+        android:textFontWeight="800"
+        android:textStyle="bold"
+        android:textColor="#ff0000"
+        android:fontFamily="@font/noto_sans"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:gravity="center_horizontal" />
+
+    <TextView
+        android:layout_marginTop="5dp"
         android:id="@+id/tv_place"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,6 +56,7 @@
 
 
     <LinearLayout
+        android:layout_marginTop="5dp"
         android:id="@+id/peoplenumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -68,6 +90,7 @@
     </LinearLayout>
 
     <TextView
+        android:layout_marginTop="5dp"
         android:id="@+id/tv_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -110,6 +133,8 @@
             android:id="@+id/tv_hashtag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="#해시태그해시태그"
+            android:textFontWeight="800"
             android:fontFamily="@font/noto_sans"
             android:textColor="#AEAEB2"
             android:textSize="13sp">
@@ -124,14 +149,16 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="18dp"
         android:layout_marginLeft="18dp"
+        android:layout_marginBottom="10dp"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView"
         app:layout_constraintTop_toBottomOf="@+id/hashtag">
 
         <TextView
+            android:id="@+id/tv_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tv_price"
             android:fontFamily="@font/montserrat_regular"
             android:text="20,000"
             android:textColor="#000000"

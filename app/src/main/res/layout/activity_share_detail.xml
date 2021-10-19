@@ -70,15 +70,28 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/frameLayout">
 
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardView"
+                        android:layout_width="85dp"
+                        android:layout_height="85dp"
+                        android:layout_marginLeft="36dp"
+                        android:layout_marginStart="33dp"
+                        app:cardCornerRadius="75dp"
+                        app:cardElevation="0dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
                     <ImageView
                         android:id="@+id/imageView2"
-                        android:layout_width="72dp"
-                        android:layout_height="72dp"
-                        android:layout_marginLeft="36dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:background="#c5c5c5"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.cardview.widget.CardView>
 
                     <TextView
                         android:id="@+id/textView4"
@@ -91,7 +104,7 @@
                         android:textColor="#000000"
                         android:textFontWeight="700"
                         android:textSize="20dp"
-                        app:layout_constraintStart_toEndOf="@+id/imageView2"
+                        app:layout_constraintStart_toEndOf="@+id/cardView"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
@@ -106,7 +119,7 @@
                         android:textColor="#000000"
                         android:textFontWeight="400"
                         android:textSize="18sp"
-                        app:layout_constraintStart_toEndOf="@+id/imageView2"
+                        app:layout_constraintStart_toEndOf="@+id/cardView"
                         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
                     <LinearLayout
@@ -117,7 +130,7 @@
                         android:layout_marginLeft="16dp"
                         android:layout_marginTop="3dp"
                         android:orientation="horizontal"
-                        app:layout_constraintStart_toEndOf="@+id/imageView2"
+                        app:layout_constraintStart_toEndOf="@+id/cardView"
                         app:layout_constraintTop_toBottomOf="@+id/textView5">
 
                         <ImageView
@@ -283,6 +296,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/noto_sans"
+                        android:textFontWeight="700"
                         android:text="#커피 #마우스"
                         android:textColor="#AEAEB2"
                         android:textSize="15sp">
@@ -423,9 +437,9 @@
             android:id="@+id/linearLayout5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="35dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/frameLayout5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -445,7 +459,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/noto_sans"
-                android:text="에서"
+                android:text="  에서"
                 android:textColor="#ffffff"
                 android:textFontWeight="300"
                 android:textSize="14dp" />
@@ -453,6 +467,7 @@
         </LinearLayout>
 
         <FrameLayout
+            android:id="@+id/frameLayout5"
             android:layout_width="180dp"
             android:layout_height="match_parent"
             android:background="#B2FFE2"
@@ -465,8 +480,7 @@
                 android:id="@+id/btn_enroll"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#00000000">
-            </Button>
+                android:background="#00000000"></Button>
 
             <TextView
                 android:layout_width="wrap_content"
