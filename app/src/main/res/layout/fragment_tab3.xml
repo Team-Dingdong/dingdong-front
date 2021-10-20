@@ -54,12 +54,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:descendantFocusability="blocksDescendants"
             android:orientation="vertical">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/sharelist"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:layout_marginBottom="50dp"
                 android:layout_weight="1"
                 android:nestedScrollingEnabled="false" />
 
