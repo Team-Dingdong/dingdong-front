@@ -70,7 +70,8 @@ public class ShareListAdpater extends RecyclerView.Adapter<ShareListAdpater.shar
         }
 
         holder.place.setText(share.getPlace());
-        holder.personnel.setText(share.getGatheredPeople() + "/" + share.getPersonnelcapacity());
+        int real_gather = Integer.parseInt(share.getGatheredPeople()) + 1;
+        holder.personnel.setText( Integer.toString(real_gather) + "/" + share.getPersonnelcapacity());
         List<String> hashtag = share.getHashtag();
         String str="";
         for(int i=0; i < hashtag.size(); i++){
