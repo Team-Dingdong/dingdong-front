@@ -68,8 +68,8 @@ public interface Apiinterface {
     Call<PostResponse> getCreatedCategoryData(@Path("id") int id, @Path("regionid") int regionid, @Query("page") int num);
 
     @Multipart
-    @POST("/api/v1/post")
-    Call<EditResponse> setPost(@Part ArrayList<MultipartBody.Part> input, @Part ArrayList<MultipartBody.Part> files);
+    @POST("/api/v1/post/{id}")
+    Call<EditResponse> setPost(@Part ArrayList<MultipartBody.Part> input, @Part ArrayList<MultipartBody.Part> files, @Path("id") int id);
 
 
     @GET("/api/v1/post/{id}")

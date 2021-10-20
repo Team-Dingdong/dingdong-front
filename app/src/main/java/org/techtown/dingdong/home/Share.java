@@ -31,7 +31,7 @@ public class Share {
     @SerializedName("cost")
     @Expose
     private String price;
-    @SerializedName("local")
+    @SerializedName("location")
     @Expose
     private String place;
     @SerializedName("people")

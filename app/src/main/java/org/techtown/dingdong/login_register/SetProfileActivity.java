@@ -62,8 +62,9 @@ public class SetProfileActivity extends AppCompatActivity {
     private final int OPEN_GALLERY = 201;
     Uri imageuri;
     private String state;
-    Boolean doiimgcorrect;
+    Boolean doiimgcorrect = false;
     CardView cardView;
+    String old_nickname=",";
 
 
     @Override
@@ -186,6 +187,7 @@ public class SetProfileActivity extends AppCompatActivity {
                     if(response.body().getResult().equals("PROFILE_READ_SUCCESS")) {
                         UserProfileResponse.Data res = response.body().getData();
                         et_nickname.setText(res.getNickname());
+                        old_nickname = res.getNickname();
                         Glide.with(SetProfileActivity.this)
                                 .load(res.getProfileImg())
                                 .into(img_profile);
@@ -216,6 +218,7 @@ public class SetProfileActivity extends AppCompatActivity {
         MultipartBody.Part img = null;
         MultipartBody.Part nickname = null;
         if(doiimgcorrect){
+            //이미지를 수정한경우 , 닉네임은 수정하지 않은 경우 수정한 경우
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(SetProfileActivity.this.getContentResolver(), imageuri);
                 File file = getResize(bitmap, Integer.toString((int) System.currentTimeMillis()).replace("-",""));
@@ -225,10 +228,16 @@ public class SetProfileActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            nickname = MultipartBody.Part.createFormData("nickname", et_nickname.getText().toString());
+
+            if(!et_nickname.getText().toString().equals(old_nickname)){
+                nickname = MultipartBody.Part.createFormData("nickname", et_nickname.getText().toString());
+            }
+
         }
         else{
-            nickname = MultipartBody.Part.createFormData("nickname", et_nickname.getText().toString());
+            if(!et_nickname.getText().toString().equals(old_nickname)){
+                nickname = MultipartBody.Part.createFormData("nickname", et_nickname.getText().toString());
+            }
         }
 
         Call<ResponseBody> call = apiinterface.setUpdateProfile(img, nickname);

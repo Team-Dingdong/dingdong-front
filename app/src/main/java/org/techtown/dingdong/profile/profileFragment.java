@@ -109,14 +109,6 @@ public class profileFragment extends Fragment {
 
         }
 
-    public void setDummy(){
-        salesList = new ArrayList<>();
-        salesList.add(new Share("hhi","","","","apdls","2021-08-25T23:55:11","20000","","5","3"));
-        salesList.add(new Share("hhi","","","","apdls","2021-08-25T23:55:11","20000","","5","5"));
-        salesList.add(new Share("hhi","","","","apdls","2021-08-25T23:55:11","20000","","5","3"));
-        salesList.add(new Share("hhi","","","","apdls","2021-08-25T23:55:11","20000","","5","1"));
-
-        }
 
     public void getProfile(Token token){
         Apiinterface apiinterface = Api.createService(Apiinterface.class, token, getActivity());
@@ -221,7 +213,14 @@ public class profileFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getHistory(token);
+        getProfile(token);
+        getRating(token);
     }
+}
 
 
 

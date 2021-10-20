@@ -183,7 +183,10 @@ public class myPageFragment extends Fragment{
         });
     }
 
-
-
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        getProfile(token);
+        getRating(token);
+    }
 }

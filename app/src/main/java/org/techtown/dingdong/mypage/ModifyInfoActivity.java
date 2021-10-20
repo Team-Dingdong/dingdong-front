@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 
 import org.techtown.dingdong.BuildConfig;
+import org.techtown.dingdong.PrefManager;
 import org.techtown.dingdong.R;
 import org.techtown.dingdong.home.EditActivity;
 import org.techtown.dingdong.login_register.LoginActivity;
@@ -206,6 +207,10 @@ public class ModifyInfoActivity extends AppCompatActivity {
                                         if (response.isSuccessful()) {
                                             if (response.code() == 200) {
                                                 pref.edit().putBoolean("oauth.loggedin",false).apply();
+                                                pref.edit().putString("oauth.accesstoken", "").apply();
+                                                pref.edit().putString("oauth.refreshtoken", "").apply();
+                                                pref.edit().putString("oauth.expire", "").apply();
+                                                pref.edit().putString("oauth.tokentype", "").apply();
                                                 Toast.makeText(ModifyInfoActivity.this, "로그아웃이 완료되었습니다.", Toast.LENGTH_LONG).show();
                                                 Intent intent = new Intent(ModifyInfoActivity.this, LoginActivity.class);
                                                 //Intent intent = new Intent(ModifyInfoActivity.this, LoginOrRegisterActivity.class);

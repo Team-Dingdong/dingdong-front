@@ -38,6 +38,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -110,11 +111,12 @@ public class EditActivity extends AppCompatActivity {
     ImageUploadAdapter imageUploadAdapter;
     private String id;
     final int PERMISSIONS_REQUEST = 1005;
+    FrameLayout frameLayout_region;
 
 
     String[] categories = {"과일·채소", "육류·계란", "간식류", "생필품", "기타"};
     String[] personnels = {"1", "2", "3", "4", "5"};
-    String[] region = {"미아2동", "안암동"};
+    //String[] region = {"미아2동", "안암동"};
 
 
     @Override
@@ -133,6 +135,10 @@ public class EditActivity extends AppCompatActivity {
         et_title = findViewById(R.id.et_title);
         et_place = findViewById(R.id.et_place);
         tv_btn = findViewById(R.id.post_text);
+        frameLayout_region = findViewById(R.id.linearLayout5);
+
+        List<String> where = new ArrayList<String>();
+        where.add("동네선택");
 
         SharedPreferences pref = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         String access = pref.getString("oauth.accesstoken", "");
@@ -147,6 +153,7 @@ public class EditActivity extends AppCompatActivity {
         id = intent.getStringExtra("id");
 
 
+
         //뒤로가기 눌렀을때
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,27 +161,6 @@ public class EditActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-
-
-        //동네 선택 스피너 세팅
-        ArrayAdapter<String> regionadapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, region);
-        regionadapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
-        select_region.setAdapter(regionadapter);
-        select_region.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selected_region = region[position];
-                tv_region.setText(selected_region);
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
 
 
 
@@ -380,6 +366,53 @@ public class EditActivity extends AppCompatActivity {
         if(Integer.parseInt(id) != 0) {
             setShare(token);
             tv_btn.setText("나눔 수정하기");
+            frameLayout_region.setVisibility(View.GONE);
+        }
+        else{
+
+            Apiinterface apiinterface = Api.createService(Apiinterface.class, token, EditActivity.this);
+            Call<LocalResponse> call = apiinterface.getLocal();
+            call.enqueue(new Callback<LocalResponse>() {
+                @Override
+                public void onResponse(Call<LocalResponse> call, Response<LocalResponse> response) {
+                    if(response.isSuccessful() && response.body() != null){
+                        if(response.body().getResult().equals("LOCAL_READ_SUCCESS")){
+                            LocalResponse res = response.body();
+                            LocalResponse.Data data1 = res.getData().get(0);
+                            LocalResponse.Data data2 = res.getData().get(1);
+                            where.add(data1.getName());
+                            where.add(data2.getName());
+                            String[] region = new String[where.size()];
+                            where.toArray(region);
+
+
+                            ArrayAdapter<String> regionadapter = new ArrayAdapter<String>(EditActivity.this, android.R.layout.simple_spinner_item, region);
+                            regionadapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+                            select_region.setAdapter(regionadapter);
+                            select_region.setSelection(0);
+                            select_region.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                @Override
+                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                    selected_region = region[position];
+                                    tv_region.setText(selected_region);
+
+                                }
+
+                                @Override
+                                public void onNothingSelected(AdapterView<?> parent) {
+
+                                }
+                            });
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<LocalResponse> call, Throwable t) {
+
+                }
+            });
+
         }
 
 
@@ -392,7 +425,7 @@ public class EditActivity extends AppCompatActivity {
                 res_hash = res_hash.replace("##","#");
 
                 if(et_place.getText().length() > 0 && et_title.getText().length() >0 &&
-                        et_detail.getText().length()>0 && et_price.getText().length() >0 && res_hash.length() >0){
+                        et_detail.getText().length()>0 && et_price.getText().length() >0 && res_hash.length() >0 && select_region.getSelectedItemPosition() != 0){
 
                     //9,999로 받아오기 때문에 Integer로 변환하기 위해 ','를 없애줌
                     res_price = et_price.getText().toString().replace(",","");
@@ -405,10 +438,9 @@ public class EditActivity extends AppCompatActivity {
                         setPost(token);
                     }
 
-
                 }
                 else {
-                    Toast.makeText(getApplicationContext(), "게시물이 다 채워지지 않았어요!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "게시물이 다 채워지지 않았어요!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -444,7 +476,7 @@ public class EditActivity extends AppCompatActivity {
         input.add(MultipartBody.Part.createFormData("people", Integer.toString(selected_personnel)));
         input.add(MultipartBody.Part.createFormData("cost", res_price));
         input.add(MultipartBody.Part.createFormData("bio",et_detail.getText().toString()));
-        input.add(MultipartBody.Part.createFormData("local",et_place.getText().toString()));
+        input.add(MultipartBody.Part.createFormData("location",et_place.getText().toString()));
         input.add(MultipartBody.Part.createFormData("categoryId",Integer.toString(category)));
         input.add(MultipartBody.Part.createFormData("postTag",res_hash));
 
@@ -512,13 +544,13 @@ public class EditActivity extends AppCompatActivity {
         input.add(MultipartBody.Part.createFormData("people", Integer.toString(selected_personnel)));
         input.add(MultipartBody.Part.createFormData("cost", res_price));
         input.add(MultipartBody.Part.createFormData("bio",et_detail.getText().toString()));
-        input.add(MultipartBody.Part.createFormData("local",et_place.getText().toString()));
+        input.add(MultipartBody.Part.createFormData("location",et_place.getText().toString()));
         input.add(MultipartBody.Part.createFormData("categoryId",Integer.toString(category)));
         input.add(MultipartBody.Part.createFormData("postTag",res_hash));
 
         //토큰을 이용해 통신하도록 레트로핏 통신 클래스에 전달
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,EditActivity.this);
-        Call<EditResponse> call = apiinterface.setPost(input, uplist);
+        Call<EditResponse> call = apiinterface.setPost(input, uplist, select_region.getSelectedItemPosition());
         call.enqueue(new Callback<EditResponse>() {
             @Override
             public void onResponse(Call<EditResponse> call, Response<EditResponse> response) {
@@ -621,24 +653,6 @@ public class EditActivity extends AppCompatActivity {
                                 break;
                         }
 
-                        /*if(share.getImage1()!=null){
-                        if(!share.getImage1().contains("default_post.png")){
-
-                            imgList.add(share.getImage1());
-
-                            if(!share.getImage2().contains("default_post.png")){
-                                imgList.add(share.getImage2());
-                            }
-                            if(!share.getImage3().contains("default_post.png")){
-                                imgList.add(share.getImage3());
-                            }
-
-                            //이미지 리사이클러뷰 세팅
-                            imageUploadAdapter = new ImageUploadAdapter(imgList, getApplicationContext());
-                            recycler_image.setAdapter(imageUploadAdapter);
-                            recycler_image.setLayoutManager(new LinearLayoutManager(EditActivity.this, LinearLayoutManager.HORIZONTAL, false));
-
-                        }}*/
                     }
 
                 }else{

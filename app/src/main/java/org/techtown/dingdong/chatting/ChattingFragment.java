@@ -30,6 +30,7 @@ import com.google.gson.Gson;
 import org.jetbrains.annotations.NotNull;
 import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.R;
+import org.techtown.dingdong.home.HomeFragment;
 import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
@@ -49,9 +50,15 @@ public class ChattingFragment extends Fragment {
     private RecyclerView recyclerView;
     ChatRoomListAdapter chatRoomListAdapter;
     Boolean ismaster = true;
+    Token token;
 
     public ChattingFragment() {
         // Required empty public constructor
+    }
+
+    public static ChattingFragment newInstance() {
+        ChattingFragment fragment = new ChattingFragment();
+        return fragment;
     }
 
     @Override
@@ -67,7 +74,7 @@ public class ChattingFragment extends Fragment {
         String expire = pref.getString("oauth.expire","");
         String tokentype = pref.getString("oauth.tokentype","");
 
-        Token token = new Token(access,refresh,expire,tokentype);
+        token = new Token(access,refresh,expire,tokentype);
         token.setContext(getActivity());
 
         Log.d("토큰", String.valueOf(access));
@@ -170,6 +177,12 @@ public class ChattingFragment extends Fragment {
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
         return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setChatRooms(token);
     }
 
     public void setDummy(){
