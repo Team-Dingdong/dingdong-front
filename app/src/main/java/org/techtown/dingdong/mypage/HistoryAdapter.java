@@ -1,12 +1,14 @@
 package org.techtown.dingdong.mypage;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -57,16 +59,31 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     public void onBindViewHolder(@NonNull @NotNull HistoryAdapter.ViewHolder holder, int position) {
         share = historyList.get(position);
 
-        if(state.equals("profile")||state.equals("mypurchases")){
+        if(state.equals("profile")){
             holder.tv_confirm.setVisibility(View.GONE);
         }
 
-        holder.tv_confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onItemClick(position, historyList.get(position).getId());
-            }
-        });
+        if(share.getDone().equals("true")){
+            //done일때 평가하기로 연결되게
+            holder.tv_confirm.setText("평가하기");
+            holder.tv_confirm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(v.getContext(), RatingActivity.class);
+                    intent.putExtra("id", historyList.get(position).getId());
+                    context.startActivity(intent);
+                    //listener.onItemClick(position, historyList.get(position).getId());
+                }
+            });
+        }else{
+            //done 이 아닐때 거래완료하기 눌렀을경우
+            holder.tv_confirm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(position, historyList.get(position).getId());
+                }
+            });
+        }
 
         holder.tv_title.setText(share.getTitle());
         holder.tv_parti.setText(share.getGatheredPeople()+"명 참여");

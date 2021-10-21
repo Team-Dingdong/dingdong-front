@@ -355,7 +355,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
                 android:fontFamily="@font/noto_sans"
-                android:text="미아2동"
+                android:text="지역"
                 android:textColor="#ffffff"
                 android:textFontWeight="700"
                 android:textSize="20sp"

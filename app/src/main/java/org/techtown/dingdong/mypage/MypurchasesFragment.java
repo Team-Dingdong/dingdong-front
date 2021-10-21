@@ -24,6 +24,7 @@ import org.techtown.dingdong.home.Share;
 import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
+import org.techtown.dingdong.profile.HistoryResponse;
 
 import java.util.ArrayList;
 
@@ -69,10 +70,10 @@ public class MypurchasesFragment extends Fragment {
         historyAdapter.setListener(new HistoryAdapter.onItemClickListener() {
             @Override
             public void onItemClick(int position, String id) {
-                //Toast.makeText(getActivity(), id, Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getActivity(),RatingActivity.class);
+                Toast.makeText(getActivity(),id + ": 거래를 확정하였습니다.", Toast.LENGTH_SHORT).show();
+                /*Intent intent = new Intent(getActivity(),RatingActivity.class);
                 intent.putExtra("id",id);
-                getActivity().startActivity(intent);
+                getActivity().startActivity(intent);*/
 
             }
         });
@@ -85,16 +86,16 @@ public class MypurchasesFragment extends Fragment {
 
     public void getHistory(Token token) {
         Apiinterface apiinterface = Api.createService(Apiinterface.class, token, getActivity());
-        Call<PostResponse> call = apiinterface.getPurchasesHistory();
-        call.enqueue(new Callback<PostResponse>() {
+        Call<HistoryResponse> call = apiinterface.getPurchasesHistory();
+        call.enqueue(new Callback<HistoryResponse>() {
             @Override
-            public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
+            public void onResponse(Call<HistoryResponse> call, Response<HistoryResponse> response) {
                 if(response.isSuccessful() && response.body() != null){
                     if(response.body().getResult().equals("POST_READ_SUCCESS")){
-                        PostResponse res = response.body();
+                        HistoryResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
-                        purchasesList.addAll(res.getData().getShare());
+                        purchasesList.addAll(res.getHistorys());
                         historyAdapter.notifyDataSetChanged();
                     }
 
@@ -106,13 +107,20 @@ public class MypurchasesFragment extends Fragment {
                     Log.d("실패", String.valueOf(response.raw().request().url().url()));
                     Log.d("실패", new Gson().toJson(response.raw().request()));
                 }
+
             }
 
             @Override
-            public void onFailure(Call<PostResponse> call, Throwable t) {
+            public void onFailure(Call<HistoryResponse> call, Throwable t) {
 
             }
         });
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     public void setDummy(){

@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/noto_sans"
-                android:text="닉네임"
+                android:text="    "
                 android:textColor="#000000"
                 android:textFontWeight="700"
                 android:textSize="20dp"
@@ -110,7 +110,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/montserrat_semibold"
-                    android:text="3"
+                    android:text="  "
                     android:textColor="#BDBDBD"
                     android:textFontWeight="700"
                     android:textSize="20dp" />
@@ -136,7 +136,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/montserrat_semibold"
-                    android:text="3"
+                    android:text="  "
                     android:textColor="#BDBDBD"
                     android:textFontWeight="700"
                     android:textSize="20dp" />

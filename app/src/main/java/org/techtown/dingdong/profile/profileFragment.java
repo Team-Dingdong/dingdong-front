@@ -179,20 +179,21 @@ public class profileFragment extends Fragment {
 
     public void getHistory(Token token){
         Apiinterface apiinterface = Api.createService(Apiinterface.class, token, getActivity());
-        Call<PostResponse> call = apiinterface.getSalesHistory();
-        call.enqueue(new Callback<PostResponse>() {
+        Call<HistoryResponse> call = apiinterface.getSalesHistory();
+        call.enqueue(new Callback<HistoryResponse>() {
             @Override
-            public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
+            public void onResponse(Call<HistoryResponse> call, Response<HistoryResponse> response) {
+
                 if(response.isSuccessful() && response.body() != null){
                     if(response.body().getResult().equals("POST_READ_SUCCESS")){
-                        PostResponse res = response.body();
+                        HistoryResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
 
                         if(!salesList.isEmpty()){
                             salesList = new ArrayList<>();
                         }
 
-                        salesList.addAll(res.getData().getShare());
+                        salesList.addAll(res.getHistorys());
                         historyAdapter.notifyDataSetChanged();
                     }
 
@@ -204,13 +205,15 @@ public class profileFragment extends Fragment {
                     Log.d("실패", String.valueOf(response.raw().request().url().url()));
                     Log.d("실패", new Gson().toJson(response.raw().request()));
                 }
+
             }
 
             @Override
-            public void onFailure(Call<PostResponse> call, Throwable t) {
+            public void onFailure(Call<HistoryResponse> call, Throwable t) {
 
             }
         });
+
     }
 
     @Override

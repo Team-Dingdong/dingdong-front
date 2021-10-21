@@ -21,6 +21,7 @@ import org.techtown.dingdong.login_register.ProfileUploadResponse;
 import org.techtown.dingdong.login_register.TokenRefreshRequest;
 import org.techtown.dingdong.mypage.UserRatingRequest;
 import org.techtown.dingdong.mypage.UserRatingResponse;
+import org.techtown.dingdong.profile.HistoryResponse;
 import org.techtown.dingdong.profile.UserProfileRequest;
 import org.techtown.dingdong.mytown.AuthLocalRequest;
 import org.techtown.dingdong.mytown.AuthLocalResponse;
@@ -156,10 +157,10 @@ public interface Apiinterface {
     Call<UserRatingResponse> getRating();
 
     @GET("/api/v1/post/user/sell")
-    Call<PostResponse> getSalesHistory();
+    Call<HistoryResponse> getSalesHistory();
 
     @GET("/api/v1/post/user/buy")
-    Call<PostResponse> getPurchasesHistory();
+    Call<HistoryResponse> getPurchasesHistory();
 
     @POST("/api/v1/auth/nickname")
     Call<ResponseBody> setProfile(@Body UserProfileRequest userProfileRequest);
