@@ -212,8 +212,7 @@ public class ModifyInfoActivity extends AppCompatActivity {
                                                 pref.edit().putString("oauth.expire", "").apply();
                                                 pref.edit().putString("oauth.tokentype", "").apply();
                                                 Toast.makeText(ModifyInfoActivity.this, "로그아웃이 완료되었습니다.", Toast.LENGTH_LONG).show();
-                                                Intent intent = new Intent(ModifyInfoActivity.this, LoginActivity.class);
-                                                //Intent intent = new Intent(ModifyInfoActivity.this, LoginOrRegisterActivity.class);
+                                                Intent intent = new Intent(ModifyInfoActivity.this, LoginOrRegisterActivity.class);
                                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                                 startActivity(intent);
                                             }

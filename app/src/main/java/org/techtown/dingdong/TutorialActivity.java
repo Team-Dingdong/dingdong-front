@@ -73,7 +73,7 @@ public class TutorialActivity extends AppCompatActivity {
         }
         else{
             //로그인 안되어 있을때는 로그인액티비티로
-            startActivity(new Intent(TutorialActivity.this, LoginActivity.class));
+            startActivity(new Intent(TutorialActivity.this, LoginOrRegisterActivity.class));
             finish();
         }
     }
