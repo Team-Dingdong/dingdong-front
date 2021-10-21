@@ -192,4 +192,19 @@
         app:layout_constraintTop_toBottomOf="@+id/btn_quit" />
 
 
+    <TextView
+        android:layout_width="285dp"
+        android:layout_height="wrap_content"
+        android:text="\@ put license"
+        android:textAlignment="center"
+        android:textColor="#c5c5c5"
+        android:textFontWeight="300"
+        android:layout_marginTop="20dp"
+        android:textSize="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_logout"
+        android:gravity="center_horizontal" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
