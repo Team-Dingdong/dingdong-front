@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
     String authNumber, phoneNumber;
     Button startbutton;
     private TextView tv_timer;
-    private static final int MILLISINFUTURE = 301;
+    private static final int MILLISINFUTURE = 300;
     private static final int COUNT_DOWN_INTERVAL = 1000;
     private int count = 300;
     public CountDownTimer countDownTimer;
@@ -75,12 +75,11 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-
         //인텐트, 객체 받아오기
         Intent intent = getIntent();
         phoneNumber = intent.getStringExtra("phoneNumber");
         time = intent.getStringExtra("time");
-        
+
         //timestamp 형식에 맞게 변환함
         //5분 - (현재시간 - 요청시간)
         time = time.substring(0,10) + " " +time.substring(11,19);
@@ -146,7 +145,7 @@ public class LoginActivity extends AppCompatActivity {
                 LoginRequest loginRequest = new LoginRequest(phoneNumber, authNumber);
                 Apiinterface apiinterface = Api.createService(Apiinterface.class);
                 Call<LoginResponse> call = apiinterface.LoginRequest(loginRequest);
-                Log.w(phoneNumber, authNumber);
+                //Log.w(phoneNumber, authNumber);
                 call.enqueue(new Callback<LoginResponse>() {
                     @Override
                     public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
@@ -157,9 +156,7 @@ public class LoginActivity extends AppCompatActivity {
                             //기기 내부에 토큰 정보 저장
                             SharedPreferences preferences = getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
 
-                            Log.d("로그인성공", new Gson().toJson(response.body()));
                             LoginResponse.Data mToken = response.body().data;
-                            Log.d("로그인성공", mToken.getAccessToken());
                             Token token = new Token(mToken.getAccessToken(),mToken.getRefreshToken(),mToken.getExpireIn(),mToken.getTokentype());
                             preferences.edit().putBoolean("oauth.loggedin",true).apply();
                             preferences.edit().putString("oauth.accesstoken", token.getAccessToken()).apply();

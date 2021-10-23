@@ -67,7 +67,7 @@ public class LoginOrRegisterActivity extends AppCompatActivity {
                 message= et_phone.getText().toString();
 
                 AuthRequest authRequest = new AuthRequest(message);
-                Log.d("tag", message);
+                //Log.d("tag", message);
                 Apiinterface apiinterface = Api.createService(Apiinterface.class);
                 Call<AuthResponse> call = apiinterface.setAuth(authRequest);
                 call.enqueue(new Callback<AuthResponse>() {

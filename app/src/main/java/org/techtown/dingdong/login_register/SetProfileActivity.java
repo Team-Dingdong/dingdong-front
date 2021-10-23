@@ -132,6 +132,7 @@ public class SetProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(state.equals("signup") && et_nickname.getText().toString().length() > 0){
+                    //updateProfile(token);
                     setProfile(token);
                 }
                 else if(state.equals("correct") && et_nickname.getText().toString().length() > 0){
@@ -244,7 +245,6 @@ public class SetProfileActivity extends AppCompatActivity {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if(response.isSuccessful() && response.body() != null){
                     if(response.code() == 200) {
                         Log.d("성공", new Gson().toJson(response.code()));
                         Log.d("성공", String.valueOf(response.raw().request().url().url()));
@@ -256,11 +256,13 @@ public class SetProfileActivity extends AppCompatActivity {
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                Intent intent = new Intent(SetProfileActivity.this, MainActivity.class);
-                                startActivity(intent);
+                                finish();
+                                //Intent intent = new Intent(SetProfileActivity.this, MainActivity.class);
+                                //startActivity(intent);
                             }
                         }, 1000);
-                    }
+                }else if(response.code() == 409){
+                    Toast.makeText(SetProfileActivity.this,"이미 사용중인 닉네임입니다. 다른 닉네임을 설정해주세요.",Toast.LENGTH_SHORT).show();
                 }
                 else{
                     Log.d("실패", new Gson().toJson(response.errorBody()));
@@ -289,8 +291,7 @@ public class SetProfileActivity extends AppCompatActivity {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if(response.isSuccessful() && response.body() != null){
-                    if(response.code() == 200) {
+                    if(response.code() == 201) {
                         Log.d("성공", new Gson().toJson(response.code()));
                         Log.d("성공", String.valueOf(response.raw().request().url().url()));
                         Log.d("성공", new Gson().toJson(response.raw().request()));
@@ -301,11 +302,21 @@ public class SetProfileActivity extends AppCompatActivity {
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                finish();
+                                Intent intent = new Intent(SetProfileActivity.this, MainActivity.class);
+                                startActivity(intent);
                             }
                         }, 1000);
+                    }else if(response.code() == 409) {
+                        Toast.makeText(SetProfileActivity.this,"이미 사용중인 닉네임입니다. 다른 닉네임을 설정해주세요.",Toast.LENGTH_SHORT).show();
                     }
-                }
+                    else{
+                        Log.d("실패", new Gson().toJson(response.errorBody()));
+                        Log.d("실패", response.toString());
+                        Log.d("실패", String.valueOf(response.code()));
+                        Log.d("실패", response.message());
+                        Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                        Log.d("실패", new Gson().toJson(response.raw().request()));
+                    }
 
             }
 
