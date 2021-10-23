@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
 import androidx.annotation.RequiresApi;
@@ -74,6 +75,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
+
         //인텐트, 객체 받아오기
         Intent intent = getIntent();
         phoneNumber = intent.getStringExtra("phoneNumber");
@@ -103,6 +105,8 @@ public class LoginActivity extends AppCompatActivity {
         };
 
         countDownTimer.start();
+
+
 
 
 
@@ -183,13 +187,11 @@ public class LoginActivity extends AppCompatActivity {
                             }
                             
                         }else{
-
-                            Log.d("실패", new Gson().toJson(response.errorBody()));
-                            Log.d("실패", response.toString());
-                            Log.d("실패", String.valueOf(response.code()));
-                            Log.d("실패", response.message());
-                            Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                            Log.d("실패", new Gson().toJson(response.raw().request()));
+                            if(response.code() == 400){
+                                //다시인증해주세요
+                                Toast.makeText(LoginActivity.this, "인증번호가 올바르지 않습니다.", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
                         }
 
 

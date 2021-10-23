@@ -29,6 +29,7 @@ import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.MainActivity;
 import org.techtown.dingdong.R;
 import org.techtown.dingdong.chatting.ChattingActivity;
+import org.techtown.dingdong.home.PostResponse;
 import org.techtown.dingdong.home.Share;
 import org.techtown.dingdong.login_register.SetProfileActivity;
 import org.techtown.dingdong.login_register.Token;
@@ -83,14 +84,16 @@ public class UserProfileActivity extends AppCompatActivity {
         id = intent.getStringExtra("id");
         Log.d("토큰", id);
 
-        getUser(token);
-        getProfile(token);
-        getRating(token);
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(UserProfileActivity.this, LinearLayoutManager.VERTICAL, false));
         historyAdapter = new HistoryAdapter(salesList,UserProfileActivity.this,"profile");
         recyclerView.setAdapter(historyAdapter);
+
+        getUser(token);
+        getHistory(token);
+        getProfile(token);
+        getRating(token);
 
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,7 +176,30 @@ public class UserProfileActivity extends AppCompatActivity {
                     });
 
                     popupMenu.show();
+                }else{
+
+                    final PopupMenu popupMenu2 = new PopupMenu(getApplicationContext(), v);
+                    getMenuInflater().inflate(R.menu.menu_user_profile_mine, popupMenu2.getMenu());
+                    popupMenu2.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()){
+                                case R.id.correct:
+                                    Intent intent = new Intent(UserProfileActivity.this, SetProfileActivity.class);
+                                    intent.putExtra("state","correct");
+                                    startActivity(intent);
+                                    popupMenu2.dismiss();
+                                    break;
+                            }
+
+                            return false;
+                        }
+                    });
+
+                    popupMenu2.show();
+
                 }
+
             }
         });
 
@@ -284,4 +310,51 @@ public class UserProfileActivity extends AppCompatActivity {
 
     }
 
+    public void getHistory(Token token){
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, UserProfileActivity.this);
+        Call<PostResponse> call = apiinterface.getUserSalesHistory(Integer.parseInt(id));
+        call.enqueue(new Callback<PostResponse>() {
+            @Override
+            public void onResponse(Call<PostResponse> call, Response<PostResponse> response) {
+
+                if(response.isSuccessful() && response.body() != null){
+                    if(response.body().getResult().equals("POST_READ_SUCCESS")){
+                        PostResponse res = response.body();
+                        Log.d("성공", new Gson().toJson(res));
+
+                        if(!salesList.isEmpty()){
+                            salesList = new ArrayList<>();
+                        }
+
+                        salesList.addAll(res.getData().getShare());
+                        historyAdapter.notifyDataSetChanged();
+                    }
+
+                }else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<PostResponse> call, Throwable t) {
+
+            }
+        });
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getUser(token);
+        getProfile(token);
+        getRating(token);
+        getHistory(token);
+    }
 }

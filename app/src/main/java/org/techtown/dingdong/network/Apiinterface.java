@@ -182,4 +182,8 @@ public interface Apiinterface {
     @Multipart
     @POST("/api/v1/profile/report/{id}")
     Call<ResponseBody> reportUser(@Path("id") int id, @Part MultipartBody.Part nickname);
+
+    @GET("/api/v1/post/user/{id}")
+    Call<PostResponse> getUserSalesHistory(@Path("id") int id);
+
 }

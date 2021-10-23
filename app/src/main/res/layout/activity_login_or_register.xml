@@ -28,6 +28,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:ems="10"
+        android:maxLength="11"
         android:hint="휴대폰 번호 (-없이 숫자만 입력)"
         android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"

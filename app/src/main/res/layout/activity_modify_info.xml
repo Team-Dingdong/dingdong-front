@@ -209,19 +209,35 @@
         android:gravity="center_horizontal" />
 
 
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_oss" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+
     <TextView
         android:id="@+id/tv_ossinfo"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/noto_sans"
+        android:layout_gravity="center_horizontal"
         android:text="오픈소스 라이선스 목록"
+        android:paddingHorizontal="10dp"
+        android:layout_marginBottom="400dp"
         android:layout_marginTop="18dp"
         android:textColor="@color/grey"
         android:textFontWeight="300"
-        android:textSize="7dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_oss" />
+        android:textSize="7dp" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

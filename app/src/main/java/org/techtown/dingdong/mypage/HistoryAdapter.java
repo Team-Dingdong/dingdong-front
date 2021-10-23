@@ -81,7 +81,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
                     //listener.onItemClick(position, historyList.get(position).getId());
                 }
             });
-        }else{
+        }else if(share.getDone().equals("false") && state.equals("mysales")){
             //done 이 아닐때 거래완료하기 눌렀을경우
             holder.tv_confirm.setOnClickListener(new View.OnClickListener() {
                 @Override
