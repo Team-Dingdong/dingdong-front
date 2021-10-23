@@ -184,22 +184,8 @@ public class Tab2Fragment extends Fragment {
 
 
 
-        //setDummy();
-
-        //setShareListRecycler(sharelistrecycler, sharelist_deadline);
 
         return v;
-    }
-
-    public void setShareListRecycler(RecyclerView sharelistrecycler, ArrayList<Share> sharelist){
-
-
-        sharelist_data = new ArrayList<>();
-        sharelist_data = sharelist;
-        sharelistrecycler.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL, false));
-        shareListAdpater = new ShareListAdpater(getActivity(), sharelist_data);
-        sharelistrecycler.setAdapter(shareListAdpater);
-
     }
 
     public void setEndTimeData(Token token){

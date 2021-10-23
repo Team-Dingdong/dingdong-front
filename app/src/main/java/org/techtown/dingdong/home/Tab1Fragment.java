@@ -186,16 +186,6 @@ public class Tab1Fragment extends Fragment {
         return v;
     }
 
-    public void setShareListRecycler(RecyclerView sharelistrecycler, ArrayList<Share> sharelist){
-
-
-        sharelist_data = new ArrayList<>();
-        sharelist_data = sharelist;
-        sharelistrecycler.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL, false));
-        shareListAdpater = new ShareListAdpater(getActivity(), sharelist_data);
-        sharelistrecycler.setAdapter(shareListAdpater);
-
-    }
 
     public void setEndTimeData(Token token){
 
@@ -290,24 +280,4 @@ public class Tab1Fragment extends Fragment {
 
     }
 
-    public void setDummy(){/*
-        sharelist_latest = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            sharelist_latest.add(new Share("감자를 나누고 싶어요",new String[]{
-                    "https://cdn.pixabay.com/photo/2019/12/26/10/44/horse-4720178_1280.jpg",
-                    "https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                    "https://cdn.pixabay.com/photo/2014/03/03/16/15/mosque-279015_1280.jpg"
-            }, "감자를 제발 나눠주고 싶네요 \n 집에 너무 많아가지고 힘들어요...","7분전","#감자 #나눠요","20,000","노원구청앞",4,2));
-        }
-
-        sharelist_deadline = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            sharelist_deadline.add(new Share("양파를 나누고 싶어요",new String[]{
-                    "https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                    "https://cdn.pixabay.com/photo/2019/12/26/10/44/horse-4720178_1280.jpg",
-                    "https://cdn.pixabay.com/photo/2014/03/03/16/15/mosque-279015_1280.jpg"
-            }, "감자를 제발 나눠주고 싶네요 \n 집에 너무 많아가지고 힘들어요...","7분전","#양파 #나눠요","10,000","울집앞",4,3));
-        }
-*/
-    }
 }

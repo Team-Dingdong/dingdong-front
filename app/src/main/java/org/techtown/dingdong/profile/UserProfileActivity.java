@@ -87,7 +87,6 @@ public class UserProfileActivity extends AppCompatActivity {
         getProfile(token);
         getRating(token);
 
-        setDummy();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(UserProfileActivity.this, LinearLayoutManager.VERTICAL, false));
         historyAdapter = new HistoryAdapter(salesList,UserProfileActivity.this,"profile");
@@ -285,12 +284,4 @@ public class UserProfileActivity extends AppCompatActivity {
 
     }
 
-
-    public void setDummy(){
-        salesList = new ArrayList<>();
-        salesList.add(new Share("hhi","","","","apdls","2021-08-25T23:55:11","20000","","5","3"));
-        salesList.add(new Share("hhi","","","","apdls","2021-08-25T23:55:11","20000","","5","5"));
-        salesList.add(new Share("hhi","","","","apdls","2021-08-25T23:55:11","20000","","5","3"));
-        salesList.add(new Share("hhi","","","","apdls","2021-08-25T23:55:11","20000","","5","1"));
-    }
 }

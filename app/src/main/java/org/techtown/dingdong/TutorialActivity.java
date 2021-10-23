@@ -33,11 +33,10 @@ public class TutorialActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tutorial);
 
-        Log.d("tutorialactivity","tut");
 
         prefManager = new PrefManager(TutorialActivity.this);
         if(!prefManager.isFirstTimeLaunch()){
-            Log.d("tutorialactivity","nofirst");
+            Log.d("tutorialactivity","notfirst");
             launchHomeScreen();
         }
 

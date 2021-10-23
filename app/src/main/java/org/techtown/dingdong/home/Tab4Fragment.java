@@ -184,17 +184,6 @@ public class Tab4Fragment extends Fragment {
         return v;
     }
 
-    public void setShareListRecycler(RecyclerView sharelistrecycler, ArrayList<Share> sharelist){
-
-
-        sharelist_data = new ArrayList<>();
-        sharelist_data = sharelist;
-        sharelistrecycler.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL, false));
-        shareListAdpater = new ShareListAdpater(getActivity(), sharelist_data);
-        sharelistrecycler.setAdapter(shareListAdpater);
-
-    }
-
     public void setEndTimeData(Token token){
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());

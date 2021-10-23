@@ -60,7 +60,6 @@ public class UserListActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
-        Log.d("토큰", id);
 
         recyclerView = findViewById(R.id.recycler_user);
         tv_people = findViewById(R.id.tv_people);
@@ -205,19 +204,6 @@ public class UserListActivity extends AppCompatActivity {
 
             }
         });
-
-    }
-
-    private void setDummy(){
-
-        /*
-       chatUsers = new ArrayList<>();
-       chatUsers.add(new ChatUser("젤리","https://cdn.pixabay.com/photo/2016/08/24/21/33/gummybears-1618073_1280.jpg","true"));
-       chatUsers.add(new ChatUser("원선","https://cdn.pixabay.com/photo/2019/10/15/21/34/cat-4552983_1280.jpg","false"));
-       chatUsers.add(new ChatUser("김나나","https://cdn.pixabay.com/photo/2016/08/24/21/33/gummybears-1618073_1280.jpg","false"));
-       chatUsers.add(new ChatUser("다루","https://cdn.pixabay.com/photo/2019/10/15/21/34/cat-4552983_1280.jpg","false"));
-
-         */
 
     }
 

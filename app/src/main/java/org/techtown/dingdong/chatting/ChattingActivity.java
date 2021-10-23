@@ -107,8 +107,6 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
 
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
-        Log.d("토큰", id);
-        Log.d("토큰", String.valueOf(access));
 
         getUser(token);
 
@@ -156,7 +154,6 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
 
                         });
 
-        Log.d("chatstomp","자니..? 왜응답이없어");
 
         gson = new GsonBuilder().create();
 
@@ -346,36 +343,6 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
     } }
 
 
-
-
-    private void setDummy(){
-        chats = new ArrayList<>();
-        Timestamp time = new Timestamp(System.currentTimeMillis());
-        String t = time.toString();
-        String d = "2021-08-22 17:00:33.822";
-        Log.d("time",t);
-        //객체 추가
-        chats.add(new Chat("안녕하세요 여러분","원선","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                d,"FALSE",ChatType.ViewType.LEFT_CONTENT ));
-        chats.add(new Chat("넵 안녕하세요","다루","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                d,"FALSE",ChatType.ViewType.RIGHT_CONTENT ));
-        chats.add(new Chat("반갑습니다!","다루","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                d,"FALSE",ChatType.ViewType.LEFT_CONTENT ));
-        chats.add(new Chat("반갑습니다!","다루","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                t,"FALSE",ChatType.ViewType.LEFT_CONTENT ));
-        chats.add(new Chat("반갑습니다!","다루","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                t,"FALSE",ChatType.ViewType.LEFT_CONTENT ));
-        chats.add(new Chat("https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg","정희","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                t,"FALSE",ChatType.ViewType.LEFT_CONTENT_IMG ));
-        chats.add(new Chat("https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg","정희","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                t,"FALSE",ChatType.ViewType.RIGHT_CONTENT_IMG ));
-        chats.add(new Chat("노원구청어쩌구저쩌구에서 만나요!","정희","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                t,"FALSE",ChatType.ViewType.RIGHT_CONTENT_PLAN));
-        chats.add(new Chat("노원구청어쩌구저쩌구에서 만나요!","정희","https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                t,"FALSE",ChatType.ViewType.LEFT_CONTENT_PLAN));
-
-    }
-
     @Override
     public void onButtonChoice(int choice) {
         switch (choice){
@@ -397,7 +364,6 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                 break;
             case 2:
                 Intent intent2 = new Intent(ChattingActivity.this,PlanningActivity.class);
-                intent2.putExtra("id",id);
                 startActivity(intent2);
                 chattingBottomDialogFragment.dismiss();
                 break;
@@ -431,8 +397,6 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                         ChatResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
                         chats.addAll(res.getChats());
-                        /*chatAdapter.notifyDataSetChanged();
-                        recycler_chat.scrollToPosition(chatAdapter.getItemCount()-1);*/
                         setChatRecycler(recycler_chat, chats);
 
                     }
@@ -484,7 +448,6 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         jsonObject.put("type","TALK");
         jsonObject.put("message",message);
 
-        Log.d("sendstomp","데이터센딩");
 
         stompClient.send(new StompMessage(StompCommand.SEND, Arrays.asList(new StompHeader(StompHeader.DESTINATION, "/pub/chat/message"),
                 new StompHeader("Authorization","Bearer " + token.getAccessToken())), jsonObject.toString())).subscribe();
@@ -492,8 +455,6 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
         Chat chat = new Chat(message,username,userprofile,new Timestamp(System.currentTimeMillis()).toString(), isowner.toUpperCase(), ChatType.ViewType.RIGHT_CONTENT);
         addItem(chat);
 
-
-        Log.d("sendstomp","데이터센딩완료");
 
     }
 

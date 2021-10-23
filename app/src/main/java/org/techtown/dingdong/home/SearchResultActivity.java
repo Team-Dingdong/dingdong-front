@@ -59,7 +59,6 @@ public class SearchResultActivity extends AppCompatActivity {
         Token token = new Token(access, refresh, expire, tokentype);
         token.setContext(SearchResultActivity.this);
 
-        //SearchRequest searchRequest = new SearchRequest(searchword);
 
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,SearchResultActivity.this);
@@ -74,7 +73,6 @@ public class SearchResultActivity extends AppCompatActivity {
 
                         ArrayList<Share> mList = new ArrayList<>();
                         mList = res.getData().getShare();
-                        //String json = new Gson().toJson(res.getData().getShare());
                         setShareListRecycler(recyclerView, mList);
 
                     }

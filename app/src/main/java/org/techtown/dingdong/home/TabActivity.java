@@ -76,7 +76,6 @@ public class TabActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.pager);
         tv_region = findViewById(R.id.tv_region);
 
-       // tv_region.setText(region[Id-1]);
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class, token, TabActivity.this);
         Call<LocalResponse> call = apiinterface.getLocal();

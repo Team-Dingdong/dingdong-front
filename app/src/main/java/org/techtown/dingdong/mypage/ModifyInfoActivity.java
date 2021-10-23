@@ -83,7 +83,6 @@ public class ModifyInfoActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(et_modify.getText().toString().length() == 11){
                     phonenum = et_modify.getText().toString();
-                    //tv_phone.setText(phonenum);
                     ln_modify.setVisibility(View.GONE);
                     ln_auth.setVisibility(View.VISIBLE);
                     btn_correct.setText("다시받기");

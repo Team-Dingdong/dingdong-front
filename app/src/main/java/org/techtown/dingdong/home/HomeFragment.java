@@ -172,8 +172,6 @@ public class HomeFragment extends Fragment {
                         select_region.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                             @Override
                             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                //selected_region = region[position];
-                                //tv_region.setText(selected_region);
                                 if(position != 0){
                                     Id = position;
                                     Log.d("selectid",Integer.toString(Id));
@@ -183,14 +181,6 @@ public class HomeFragment extends Fragment {
                                     activity.replaceFragment(fragment);
                                 }
 
-                /*shareList = new ArrayList<>();
-                shareListAdpater = new ShareListAdpater(getActivity(), shareList);
-                sharelistrecycler.setAdapter(shareListAdpater);
-                sharelistrecycler.scrollToPosition(0);
-                //page = 0;
-                tv_align.setText("최신순");
-                trans = true;
-                setCreatedData(token);*/
                             }
 
                             @Override
@@ -370,15 +360,6 @@ public class HomeFragment extends Fragment {
         return v;
     }
 
-    public void setShareListRecycler(RecyclerView sharelistrecycler, ArrayList<Share> sharelist){
-
-
-        sharelistrecycler.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL, false));
-        shareListAdpater = new ShareListAdpater(getActivity(), shareList);
-        sharelistrecycler.setAdapter(shareListAdpater);
-
-    }
-
     public void setCreatedData(Token token){
 
         Apiinterface apiinterface = Api.createService(Apiinterface.class,token,getActivity());
@@ -470,30 +451,6 @@ public class HomeFragment extends Fragment {
 
 
     }
-
-
-
-    public void setDummy(){
-        /*sharelist_latest = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            sharelist_latest.add(new Share("감자를 나누고 싶어요",new String[]{
-                    "https://cdn.pixabay.com/photo/2019/12/26/10/44/horse-4720178_1280.jpg",
-                    "https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                    "https://cdn.pixabay.com/photo/2014/03/03/16/15/mosque-279015_1280.jpg"
-            }, "감자를 제발 나눠주고 싶네요 \n 집에 너무 많아가지고 힘들어요...","7분전","#감자 #나눠요","20,000","노원구청앞",4,2));
-        }
-
-        sharelist_deadline = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            sharelist_deadline.add(new Share("양파를 나누고 싶어요",new String[]{
-                    "https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-                    "https://cdn.pixabay.com/photo/2019/12/26/10/44/horse-4720178_1280.jpg",
-                    "https://cdn.pixabay.com/photo/2014/03/03/16/15/mosque-279015_1280.jpg"
-            }, "감자를 제발 나눠주고 싶네요 \n 집에 너무 많아가지고 힘들어요...","7분전","#양파 #나눠요","10,000","울집앞",4,3));
-        }*/
-
-    }
-
 
 
 
