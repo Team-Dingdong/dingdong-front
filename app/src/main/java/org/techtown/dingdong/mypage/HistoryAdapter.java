@@ -2,6 +2,7 @@ package org.techtown.dingdong.mypage;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,10 +63,15 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         if(state.equals("profile")){
             holder.tv_confirm.setVisibility(View.GONE);
         }
+        else if(state.equals("mypurchases")){
+            holder.tv_confirm.setText("아직 확정되지 않은 거래입니다.");
+            holder.tv_confirm.setBackgroundColor(Color.parseColor("#c5c5c5"));
+        }
 
         if(share.getDone().equals("true")){
             //done일때 평가하기로 연결되게
             holder.tv_confirm.setText("평가하기");
+            holder.tv_confirm.setBackgroundColor(Color.parseColor("#73BAD6"));
             holder.tv_confirm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

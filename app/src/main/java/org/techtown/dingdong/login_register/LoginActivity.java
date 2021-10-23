@@ -73,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-        /*
+
         //인텐트, 객체 받아오기
         Intent intent = getIntent();
         phoneNumber = intent.getStringExtra("phoneNumber");
@@ -103,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
         };
 
         countDownTimer.start();
-        */
+
 
 
 
@@ -137,7 +137,7 @@ public class LoginActivity extends AppCompatActivity {
                 //서버로 폰번호,인증번호 전달
 
                 authNumber= edt_number_validation.getText().toString();
-                phoneNumber = "01022222222";
+                //phoneNumber = "01022222222";
 
                 LoginRequest loginRequest = new LoginRequest(phoneNumber, authNumber);
                 Apiinterface apiinterface = Api.createService(Apiinterface.class);
