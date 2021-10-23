@@ -177,12 +177,6 @@ public class LoginActivity extends AppCompatActivity {
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
 
-                                /*Fragment fragment = new profileFragment();
-                                FragmentManager fragmentManager = getSupportFragmentManager();
-                                fragmentManager.beginTransaction().replace(R.id.logincontainer, fragment).commit();
-                                edt_number_validation.setVisibility(GONE);
-                                tv_timer.setVisibility(GONE);
-                                toolbar3.setVisibility(GONE);*/
                                 return;
 
 
@@ -198,12 +192,6 @@ public class LoginActivity extends AppCompatActivity {
                             Log.d("실패", new Gson().toJson(response.raw().request()));
                         }
 
-
-                        //LoginResponse loginResponse = response.body();
-                       // LoginResponse.Data data = loginResponse.data;
-                        //String token = response.body().data.accessToken;
-
-                        //Log.d("성공", token);
 
                     }
 

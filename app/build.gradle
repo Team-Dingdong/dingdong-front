@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.android.gms.oss-licenses-plugin'
 }
 
 android {
@@ -71,6 +72,8 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'io.reactivex.rxjava3:rxjava:3.0.0-RC3'
     implementation 'commons-io:commons-io:2.6'
+
+    implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
 
 
 }

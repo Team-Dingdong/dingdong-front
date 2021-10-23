@@ -171,7 +171,7 @@
         android:textColor="#000000"
         android:textFontWeight="700"
         android:textSize="16dp"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="70dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout13" />
@@ -193,18 +193,35 @@
 
 
     <TextView
+        android:id="@+id/tv_oss"
         android:layout_width="285dp"
         android:layout_height="wrap_content"
-        android:text="\@ put license"
+        android:text="오픈소스 라이선스 목록"
         android:textAlignment="center"
-        android:textColor="#c5c5c5"
-        android:textFontWeight="300"
+        android:fontFamily="@font/noto_sans"
+        android:textColor="@color/grey"
+        android:textFontWeight="700"
         android:layout_marginTop="20dp"
-        android:textSize="20dp"
+        android:textSize="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_logout"
         android:gravity="center_horizontal" />
+
+
+    <TextView
+        android:id="@+id/tv_ossinfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/noto_sans"
+        android:text="오픈소스 라이선스 목록"
+        android:layout_marginTop="18dp"
+        android:textColor="@color/grey"
+        android:textFontWeight="300"
+        android:textSize="7dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_oss" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
