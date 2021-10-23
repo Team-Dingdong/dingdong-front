@@ -1,5 +1,9 @@
+
 Ding-Dong Android
 =====
+
+<p align="center"><img src="https://user-images.githubusercontent.com/59547003/138564406-5df826cf-6149-42c1-a895-56a465478718.png" width="35%" alter="center"></img></p>
+
 띵-동
 -----
 
@@ -21,3 +25,4 @@ Ding-Dong Android
  주요 기능
 -----
 #### 1. 로그인 및 회원가입
+> 
