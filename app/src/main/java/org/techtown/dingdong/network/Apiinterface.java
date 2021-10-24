@@ -81,7 +81,7 @@ public interface Apiinterface {
 
 
     @Multipart
-    @PATCH("/api/v1/post/edit/{id}")
+    @POST("/api/v1/post/edit/{id}")
     Call<ResponseBody> setPatch(@Part ArrayList<MultipartBody.Part> input, @Part ArrayList<MultipartBody.Part> files, @Path("id") int id);
 
 
