@@ -78,6 +78,24 @@ https://github.com/square/retrofit
 Copyright 2013 Square, Inc
 Apache License 2.0
 
+**StompProtocolAndroid**
+https://github.com/NaikSoftware/StompProtocolAndroid
+Copyright 2016 Nickolay Savchenko
+MIT License
+
+**play-services-oss-licenses**
+https://developer.android.com/studio/terms
+
+**AndPermission**
+https://github.com/yanzhenjie/AndPermission
+Copyright 2019 Zhenjie Yan
+Apache License 2.0
+
+**TedPermission**
+https://github.com/ParkSangGwon/TedPermission
+Copyright 2021 Ted Park
+Apache License 2.0
+
 
 # BSD 2-Clause FreeBSD License #
 ``````````
