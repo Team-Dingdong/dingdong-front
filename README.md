@@ -53,13 +53,15 @@ Ding-Dong Android
  라이선스
 -----
 #### icon
+**twemoji**
+https://github.com/twitter/twemoji
 Copyright 2019 Twitter, Inc and other contributors
-
-Code licensed under the MIT License: http://opensource.org/licenses/MIT
-
-Graphics licensed under CC-BY 4.0: https://creativecommons.org/licenses/by/4.0/
-
+Code licensed under the MIT License
+Graphics licensed under CC-BY 4.0
+**material-design-icons**
+https://github.com/google/material-design-icons
 @googlefonts on Twitter
+Apache License 2.0
 
 #### opensource
 LICENSE.md 참조
