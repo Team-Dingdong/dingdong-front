@@ -11,7 +11,7 @@ public class EditResponse {
 
     @SerializedName("data")
     @Expose
-    private String id;
+    private Data data;
 
     public String getResult() {
         return result;
@@ -21,11 +21,26 @@ public class EditResponse {
         this.result = result;
     }
 
-    public String getId() {
-        return id;
+    public Data getData() {
+        return data;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setData(Data data) {
+        this.data = data;
+    }
+
+    public class Data{
+
+        @SerializedName("id")
+        @Expose
+        private String id;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
     }
 }

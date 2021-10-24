@@ -558,7 +558,7 @@ public class EditActivity extends AppCompatActivity {
                 if(response.isSuccessful()){
 
                    EditResponse res = response.body();
-                   String resId = res.getId();
+                   String resId = res.getData().getId();
                    Log.d("성공",resId);
                    onfinish(1);
 
