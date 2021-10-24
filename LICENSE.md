@@ -63,7 +63,10 @@ Apache License 2.0
 https://github.com/square/retrofit
 Copyright 2013 Square, Inc
 Apache License 2.0
-BSD 2-Clause FreeBSD License
+
+
+# BSD 2-Clause FreeBSD License #
+``````````
 The FreeBSD Copyright
 
 Copyright 1992-2012 The FreeBSD Project. All rights reserved.
