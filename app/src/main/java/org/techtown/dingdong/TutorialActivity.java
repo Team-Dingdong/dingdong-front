@@ -65,9 +65,11 @@ public class TutorialActivity extends AppCompatActivity {
 
     public void launchHomeScreen(){
         prefManager.setFirstTimeLaunch(false);
-        SharedPreferences preferences = getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+        SharedPreferences preferences = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+
         if(preferences.getBoolean("oauth.loggedin",false)){
             //로그인 되어 있을 경우 메인액티비티로
+            preferences.edit().putBoolean("oauth.loggedin",true).apply();
             startActivity(new Intent(TutorialActivity.this, MainActivity.class));
             finish();
         }
@@ -77,7 +79,6 @@ public class TutorialActivity extends AppCompatActivity {
             //Intent intent = new Intent(TutorialActivity.this, TownActivity.class);
             //intent.putExtra("state","signup");
             //startActivity(intent);
-
             finish();
         }
     }

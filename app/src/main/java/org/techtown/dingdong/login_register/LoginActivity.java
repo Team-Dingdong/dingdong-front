@@ -164,6 +164,7 @@ public class LoginActivity extends AppCompatActivity {
                             preferences.edit().putString("oauth.expire", token.getExpireIn()).apply();
                             preferences.edit().putString("oauth.tokentype", token.getGrantType()).apply();
 
+
                             if(response.body().result.equals("SIGNUP_SUCCESS")){
 
                                 Log.d("회원가입성공", String.valueOf(response));

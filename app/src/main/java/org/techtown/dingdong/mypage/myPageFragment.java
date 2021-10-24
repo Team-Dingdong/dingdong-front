@@ -108,7 +108,9 @@ public class myPageFragment extends Fragment{
         btn_town.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), TownActivity.class));
+                Intent intent = new Intent(getActivity(), TownActivity.class);
+                intent.putExtra("state","modify");
+                startActivity(intent);
             }
         });
 
