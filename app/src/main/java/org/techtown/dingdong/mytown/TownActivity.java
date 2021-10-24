@@ -1,5 +1,6 @@
 package org.techtown.dingdong.mytown;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -35,7 +36,7 @@ public class TownActivity extends AppCompatActivity {
     TextView tv_town1, tv_town2;
     String town1, town2;
     String num_town1, num_town2;
-
+    String state;
 
 
 
@@ -66,6 +67,10 @@ public class TownActivity extends AppCompatActivity {
 
         town1="";
         town2="";
+
+        Intent intent = getIntent();
+        state = intent.getStringExtra("state");
+
 
        if(town1.equals("")){
             imgbtn_AddTown1.setVisibility(View.VISIBLE);

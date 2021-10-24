@@ -254,10 +254,12 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
 
             Location location = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER); //이전에 확인했던 위치 정보 가져오기
             if (location != null) {
-                latitude = location.getLatitude();
-                longtitude = location.getLongitude();
+               latitude = location.getLatitude();
+               longtitude = location.getLongitude();
+               // latitude= 37.5894;
+               // longtitude= 127.0167;
                 Geocoder g = new Geocoder(this);
-                List<Address> address = null; //왜 추가 해놨지?
+                List<Address> address = null;
                 Log.d("Log","latitude: "+latitude+"longtitude: "+longtitude );
 
 
