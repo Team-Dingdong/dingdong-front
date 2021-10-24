@@ -19,7 +19,7 @@ Ding-Dong Android
 
  프로젝트 시스템 구성도
 ------
-> ![프로그램](https://user-images.githubusercontent.com/59547003/138563086-a34d8ffe-d1e3-49a6-90ed-39a14c67266b.JPG)
+> ![프로그램](https://user-images.githubusercontent.com/59547003/138579103-e0082f01-7128-4c0a-886e-61d62a67f56a.JPG)
 * * *
 
  주요 기능
