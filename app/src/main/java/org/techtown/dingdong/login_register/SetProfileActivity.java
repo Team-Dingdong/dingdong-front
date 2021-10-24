@@ -34,6 +34,7 @@ import org.techtown.dingdong.R;
 import org.techtown.dingdong.chatting.Chat;
 import org.techtown.dingdong.chatting.ChatType;
 import org.techtown.dingdong.chatting.ChattingActivity;
+import org.techtown.dingdong.mytown.TownActivity;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
 import org.techtown.dingdong.profile.UserProfileRequest;
@@ -302,7 +303,8 @@ public class SetProfileActivity extends AppCompatActivity {
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                Intent intent = new Intent(SetProfileActivity.this, MainActivity.class);
+                                Intent intent = new Intent(SetProfileActivity.this, TownActivity.class);
+                                intent.putExtra("state","signup");
                                 startActivity(intent);
                             }
                         }, 1000);

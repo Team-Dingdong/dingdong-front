@@ -198,9 +198,10 @@ public class TownActivity extends AppCompatActivity {
                     }
                 });
 
+                /*
                 //화면전환
                 Intent intent = new Intent(TownActivity.this, MainActivity.class);
-                startActivity(intent);
+                startActivity(intent);*/
             }
         });
     }

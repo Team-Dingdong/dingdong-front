@@ -16,6 +16,7 @@ import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator;
 
 import org.techtown.dingdong.login_register.LoginActivity;
 import org.techtown.dingdong.login_register.LoginOrRegisterActivity;
+import org.techtown.dingdong.mytown.TownActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,8 +73,11 @@ public class TutorialActivity extends AppCompatActivity {
         }
         else{
             //로그인 안되어 있을때는 로그인액티비티로
-            //startActivity(new Intent(TutorialActivity.this, LoginActivity.class));
             startActivity(new Intent(TutorialActivity.this, LoginOrRegisterActivity.class));
+            //Intent intent = new Intent(TutorialActivity.this, TownActivity.class);
+            //intent.putExtra("state","signup");
+            //startActivity(intent);
+
             finish();
         }
     }
