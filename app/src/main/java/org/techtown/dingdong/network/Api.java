@@ -50,8 +50,8 @@ public class Api {
     }
 
     public static <S> S createService(Class<S> serviceClass, Token accessToken, Context c) {
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-                //.addInterceptor(new AccessTokenInterceptor(accessToken));
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
+                .addInterceptor(new AccessTokenInterceptor(accessToken));
                 /*.readTimeout(100, TimeUnit.SECONDS)
                 .writeTimeout(100, TimeUnit.SECONDS);*/
         Retrofit.Builder builder = new Retrofit.Builder()
@@ -80,50 +80,6 @@ public class Api {
                             .method(original.method(), original.body());
 
                     Request request = requestBuilder.build();
-                    Response response = chain.proceed(request);
-
-                    if(response.code() == 401){
-                        String accessToken = token.getAccessToken();
-                        String refreshToken = token.getRefreshToken();
-                        Context context = token.getContext();
-                        TokenRefreshRequest tokenRefreshRequest = new TokenRefreshRequest(accessToken, refreshToken);
-                        Apiinterface apiinterface = Api.createService(Apiinterface.class);
-                        Call<LoginResponse> call = apiinterface.getRefresh(tokenRefreshRequest);
-                        call.enqueue(new Callback<LoginResponse>() {
-                            @Override
-                            public void onResponse(Call<LoginResponse> call, retrofit2.Response<LoginResponse> response) {
-                                if(response.isSuccessful()){
-
-                                    if(response.body().getResult().equals("REISSUE_SUCCESS")){
-                                        LoginResponse.Data mToken = response.body().getData();
-                                        Token ntoken = new Token(mToken.getAccessToken(),mToken.getRefreshToken(),mToken.getExpireIn(),mToken.getTokentype());
-
-                                        SharedPreferences pref = context.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
-
-                                        pref.edit().putString("oauth.accesstoken", ntoken.getAccessToken()).apply();
-                                        pref.edit().putString("oauth.refreshtoken", ntoken.getRefreshToken()).apply();
-                                        pref.edit().putString("oauth.expire", ntoken.getExpireIn()).apply();
-                                        pref.edit().putString("oauth.tokentype",ntoken.getGrantType()).apply();
-
-                                    }
-                                }
-                                else{
-                                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                                    Log.d("실패", response.toString());
-                                    Log.d("실패", String.valueOf(response.code()));
-                                    Log.d("실패", response.message());
-                                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                                    Log.d("실패", new Gson().toJson(response.raw().request()));
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<LoginResponse> call, Throwable t) {
-                                Log.d("tag", t.toString());
-                            }
-                        });
-
-                    }
 
                     return chain.proceed(request);
                 }

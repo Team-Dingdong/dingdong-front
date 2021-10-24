@@ -577,7 +577,8 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<EditResponse> call, Throwable t) {
 
-                Log.d("외않되","응?" );
+                Log.d("외않되",t.toString() );
+                Log.d("외않되",call.toString() );
 
             }
         });
