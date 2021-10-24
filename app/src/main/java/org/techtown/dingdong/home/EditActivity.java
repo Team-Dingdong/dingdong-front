@@ -490,6 +490,7 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if(response.isSuccessful()){
+                    resId = id;
                     Log.d("성공","수정이완료됨");
                     onfinish(1);
 
