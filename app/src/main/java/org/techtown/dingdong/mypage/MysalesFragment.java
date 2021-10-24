@@ -29,6 +29,7 @@ import org.techtown.dingdong.profile.HistoryResponse;
 
 import java.util.ArrayList;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -73,10 +74,8 @@ public class MysalesFragment extends Fragment {
         historyAdapter.setListener(new HistoryAdapter.onItemClickListener() {
             @Override
             public void onItemClick(int position, String id) {
-                Toast.makeText(getActivity(),id + ": 거래를 확정하였습니다.", Toast.LENGTH_SHORT).show();
-                /*Intent intent = new Intent(getActivity(),RatingActivity.class);
-                intent.putExtra("id",id);
-                getActivity().startActivity(intent);*/
+
+                setConfirm(token, id);
 
             }
         });
@@ -98,6 +97,9 @@ public class MysalesFragment extends Fragment {
                     if(response.body().getResult().equals("POST_READ_SUCCESS")){
                         HistoryResponse res = response.body();
                         Log.d("성공", new Gson().toJson(res));
+                        if(!salesList.isEmpty()){
+                            salesList = new ArrayList<>();
+                        }
 
                         salesList.addAll(res.getHistorys());
                         historyAdapter.notifyDataSetChanged();
@@ -117,6 +119,41 @@ public class MysalesFragment extends Fragment {
             @Override
             public void onFailure(Call<HistoryResponse> call, Throwable t) {
 
+                Log.d("tag",t.toString());
+            }
+        });
+
+    }
+
+    public void setConfirm(Token token, String id){
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, getActivity());
+        Call<ResponseBody> call = apiinterface.setConfirm(Integer.parseInt(id));
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(response.code() == 200) {
+                    Toast.makeText(getActivity(), "거래가 확정되었습니다. 평가를 진행해주세요.", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getActivity(),RatingActivity.class);
+                    intent.putExtra("id",id);
+                    getActivity().startActivity(intent);
+
+                }else if(response.code() == 403){
+                    Toast.makeText(getActivity(), "이미 확정된 거래입니다.", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Log.d("실패", new Gson().toJson(response.errorBody()));
+                    Log.d("실패", response.toString());
+                    Log.d("실패", String.valueOf(response.code()));
+                    Log.d("실패", response.message());
+                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("tag",t.toString());
+
             }
         });
 
@@ -125,6 +162,7 @@ public class MysalesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        getHistory(token);
     }
 
     public void setDummy(){

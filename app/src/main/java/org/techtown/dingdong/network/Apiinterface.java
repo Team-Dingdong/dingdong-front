@@ -156,6 +156,9 @@ public interface Apiinterface {
     @GET("/api/v1/rating")
     Call<UserRatingResponse> getRating();
 
+    @GET("/api/v1/rating/{id}")
+    Call<UserRatingResponse> getUserRating(@Path("id") int id);
+
     @GET("/api/v1/post/user/sell")
     Call<HistoryResponse> getSalesHistory();
 
@@ -185,5 +188,8 @@ public interface Apiinterface {
 
     @GET("/api/v1/post/user/{id}")
     Call<PostResponse> getUserSalesHistory(@Path("id") int id);
+
+    @POST("/api/v1/post/confirmed/{id}")
+    Call<ResponseBody> setConfirm(@Path("id") int id);
 
 }

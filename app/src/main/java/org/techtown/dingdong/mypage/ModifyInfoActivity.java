@@ -142,7 +142,7 @@ public class ModifyInfoActivity extends AppCompatActivity {
             "\n" +
             "To apply the Apache License to your work, attach the following boilerplate notice, with the fields enclosed by brackets \"[]\" replaced with your own identifying information. (Don't include the brackets!)  The text should be enclosed in the appropriate comment syntax for the file format. We also recommend that a file or class name and description of purpose be included on the same \"printed page\" as the copyright notice for easier identification within third-party archives.\n" +
             "\n" +
-            "Copyright 2021 wonseson\n" +
+            "Copyright 2021 dingdong\n" +
             "\n" +
             "Licensed under the Apache License, Version 2.0 (the \"License\");\n" +
             "you may not use this file except in compliance with the License.\n" +

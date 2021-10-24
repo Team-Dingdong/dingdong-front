@@ -231,7 +231,7 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
 
     @Override
     public int getItemViewType(int position) {
-        if(myChatList.get(position).getType().equals("QUIT") || myChatList.get(position).getType().equals("ENTER") || myChatList.get(position).getType().equals("PROMISE_CONFIRMED")){
+        if(myChatList.get(position).getType().equals("QUIT") || myChatList.get(position).getType().equals("ENTER")){
             return ChatType.ViewType.CENTER_CONTENT;
         }
         else if(myChatList.get(position).getName().equals(username) && myChatList.get(position).getType().equals("TALK")){
@@ -251,6 +251,9 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
         }
         else if(myChatList.get(position).getName().equals(username) && myChatList.get(position).getType().equals("PROMISE_AGAIN")){
             return ChatType.ViewType.RIGHT_CONTENT_PLAN;
+        }
+        else if(myChatList.get(position).getType().equals("PROMISE_CONFIRMED")){
+            return ChatType.ViewType.LEFT_CONTENT;
         }
         else{
             return myChatList.get(position).getViewType();

@@ -105,10 +105,10 @@ public class PlanningActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 
-                if(monthOfYear< 10){
-                    m = "0" + Integer.toString(monthOfYear);
+                if(monthOfYear < 9){
+                    m = "0" + Integer.toString(monthOfYear + 1);
                 }else{
-                    m = Integer.toString(monthOfYear);
+                    m = Integer.toString(monthOfYear + 1);
                 }
                 if(dayOfMonth < 10){
                     d = "0" + Integer.toString(dayOfMonth);
@@ -128,7 +128,7 @@ public class PlanningActivity extends AppCompatActivity {
         };
 
         //데이트 피커 팝업 세팅
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this,dateSetListener,Integer.parseInt(year), Integer.parseInt(mon), Integer.parseInt(day));
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,dateSetListener,Integer.parseInt(year), Integer.parseInt(mon)-1, Integer.parseInt(day));
 
 
         btn_datepick.setOnClickListener(new View.OnClickListener() {

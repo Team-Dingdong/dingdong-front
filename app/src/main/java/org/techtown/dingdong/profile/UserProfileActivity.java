@@ -244,7 +244,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     public void getRating(Token token){
         Apiinterface apiinterface = Api.createService(Apiinterface.class, token, UserProfileActivity.this);
-        Call<UserRatingResponse> call = apiinterface.getRating();
+        Call<UserRatingResponse> call = apiinterface.getUserRating(Integer.parseInt(id));
         call.enqueue(new Callback<UserRatingResponse>() {
             @Override
             public void onResponse(Call<UserRatingResponse> call, Response<UserRatingResponse> response) {
@@ -275,7 +275,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     public void getUser(Token token){
         Apiinterface apiinterface = Api.createService(Apiinterface.class, token, UserProfileActivity.this);
-        Call<UserProfileResponse> call = apiinterface.getUserProfile();
+        Call<UserProfileResponse> call = apiinterface.getOtherUserProfile(Integer.parseInt(id));
         call.enqueue(new Callback<UserProfileResponse>() {
             @Override
             public void onResponse(Call<UserProfileResponse> call, Response<UserProfileResponse> response) {

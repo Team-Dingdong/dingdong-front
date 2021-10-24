@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -37,6 +38,7 @@ import org.techtown.dingdong.MainActivity;
 import org.techtown.dingdong.R;
 import org.techtown.dingdong.home.EditActivity;
 import org.techtown.dingdong.home.HomeFragment;
+import org.techtown.dingdong.home.ShareDetailActivity;
 import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
@@ -188,7 +190,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                 addItem(chat);
             }
             else if(type.equals("PROMISE_CONFIRMED")) {
-                Chat chat = new Chat(msg, sender, profileUrl, new Timestamp(System.currentTimeMillis()).toString(), "FALSE", ChatType.ViewType.CENTER_CONTENT);
+                Chat chat = new Chat(msg, sender, profileUrl, new Timestamp(System.currentTimeMillis()).toString(), "FALSE", ChatType.ViewType.LEFT_CONTENT);
                 addItem(chat);
                 getInfo(token);
             }
@@ -364,10 +366,54 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                 break;
             case 2:
                 Intent intent2 = new Intent(ChattingActivity.this,PlanningActivity.class);
+                intent2.putExtra("id",id);
                 startActivity(intent2);
                 chattingBottomDialogFragment.dismiss();
                 break;
             case 3:
+                Apiinterface apiinterface = Api.createService(Apiinterface.class,token, ChattingActivity.this);
+
+                Call<ResponseBody> call = apiinterface.deleteShare(Integer.parseInt(id));
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                        if (response.isSuccessful()) {
+
+                            if (response.code() == 200) {
+                                Log.d("성공", new Gson().toJson(response.code()));
+
+                                Toast.makeText(ChattingActivity.this, "삭제가 완료되었습니다.", Toast.LENGTH_LONG).show();
+
+                                //핸들러를 통한 액티비티 종료 시점 조절
+                                Handler handler = new Handler();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        finish();
+                                    }
+                                }, 1000);
+                            }
+                        } else {
+
+                            Log.d("실패", new Gson().toJson(response.errorBody()));
+                            Log.d("실패", response.toString());
+                            Log.d("실패", String.valueOf(response.code()));
+                            Log.d("실패", response.message());
+                            Log.d("실패", String.valueOf(response.raw().request().url().url()));
+                            Log.d("실패", new Gson().toJson(response.raw().request()));
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                        Log.d("외않되", String.valueOf(t));
+
+                    }
+                });
                 chattingBottomDialogFragment.dismiss();
                 break;
 
