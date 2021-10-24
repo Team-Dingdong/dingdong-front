@@ -162,7 +162,7 @@ public interface Apiinterface {
     @GET("/api/v1/post/user/buy")
     Call<HistoryResponse> getPurchasesHistory();
 
-    @POST("/api/v1/auth/nickname")
+    @PATCH("/api/v1/auth/nickname")
     Call<ResponseBody> setProfile(@Body UserProfileRequest userProfileRequest);
 
 
