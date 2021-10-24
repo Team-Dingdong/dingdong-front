@@ -156,7 +156,9 @@ public class ShareDetailActivity extends AppCompatActivity {
                                                                 handler.postDelayed(new Runnable() {
                                                                     @Override
                                                                     public void run() {
-                                                                        finish();
+                                                                        Intent intent = new Intent(ShareDetailActivity.this, MainActivity.class);
+                                                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                                        startActivity(intent);
                                                                     }
                                                                 }, 1000);
 
