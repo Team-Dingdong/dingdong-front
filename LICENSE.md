@@ -7,58 +7,72 @@ The following sets forth attribution notices for third party software that may b
 https://android.googlesource.com/platform/frameworks/multidex/
 Copyright 2005-2014, The Android Open Source Project
 Apache License 2.0
+
 **Android - platform - frameworks - support**
 https://android.googlesource.com/platform/frameworks/support
 Copyright 2014 The Android Open Source Project
 Apache License 2.0
+
 **Android Constraint Layout Library**
 https://developer.android.com/reference/android/support/constraint/packages
 Copyright 2017 The Android Open Source Project
 Apache License 2.0
+
 **Android Material Components**
 https://developer.android.com/reference/com/google/android/material/packages
 Copyright 2018 The Android Open Source Project
 Apache License 2.0
+
 **Annotations for JVM-based languages**
 https://github.com/JetBrains/java-annotations
 Copyright 2000-2016 JetBrains s.r.o.
 Apache License 2.0
+
 **Apache Commons IO**
 https://github.com/apache/commons-io
 Copyright 2002-2016 The Apache Software Foundation
 Apache License 2.0
+
 **Glide**
 https://github.com/bumptech/glide
 Copyright 2014 Google
 BSD 2-Clause FreeBSD License
+
 **Google API for Android**
 https://developers.google.com/android/
 Copyright 2015 Google, Inc
 Apache License 2.0
+
 **Google Gson**
 https://github.com/google/gson
 Copyright 2008 Google Inc.
 Apache License 2.0
+
 **Java WebSockets**
 https://github.com/TooTallNate/Java-WebSocket/
 Copyright 2010-2012 Nathan Rajlich
 MIT License
+
 **Material View Pager Dots Indicator**
 https://github.com/tommybuonomo/dotsindicator
 Copyright 2018 Tommy Buonomo
 Apache License 2.0
+
 **RxAndroid**
 https://github.com/ReactiveX/RxAndroid
 Copyright 2015 The RxAndroid authors
 Apache License 2.0
+
 **RxJava**
 https://github.com/ReactiveX/RxJava
 Copyright 2016-present, RxJava Contributors.
 Apache License 2.0
+
 **Square OkHttp**
 https://github.com/square/okhttp
 Copyright 2014 Square, Inc
 Apache License 2.0
+
 **Square Retrofit**
 https://github.com/square/retrofit
 Copyright 2013 Square, Inc
