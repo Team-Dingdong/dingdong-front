@@ -29,7 +29,7 @@ Ding-Dong Android
  * 회원가입
  * 로그인
  
-<img src="https://user-images.githubusercontent.com/59547003/138588595-78d5ed51-7af5-4477-b871-620c0bdff186.gif" width="35%"></img><img src="https://user-images.githubusercontent.com/59547003/138588455-b6ccd074-c0b1-4721-879b-13edb712bc56.gif" width="39.2%"></img>
+<p align="center"><img src="https://user-images.githubusercontent.com/59547003/138588595-78d5ed51-7af5-4477-b871-620c0bdff186.gif" width="35%"></img><img src="https://user-images.githubusercontent.com/59547003/138588455-b6ccd074-c0b1-4721-879b-13edb712bc56.gif" width="39.2%"></img></p>
 
 
  
@@ -40,7 +40,7 @@ Ding-Dong Android
  * 나누기(게시글) 생성 / 수정 / 삭제 / 상세 조회
  * 나눔 참여
  
- <img src="https://user-images.githubusercontent.com/59547003/138586266-87e15a0b-3754-44f1-8d15-058ac7efcf95.gif" width="35%"> <img src="https://user-images.githubusercontent.com/59547003/138587394-a12f47ad-d0d8-4963-bc4b-e279d2b5f1fa.gif" width="35%"></img>
+ <p align="center"><img src="https://user-images.githubusercontent.com/59547003/138586266-87e15a0b-3754-44f1-8d15-058ac7efcf95.gif" width="35%"> <img src="https://user-images.githubusercontent.com/59547003/138587394-a12f47ad-d0d8-4963-bc4b-e279d2b5f1fa.gif" width="35%"></img></p>
 
 
 
@@ -50,7 +50,7 @@ Ding-Dong Android
  * 채팅 메시지 작성
  * 나눔 약속 생성/투표하기
 
-<img src="https://user-images.githubusercontent.com/59547003/138587546-323b85b2-e2c7-4065-a2bb-13e78e96bebd.gif" width="35%"></img>
+<p align="center"><img src="https://user-images.githubusercontent.com/59547003/138587546-323b85b2-e2c7-4065-a2bb-13e78e96bebd.gif" width="35%"></img></p>
 
 
 #### 4. 마이페이지
@@ -59,9 +59,9 @@ Ding-Dong Android
  * 본인의 판매내역/구매내역 확인
  * 회원정보 수정(회원탈퇴, 로그아웃, 오픈소스 라이선스 목록)
  
-<img src="https://user-images.githubusercontent.com/59547003/138586144-57293f08-d4f4-4471-9e17-a037b8adfdab.gif" width="35%"></img><img src="https://user-images.githubusercontent.com/59547003/138588166-5c7b501d-784d-4e9c-8761-981cde02b69d.gif" width="35%"></img>
+<p align="center"><img src="https://user-images.githubusercontent.com/59547003/138586144-57293f08-d4f4-4471-9e17-a037b8adfdab.gif" width="35%"></img><img src="https://user-images.githubusercontent.com/59547003/138588166-5c7b501d-784d-4e9c-8761-981cde02b69d.gif" width="35%"></img></p>
 
-<img src="https://user-images.githubusercontent.com/59547003/138588376-54be3661-0dbf-480d-bfe8-2b1445e523ff.gif" width="35%"></img><img src="https://user-images.githubusercontent.com/59547003/138588269-0b420531-a55e-44a0-b707-61b7db97c01f.gif" width="35%"></img>
+<p align="center"><img src="https://user-images.githubusercontent.com/59547003/138588376-54be3661-0dbf-480d-bfe8-2b1445e523ff.gif" width="35%"></img><img src="https://user-images.githubusercontent.com/59547003/138588269-0b420531-a55e-44a0-b707-61b7db97c01f.gif" width="35%"></img></p>
 * * *
 
 
