@@ -70,7 +70,9 @@ public class TownActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         state = intent.getStringExtra("state");
-
+        if(state.equals("signup")){
+            btn_back.setVisibility(View.GONE);
+        }
 
        if(town1.equals("")){
             imgbtn_AddTown1.setVisibility(View.VISIBLE);
