@@ -46,3 +46,24 @@ Ding-Dong Android
  * 동네 인증
  * 본인의 판매내역/구매내역 확인
  * 회원정보 수정
+
+
+
+
+ 라이선스
+-----
+#### icon
+**twemoji**
+https://github.com/twitter/twemoji
+Copyright 2019 Twitter, Inc and other contributors
+Code licensed under the MIT License
+Graphics licensed under CC-BY 4.0
+**material-design-icons**
+https://github.com/google/material-design-icons
+@googlefonts on Twitter
+Apache License 2.0
+
+#### opensource
+LICENSE.md 참조
+
+
