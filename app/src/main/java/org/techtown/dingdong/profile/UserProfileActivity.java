@@ -86,14 +86,19 @@ public class UserProfileActivity extends AppCompatActivity {
 
 
 
+
         recyclerView.setLayoutManager(new LinearLayoutManager(UserProfileActivity.this, LinearLayoutManager.VERTICAL, false));
         historyAdapter = new HistoryAdapter(salesList,UserProfileActivity.this,"profile");
         recyclerView.setAdapter(historyAdapter);
 
-        getUser(token);
+        getUser(token); //클라이언트 정보
         getHistory(token);
-        getProfile(token);
+        getProfile(token); //프로필 정보
         getRating(token);
+
+        if(nickname.equals("탈퇴한 회원")){
+            btn_more.setVisibility(View.GONE);
+        }
 
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -275,7 +280,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     public void getUser(Token token){
         Apiinterface apiinterface = Api.createService(Apiinterface.class, token, UserProfileActivity.this);
-        Call<UserProfileResponse> call = apiinterface.getOtherUserProfile(Integer.parseInt(id));
+        Call<UserProfileResponse> call = apiinterface.getUserProfile();
         call.enqueue(new Callback<UserProfileResponse>() {
             @Override
             public void onResponse(Call<UserProfileResponse> call, Response<UserProfileResponse> response) {
@@ -352,9 +357,5 @@ public class UserProfileActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        getUser(token);
-        getProfile(token);
-        getRating(token);
-        getHistory(token);
     }
 }

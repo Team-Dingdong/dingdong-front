@@ -54,6 +54,7 @@
             <ImageButton
                 android:id="@+id/btn_palnning"
                 android:layout_width="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/btn_alarm"
                 android:background="#00000000">
@@ -63,7 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16dp"
-                android:text="나눔 생성"
+                android:text="나눔 약속 생성"
                 android:fontFamily="@font/noto_sans"
                 android:textFontWeight="700"
                 android:textColor="#000000"
@@ -90,7 +91,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16dp"
-                android:text="나눔 삭제"
+                android:text="나누기 삭제"
                 android:fontFamily="@font/noto_sans"
                 android:textFontWeight="700"
                 android:textColor="#000000"
