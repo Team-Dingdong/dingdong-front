@@ -112,6 +112,7 @@ public class EditActivity extends AppCompatActivity {
     private String id;
     final int PERMISSIONS_REQUEST = 1005;
     FrameLayout frameLayout_region;
+    String resId;
 
 
     String[] categories = {"과일·채소", "육류·계란", "간식류", "생필품", "기타"};
@@ -558,7 +559,7 @@ public class EditActivity extends AppCompatActivity {
                 if(response.isSuccessful()){
 
                    EditResponse res = response.body();
-                   String resId = res.getData().getId();
+                   resId = res.getData().getId();
                    Log.d("성공",resId);
                    onfinish(1);
 
@@ -841,7 +842,7 @@ public class EditActivity extends AppCompatActivity {
                 //finish();
                 Intent intent = new Intent(EditActivity.this, ShareDetailActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("id",id);
+                intent.putExtra("id",resId);
                 startActivity(intent);
             }
         }, 1000);
