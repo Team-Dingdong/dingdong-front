@@ -97,9 +97,6 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
         adapter.setOnItemClickListener(this);
 
 
-
-        //token.setContext(TownWhenStartActivity.this);
-
         //if 처음실행, 요청이 거부돼있을 때
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                 PERMISSION_REQUEST_READ_LOCATION);
@@ -123,47 +120,6 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
 
 
         startLocationService();
-       // setUpRecyclerView();
-
-        //recyclerView.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
-
-        //서버에서 받아온 동데이터 어댑터에 추가
-        //테스트용 데이터
-
-
-
-
-
-
-
-
-        /*adapter.setOnItemClickListener(new OnTownItemClickListener() { // 어댑터에 리스너 설정하기
-            @Override
-            public int onItemClick(TownAdapter.ViewHolder holder, View view, int position) { //아이템 클릭 이벤트
-                localResponse.Data data = adapter.townlist.get(position);
-                Townname = data.name;
-               //번호구분해서 불러오기 int num = item.getNum();
-
-                //서버에 데이터 전송, 동데이터 전달
-
-                if(what){
-                    Intent result = new Intent();
-                    result.putExtra("town", Townname);
-                    result.putExtra("what", true);
-                    setResult(RESULT_OK, result);
-                    finish();
-                }
-                else {
-                    Intent result = new Intent();
-                    result.putExtra("town", Townname);
-                    result.putExtra("what", false);
-                    setResult(RESULT_OK, result);
-                    finish();
-                }
-
-                return view.getId();
-            }
-        }); */
 
 
         //현재위치로 찾기 버튼 리스너
@@ -187,55 +143,6 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
 
     }
 
-     /*   private ArrayList<TownItem> getData() {
-        /*ArrayList<TownItem> test = new ArrayList<>();
-        TownItem townitem1 = new TownItem("1","성북동");
-        test.add(0,townitem1);
-        TownItem townitem2 = new TownItem("2","삼선동");
-        test.add(1,townitem2);
-        TownItem townitem3 = new TownItem("3","동선동");
-        test.add(2,townitem3);
-        TownItem townitem4 = new TownItem("4","돈암1동");
-        test.add(3,townitem4);
-        TownItem townitem5 = new TownItem("5","돈암2동");
-        test.add(4,townitem5);
-        TownItem townitem6 = new TownItem("6","안암동");
-        test.add(5,townitem6);
-        TownItem townitem7 = new TownItem("7","보문동");
-        test.add(6,townitem7);
-        TownItem townitem8 = new TownItem("8","정릉1동");
-        test.add(7,townitem8);
-        TownItem townitem9 = new TownItem("9","정릉2동");
-        test.add(8,townitem9);
-        TownItem townitem10 = new TownItem("10","정릉3동");
-        test.add(9,townitem10);*/
-
-
-       /* ArrayList<TownItem> result = new ArrayList<>();
-
-        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, TownWhenStartActivity.this);
-        Call<localResponse> call = apiinterface.getLocal(city, district);
-        call.enqueue(new Callback<localResponse>() {
-            @Override
-            public void onResponse(Call<localResponse> call, Response<localResponse> response) {
-                if(response.body().getCode().equals("LOCAL_READ_SUCCESS")) {
-
-                   // ArrayList<TownItem> result = new ArrayList<>();
-                    for(int i=0; i<response.body().code.length(); i++) {
-                        result.add(i,response.body().getData().get(i));
-                    }
-                }
-            }
-            @Override
-            public void onFailure(Call<localResponse> call, Throwable t) {
-                Log.d("TAG", String.valueOf(t));
-             }
-        });
-        return result;
-       // return test;
-
-        }
-        */
 
     private void startLocationService() { //현재위치 주소로 변환하고 서버로 구 데이터 보내기
         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE); //LocationManager객체 참조
@@ -256,8 +163,6 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
             if (location != null) {
                latitude = location.getLatitude();
                longtitude = location.getLongitude();
-               // latitude= 37.5894;
-               // longtitude= 127.0167;
                 Geocoder g = new Geocoder(this);
                 List<Address> address = null;
                 Log.d("Log","latitude: "+latitude+"longtitude: "+longtitude );
@@ -278,10 +183,7 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
                         city = str[1];
                         district = str[2];
                         Log.d("찾은 주소", city+district);
-                        // 구 구하기address.get(0).toString()+
 
-                        //----------여기에 서버연결-----------------------------
-                       //서버에서 동데이터 받아와서 getdata()에서 추가해주기
                         if(!city.isEmpty()){
                             Log.d("LOG","startlocation");
                             findlocal(token);
@@ -301,28 +203,10 @@ public class TownWhenStartActivity extends AppCompatActivity implements TownAdap
         }catch (SecurityException e){
             e.printStackTrace();
         }
-        //서버에 동데이터 리퀘스트
-
 
     }
 
 
-
-    /*public void searchFilter(String searchText){
-        filteredList.clear();
-
-        for(int i=0; i< TownItemList.size(); i++){
-            if(TownItemList.get(i).getTown().toLowerCase().contains(searchText.toLowerCase())){
-                filteredList.add(TownItemList.get(i));
-            }
-            adapter.filterList(filteredList);
-        }
-
-       // adapter.notifyDataSetChanged();
-
-
-    }
-*/
 
     private class GPSListener implements LocationListener {
         @Override
