@@ -1,5 +1,5 @@
 # OSS Notice | dingdong-front #
-This application is Copyright © dingdong. All rights reserved.
+This application is Copyright © 2021 Team ding-dong. All rights reserved.
 
 The following sets forth attribution notices for third party software that may be contained in this application.
 
@@ -177,7 +177,7 @@ APPENDIX: How to apply the Apache License to your work.
 
 To apply the Apache License to your work, attach the following boilerplate notice, with the fields enclosed by brackets "[]" replaced with your own identifying information. (Don't include the brackets!)  The text should be enclosed in the appropriate comment syntax for the file format. We also recommend that a file or class name and description of purpose be included on the same "printed page" as the copyright notice for easier identification within third-party archives.
 
-Copyright 2021 dingdong
+Copyright 2021 Team ding-dong
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -197,7 +197,7 @@ limitations under the License.
 ``````````
 MIT License
 
-Copyright (c)  
+Copyright (c) 2021 Team ding-dong 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
