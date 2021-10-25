@@ -166,7 +166,10 @@ public class RatingActivity extends AppCompatActivity {
                                     }
                                     if(getcheck){
                                     Toast.makeText(RatingActivity.this,"평가 완료",Toast.LENGTH_LONG).show();
-                                    finish();
+                                    Intent intent1 = new Intent(RatingActivity.this, MyhistoryActivity.class);
+                                    intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(intent1);
+                                    //finish();
                                     }
                                 }
                                 else{
