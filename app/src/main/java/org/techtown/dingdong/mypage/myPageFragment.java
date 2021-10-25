@@ -128,9 +128,11 @@ public class myPageFragment extends Fragment{
                     if(response.body().getResult().equals("PROFILE_READ_SUCCESS")) {
                         UserProfileResponse.Data res = response.body().getData();
                         tv_nickname.setText(res.getNickname());
-                        Glide.with(getActivity())
-                                .load(res.getProfileImg())
-                                .into(img_profile);
+                        if (getActivity() != null) {
+                            Glide.with(getActivity())
+                                    .load(res.getProfileImg())
+                                    .into(img_profile);
+                        }
                     }
                 }
                 else{
