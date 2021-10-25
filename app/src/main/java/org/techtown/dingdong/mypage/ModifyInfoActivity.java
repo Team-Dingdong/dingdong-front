@@ -247,7 +247,7 @@ public class ModifyInfoActivity extends AppCompatActivity {
 
                                                 Toast.makeText(ModifyInfoActivity.this, "탈퇴가 완료되었습니다.", Toast.LENGTH_LONG).show();
                                                 Intent intent = new Intent(ModifyInfoActivity.this, TutorialActivity.class);
-                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                                 startActivity(intent);
                                             }
 
@@ -338,7 +338,7 @@ public class ModifyInfoActivity extends AppCompatActivity {
                                                 pref.edit().putString("oauth.tokentype", "").apply();
                                                 Toast.makeText(ModifyInfoActivity.this, "로그아웃이 완료되었습니다.", Toast.LENGTH_LONG).show();
                                                 Intent intent = new Intent(ModifyInfoActivity.this, TutorialActivity.class);
-                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                                 startActivity(intent);
                                             }
 
