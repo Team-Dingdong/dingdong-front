@@ -118,9 +118,9 @@ public class UserProfileActivity extends AppCompatActivity {
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
                             switch (item.getItemId()){
-                                case R.id.block:
+                                /*case R.id.block:
                                     popupMenu.dismiss();
-                                    break;
+                                    break;*/
 
                                 case R.id.report:
                                     popupMenu.dismiss();
