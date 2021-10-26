@@ -1,101 +1,154 @@
-# OSS Notice | dingdong-front #
-This application is Copyright © 2021 Team ding-dong. All rights reserved.
+The following sets forth attribution notices for third party software that may be contained in this repository.
 
-The following sets forth attribution notices for third party software that may be contained in this application.
+---
 
 **Android - platform - frameworks - multidex**
+
 https://android.googlesource.com/platform/frameworks/multidex/
+
 Copyright 2005-2014, The Android Open Source Project
+
 Apache License 2.0
 
 **Android - platform - frameworks - support**
+
 https://android.googlesource.com/platform/frameworks/support
+
 Copyright 2014 The Android Open Source Project
+
 Apache License 2.0
 
 **Android Constraint Layout Library**
+
 https://developer.android.com/reference/android/support/constraint/packages
+
 Copyright 2017 The Android Open Source Project
+
 Apache License 2.0
 
 **Android Material Components**
+
 https://developer.android.com/reference/com/google/android/material/packages
+
 Copyright 2018 The Android Open Source Project
+
 Apache License 2.0
 
 **Annotations for JVM-based languages**
+
 https://github.com/JetBrains/java-annotations
+
 Copyright 2000-2016 JetBrains s.r.o.
+
 Apache License 2.0
 
 **Apache Commons IO**
+
 https://github.com/apache/commons-io
+
 Copyright 2002-2016 The Apache Software Foundation
+
 Apache License 2.0
 
 **Glide**
+
 https://github.com/bumptech/glide
+
 Copyright 2014 Google
+
 BSD 2-Clause FreeBSD License
 
 **Google API for Android**
+
 https://developers.google.com/android/
+
 Copyright 2015 Google, Inc
+
 Apache License 2.0
 
 **Google Gson**
+
 https://github.com/google/gson
+
 Copyright 2008 Google Inc.
+
 Apache License 2.0
 
 **Java WebSockets**
+
 https://github.com/TooTallNate/Java-WebSocket/
+
 Copyright 2010-2012 Nathan Rajlich
+
 MIT License
 
 **Material View Pager Dots Indicator**
+
 https://github.com/tommybuonomo/dotsindicator
+
 Copyright 2018 Tommy Buonomo
+
 Apache License 2.0
 
 **RxAndroid**
+
 https://github.com/ReactiveX/RxAndroid
+
 Copyright 2015 The RxAndroid authors
+
 Apache License 2.0
 
 **RxJava**
+
 https://github.com/ReactiveX/RxJava
+
 Copyright 2016-present, RxJava Contributors.
+
 Apache License 2.0
 
 **Square OkHttp**
+
 https://github.com/square/okhttp
+
 Copyright 2014 Square, Inc
+
 Apache License 2.0
 
 **Square Retrofit**
+
 https://github.com/square/retrofit
+
 Copyright 2013 Square, Inc
+
 Apache License 2.0
 
 **StompProtocolAndroid**
+
 https://github.com/NaikSoftware/StompProtocolAndroid
+
 Copyright 2016 Nickolay Savchenko
+
 MIT License
 
 **play-services-oss-licenses**
+
 https://developer.android.com/studio/terms
 
 **AndPermission**
+
 https://github.com/yanzhenjie/AndPermission
+
 Copyright 2019 Zhenjie Yan
+
 Apache License 2.0
 
 **TedPermission**
-https://github.com/ParkSangGwon/TedPermission
-Copyright 2021 Ted Park
-Apache License 2.0
 
+https://github.com/ParkSangGwon/TedPermission
+
+Copyright 2021 Ted Park
+
+Apache License 2.0
 
 # BSD 2-Clause FreeBSD License #
 ``````````
@@ -113,7 +166,6 @@ THIS SOFTWARE IS PROVIDED BY THE FREEBSD PROJECT ``AS IS'' AND ANY EXPRESS OR IM
 
 The views and conclusions contained in the software and documentation are those of the authors and should not be interpreted as representing official policies, either expressed or implied, of the FreeBSD Project.        
 ``````````
-
 
 # Apache License 2.0 #
 ``````````
@@ -191,7 +243,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ``````````
-
 
 # MIT License #
 ``````````
