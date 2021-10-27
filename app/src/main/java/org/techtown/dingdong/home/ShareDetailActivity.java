@@ -232,18 +232,24 @@ public class ShareDetailActivity extends AppCompatActivity {
 
                         }else{
 
-                            if(response.code() == 409){
+                            if(response.message().equals("CHAT_ROOM_DUPLICATION")){
                                 Toast.makeText(ShareDetailActivity.this,"이미 입장한 채팅방입니다.", Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(ShareDetailActivity.this, ChattingActivity.class);
                                 intent.putExtra("id",id);
                                 startActivity(intent);
 
                             }
-                            else if(response.code() == 404){
+                            else if(response.message().equals("CHAT_ROOM_NOT_FOUND")){
                                 Toast.makeText(ShareDetailActivity.this,"해당 채팅방을 찾을 수 없습니다.", Toast.LENGTH_LONG).show();
                             }
-                            else if(response.code() == 400){
-                                Toast.makeText(ShareDetailActivity.this,"해당 거래는 완료되어 입장할 수 없습니다.", Toast.LENGTH_LONG).show();
+                            else if(response.message().equals("CHAT_ROOM_ENTER_FAIL_DONE")){
+                                Toast.makeText(ShareDetailActivity.this,"해당 거래가 완료되어 입장할 수 없습니다.", Toast.LENGTH_LONG).show();
+                            }
+                            else if(response.message().equals("CHAT_ROOM_ENTER_FAIL_PROMISE")){
+                                Toast.makeText(ShareDetailActivity.this,"해당 거래 약속이 생성되어 입장할 수 없습니다.", Toast.LENGTH_LONG).show();
+                            }
+                            else if(response.message().equals("CHAT_ROOM_ENTER_FAIL_LIMIT")){
+                                Toast.makeText(ShareDetailActivity.this,"해당 거래의 인원이 가득 찼습니다.", Toast.LENGTH_LONG).show();
                             }
                             else{
                             Log.d("실패", new Gson().toJson(response.errorBody()));

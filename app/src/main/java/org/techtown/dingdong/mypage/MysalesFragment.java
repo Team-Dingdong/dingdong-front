@@ -144,7 +144,7 @@ public class MysalesFragment extends Fragment {
                     Toast.makeText(getActivity(), "이미 확정된 거래입니다.", Toast.LENGTH_SHORT).show();
                 }
                 else if(response.code() == 404){
-                    Toast.makeText(getActivity(), "해당 거래를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "해당 채팅 약속을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
                 }
                 else if(response.code() == 400){
                     Toast.makeText(getActivity(), "거래 약속 시간이 지나지 않아 거래 확정이 불가능합니다.", Toast.LENGTH_SHORT).show();

@@ -180,41 +180,15 @@ public class LoginActivity extends AppCompatActivity {
                                 return;
                             }
                             
-                        }else if(response.body().result.equals("AUTH_FAIL")){
+                        }else if(response.code() == 400){
                                 //다시인증해주세요
                                 Toast.makeText(LoginActivity.this, "인증번호가 올바르지 않습니다.", Toast.LENGTH_SHORT).show();
                                 finish();
-                        }else if(response.body().result.equals("AUTH_TIME_OUT")){
+                        }else if(response.code() == 403){
                             Toast.makeText(LoginActivity.this, "인증 시간을 초과하였습니다.", Toast.LENGTH_SHORT).show();
                             finish();
 
-                        }else if(response.body().result.equals("AUTH_COOL_TIME_LIMIT")){
-                            final Snackbar snackbar = Snackbar.make(view,"정회원 인증 제한 - 5분 후에 시도해주세요", Snackbar.LENGTH_INDEFINITE);
-                            snackbar.setAction("확인", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    snackbar.dismiss();
-                                }
-                            });
-                            TextView tvs = snackbar.getView().findViewById(com.google.android.material.R.id.snackbar_text);
-                            tvs.setTextSize(13);
-                            snackbar.show();
-                            finish();
-
-                        }else if(response.body().result.equals("AUTH_ATTEMPT_COUNT_LIMIT")){
-                            final Snackbar snackbar = Snackbar.make(view,"정회원 인증 제한 - 인증 시도 횟수 초과", Snackbar.LENGTH_INDEFINITE);
-                            snackbar.setAction("확인", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    snackbar.dismiss();
-                                }
-                            });
-                            TextView tvs = snackbar.getView().findViewById(com.google.android.material.R.id.snackbar_text);
-                            tvs.setTextSize(13);
-                            snackbar.show();
-                            finish();
-
-                        }else if(response.body().result.equals("AUTH_NOT_FOUND")){
+                        }else if(response.code() == 404){
                             Toast.makeText(LoginActivity.this, "해당 사용자의 인증 정보를 찾을 수 없습니다", Toast.LENGTH_SHORT).show();
                             finish();
 

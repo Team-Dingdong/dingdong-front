@@ -59,13 +59,10 @@ public class AccessTokenInterceptor implements Interceptor {
                             pref.edit().putString("oauth.tokentype",token.getGrantType()).apply();
                         }
                     }
-                    else if(response.body().getResult().equals("INVALID_REFRESH_TOKEN")){
+                    else if(response.code() == 400){
                         Log.w("actokintcept,getref", "리프레시 토큰이 유효하지 않습니다");
 
-                    }else if(response.body().getResult().equals("MISMATCH_REFRESH_TOKEN")){
-                        Log.w("actokintcept,getref", "리프레시 토큰의 유저 정보가 일치하지 않습니다");
-
-                    }else if(response.body().getResult().equals("REFRESH_TOKEN_NOT_FOUND")){
+                    }else if(response.code() == 404){
                         Log.w("actokintcept,getref", "로그아웃된 사용자입니다.");
                     }
                     else{

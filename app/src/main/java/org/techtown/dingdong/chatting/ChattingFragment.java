@@ -121,7 +121,7 @@ public class ChattingFragment extends Fragment {
                                                     Toast.makeText(getActivity(),"퇴장되었습니다.",Toast.LENGTH_LONG).show();
                                                 }
 
-                                            }if(response.code() == 403){
+                                            }if(response.message().equals("CHAT_ROOM_QUIT_FAIL_OWNER")){
                                                     final Snackbar snackbar = Snackbar.make(v,"방장은 거래를 나갈 수 없습니다.\n" + "채팅방-더보기-나눔파기를 통해 나눔을 파기해주세요.", Snackbar.LENGTH_INDEFINITE);
                                                     snackbar.setAction("확인", new View.OnClickListener() {
                                                         @Override
@@ -133,17 +133,19 @@ public class ChattingFragment extends Fragment {
                                                     tvs.setTextSize(13);
                                                     snackbar.show();
 
-                                            }else if(response.code() == 404){
-                                                Toast.makeText(getActivity(),"해당 사용자가 채팅방에 속해 있지 않습니다",Toast.LENGTH_LONG).show();
-                                            }else if(response.code() == 400){
+                                            }else if(response.message().equals("CHAT_ROOM_QUIT_FAIL")){
                                                 Toast.makeText(getActivity(),"해당 거래 약속 때문에 퇴장할 수 없습니다.",Toast.LENGTH_LONG).show();
+                                            }else if(response.message().equals("CHAT_ROOM_NOT_FOUND")){
+                                                Toast.makeText(getActivity(),"해당 채팅방을 찾을 수 없습니다.",Toast.LENGTH_LONG).show();
+                                            }else if(response.message().equals("CHAT_JOIN_NOT_FOUND")){
+                                                Toast.makeText(getActivity(),"해당 사용자가 채팅방에 속해 있지 않습니다.",Toast.LENGTH_LONG).show();
                                             }
                                         }
 
                                         @Override
                                         public void onFailure(Call<ResponseBody> call, Throwable t) {
 
-                                            Log.d("외않되", String.valueOf(t));
+                                            Log.d("chattingF,exitchatr", String.valueOf(t));
 
                                         }
                                     });

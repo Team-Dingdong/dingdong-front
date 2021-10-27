@@ -247,9 +247,6 @@ public class SetProfileActivity extends AppCompatActivity {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if(response.isSuccessful()){
                     if(response.code() == 200) {
-                        Log.d("성공", new Gson().toJson(response.code()));
-                        Log.d("성공", String.valueOf(response.raw().request().url().url()));
-                        Log.d("성공", new Gson().toJson(response.raw().request()));
 
                         Toast.makeText(SetProfileActivity.this,"프로필 설정이 완료되었습니다.",Toast.LENGTH_LONG).show();
 
