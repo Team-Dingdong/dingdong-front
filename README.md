@@ -2,7 +2,9 @@
 Ding-Dong Android
 =====
 
-<p align="center"><img src="https://user-images.githubusercontent.com/59547003/138564406-5df826cf-6149-42c1-a895-56a465478718.png" width="35%" ></img></p>
+<p align="center"><img src="https://user-images.githubusercontent.com/59547003/139007560-24f2de4d-1ee3-4ebb-8165-75c4077aa934.png" width="35%" ></img></p>
+
+
 
 띵-동
 -----
