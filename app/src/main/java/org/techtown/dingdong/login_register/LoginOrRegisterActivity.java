@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.gson.Gson;
+
 import org.techtown.dingdong.R;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
@@ -75,33 +77,32 @@ public class LoginOrRegisterActivity extends AppCompatActivity {
                     public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
 
                         if(response.isSuccessful()){
-
                             if(response.body().result.equals("CREATED")){
 
                                 AuthResponse result = response.body();
                                 AuthResponse.Data data = result.data;
                                 String time = data.requestTime;
-                                Log.d("성공", String.valueOf(response.body()));
-
+                                //Log.d("성공", String.valueOf(response.body()));
                                 Intent intent = new Intent(LoginOrRegisterActivity.this, LoginActivity.class);
                                 intent.putExtra("phoneNumber", message);
                                 intent.putExtra("time", time);
                                 startActivity(intent);
-
                             }
                         }
                         else{
-                            Log.d("문제발생", String.valueOf(response));
+                            Log.d("logorreg,setauth", new Gson().toJson(response.errorBody()));
+                            Log.d("logorreg,setauth", response.toString());
+                            Log.d("logorreg,setauth", String.valueOf(response.code()));
+                            Log.d("logorreg,setauth", response.message());
+                            Log.d("logorreg,setauth", String.valueOf(response.raw().request().url().url()));
+                            Log.d("logorreg,setauth", new Gson().toJson(response.raw().request()));
                         }
-
-
-
                     }
 
                     @Override
                     public void onFailure(Call<AuthResponse> call, Throwable t) {
 
-                        Log.d("tag", t.toString());
+                        Log.d("logorreg,setauth", t.toString());
 
                     }
                 });

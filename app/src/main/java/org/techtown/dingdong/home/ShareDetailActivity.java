@@ -224,7 +224,7 @@ public class ShareDetailActivity extends AppCompatActivity {
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         if(response.isSuccessful() && response.body() != null){
                             if(response.code() == 201){
-                                Toast.makeText(ShareDetailActivity.this,"채팅방 입장 성공.", Toast.LENGTH_LONG).show();
+                                Toast.makeText(ShareDetailActivity.this,"채팅방 입장 성공", Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(ShareDetailActivity.this, ChattingActivity.class);
                                 intent.putExtra("id",id);
                                 startActivity(intent);
@@ -241,6 +241,9 @@ public class ShareDetailActivity extends AppCompatActivity {
                             }
                             else if(response.code() == 404){
                                 Toast.makeText(ShareDetailActivity.this,"해당 채팅방을 찾을 수 없습니다.", Toast.LENGTH_LONG).show();
+                            }
+                            else if(response.code() == 400){
+                                Toast.makeText(ShareDetailActivity.this,"해당 거래는 완료되어 입장할 수 없습니다.", Toast.LENGTH_LONG).show();
                             }
                             else{
                             Log.d("실패", new Gson().toJson(response.errorBody()));

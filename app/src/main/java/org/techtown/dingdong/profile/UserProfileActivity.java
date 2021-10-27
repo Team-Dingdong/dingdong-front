@@ -85,8 +85,6 @@ public class UserProfileActivity extends AppCompatActivity {
         Log.d("토큰", id);
 
 
-
-
         recyclerView.setLayoutManager(new LinearLayoutManager(UserProfileActivity.this, LinearLayoutManager.VERTICAL, false));
         historyAdapter = new HistoryAdapter(salesList,UserProfileActivity.this,"profile");
         recyclerView.setAdapter(historyAdapter);
@@ -140,26 +138,18 @@ public class UserProfileActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                                     if(response.isSuccessful() && response.body() != null){
-                                                        if(response.code() == 200) {
-
+                                                        if(response.code() == 201) {
                                                             Toast.makeText(UserProfileActivity.this, "신고가 완료되었습니다.", Toast.LENGTH_SHORT).show();
-
-                                                            Handler handler = new Handler();
-                                                            handler.postDelayed(new Runnable() {
-                                                                @Override
-                                                                public void run() {
-                                                                    finish();
-                                                                }
-                                                            }, 1000);
                                                         }
                                                     }
-                                                    else{
-                                                        Log.d("실패", new Gson().toJson(response.errorBody()));
-                                                        Log.d("실패", response.toString());
-                                                        Log.d("실패", String.valueOf(response.code()));
-                                                        Log.d("실패", response.message());
-                                                        Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                                                        Log.d("실패", new Gson().toJson(response.raw().request()));
+                                                    else if(response.code() == 403){
+                                                        Toast.makeText(UserProfileActivity.this, "본인은 신고할 수 없습니다", Toast.LENGTH_SHORT).show();
+
+                                                    }else if(response.code() == 404){
+                                                        Toast.makeText(UserProfileActivity.this, "해당 유저 정보를 찾을 수 없습니다", Toast.LENGTH_SHORT).show();
+
+                                                    }else if(response.code() == 409){
+                                                        Toast.makeText(UserProfileActivity.this, "이미 신고한 사용자입니다", Toast.LENGTH_SHORT).show();
                                                     }
                                                 }
 
@@ -227,20 +217,24 @@ public class UserProfileActivity extends AppCompatActivity {
                                 .load(res.getProfileImg())
                                 .into(img_profile);
                     }
+                }else if(response.code() == 404){
+                    Log.w("userprof,getother","해당 프로필을 찾을 수 없습니다");
+                    Toast.makeText(UserProfileActivity.this, "해당 프로필을 찾을 수 없습니다.", Toast.LENGTH_LONG);
+                    finish();
                 }
                 else{
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                    Log.d("userprof,getother", new Gson().toJson(response.errorBody()));
+                    Log.d("userprof,getother", response.toString());
+                    Log.d("userprof,getother", String.valueOf(response.code()));
+                    Log.d("userprof,getother", response.message());
+                    Log.d("userprof,getother", String.valueOf(response.raw().request().url().url()));
+                    Log.d("userprof,getother", new Gson().toJson(response.raw().request()));
                 }
             }
 
             @Override
             public void onFailure(Call<UserProfileResponse> call, Throwable t) {
-                Log.d("외않되", String.valueOf(t));
+                Log.d("userprof,getother", String.valueOf(t));
 
             }
         });
@@ -260,20 +254,23 @@ public class UserProfileActivity extends AppCompatActivity {
                         tv_dislike.setText(res.getBad());
                     }
                 }
+                else if(response.code() == 404){
+                    Log.w("userprof,getrating","해당 유저에 대한 평가를 찾을 수 없습니다");
+                }
                 else{
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                    Log.d("userprof,getrating", new Gson().toJson(response.errorBody()));
+                    Log.d("userprof,getrating", response.toString());
+                    Log.d("userprof,getrating", String.valueOf(response.code()));
+                    Log.d("userprof,getrating", response.message());
+                    Log.d("userprof,getrating", String.valueOf(response.raw().request().url().url()));
+                    Log.d("userprof,getrating", new Gson().toJson(response.raw().request()));
                 }
 
             }
 
             @Override
             public void onFailure(Call<UserRatingResponse> call, Throwable t) {
-                Log.d("외않되", String.valueOf(t));
+                Log.d("userprof,getrating", String.valueOf(t));
             }
         });
     }
@@ -288,18 +285,19 @@ public class UserProfileActivity extends AppCompatActivity {
                 if(response.isSuccessful() && response.body() != null) {
                     if (response.body().getResult().equals("PROFILE_READ_SUCCESS")) {
                         UserProfileResponse res = response.body();
-                        Log.d("성공", new Gson().toJson(res));
                         username = res.getData().getNickname();
                     }
-                }else{
+                }else if(response.code() == 404){
+                    Log.w("userprof,getuserprof","해당 프로필을 찾을 수 없습니다");
+                }
+                else{
 
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
-
+                    Log.d("userprof,getuserprof", new Gson().toJson(response.errorBody()));
+                    Log.d("userprof,getuserprof", response.toString());
+                    Log.d("userprof,getuserprof", String.valueOf(response.code()));
+                    Log.d("userprof,getuserprof", response.message());
+                    Log.d("userprof,getuserprof", String.valueOf(response.raw().request().url().url()));
+                    Log.d("userprof,getuserprof", new Gson().toJson(response.raw().request()));
 
                 }
 
@@ -308,7 +306,7 @@ public class UserProfileActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<UserProfileResponse> call, Throwable t) {
 
-                Log.d("외않되", String.valueOf(t));
+                Log.d("userprof,getuserprof", String.valueOf(t));
 
             }
         });
@@ -336,12 +334,12 @@ public class UserProfileActivity extends AppCompatActivity {
                     }
 
                 }else{
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                    Log.d("userprof,getsaleshis", new Gson().toJson(response.errorBody()));
+                    Log.d("userprof,getsaleshis", response.toString());
+                    Log.d("userprof,getsaleshis", String.valueOf(response.code()));
+                    Log.d("userprof,getsaleshis", response.message());
+                    Log.d("userprof,getsaleshis", String.valueOf(response.raw().request().url().url()));
+                    Log.d("userprof,getsaleshis", new Gson().toJson(response.raw().request()));
                 }
 
             }

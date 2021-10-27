@@ -106,12 +106,12 @@ public class MysalesFragment extends Fragment {
                     }
 
                 }else{
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                    Log.d("mysales,getSalesHistory", new Gson().toJson(response.errorBody()));
+                    Log.d("mysales,getSalesHistory", response.toString());
+                    Log.d("mysales,getSalesHistory", String.valueOf(response.code()));
+                    Log.d("mysales,getSalesHistory", response.message());
+                    Log.d("mysales,getSalesHistory", String.valueOf(response.raw().request().url().url()));
+                    Log.d("mysales,getSalesHistory", new Gson().toJson(response.raw().request()));
                 }
 
             }
@@ -119,7 +119,7 @@ public class MysalesFragment extends Fragment {
             @Override
             public void onFailure(Call<HistoryResponse> call, Throwable t) {
 
-                Log.d("tag",t.toString());
+                Log.d("mysales,getSalesHistory",t.toString());
             }
         });
 
@@ -138,21 +138,30 @@ public class MysalesFragment extends Fragment {
                     getActivity().startActivity(intent);
 
                 }else if(response.code() == 403){
+                    Toast.makeText(getActivity(), "해당 채팅방의 방장이 아닙니다.", Toast.LENGTH_SHORT).show();
+                }
+                else if(response.code() == 409){
                     Toast.makeText(getActivity(), "이미 확정된 거래입니다.", Toast.LENGTH_SHORT).show();
                 }
+                else if(response.code() == 404){
+                    Toast.makeText(getActivity(), "해당 거래를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+                }
+                else if(response.code() == 400){
+                    Toast.makeText(getActivity(), "거래 약속 시간이 지나지 않아 거래 확정이 불가능합니다.", Toast.LENGTH_SHORT).show();
+                }
                 else{
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                    Log.d("mysales,setConfirm", new Gson().toJson(response.errorBody()));
+                    Log.d("mysales,setConfirm", response.toString());
+                    Log.d("mysales,setConfirm", String.valueOf(response.code()));
+                    Log.d("mysales,setConfirm", response.message());
+                    Log.d("mysales,setConfirm", String.valueOf(response.raw().request().url().url()));
+                    Log.d("mysales,setConfirm", new Gson().toJson(response.raw().request()));
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("tag",t.toString());
+                Log.d("mysales,setConfirm",t.toString());
 
             }
         });

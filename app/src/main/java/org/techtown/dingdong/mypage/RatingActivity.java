@@ -105,12 +105,12 @@ public class RatingActivity extends AppCompatActivity {
                     }
                 }else{
 
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                    Log.d("rating,getuserpro", new Gson().toJson(response.errorBody()));
+                    Log.d("rating,getuserpro", response.toString());
+                    Log.d("rating,getuserpro", String.valueOf(response.code()));
+                    Log.d("rating,getuserpro", response.message());
+                    Log.d("rating,getuserpro", String.valueOf(response.raw().request().url().url()));
+                    Log.d("rating,getuserpro", new Gson().toJson(response.raw().request()));
 
 
                 }
@@ -200,14 +200,18 @@ public class RatingActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful() && response.code() == 201) {
-
-                }else{
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                    Log.d("rating,ratinguser",chatUsers.get(i).getUsername()+"유저 평가 성공");
+                }else if(response.code() == 403){
+                    Toast.makeText(RatingActivity.this, "평가할 수 없는 사용자입니다.", Toast.LENGTH_SHORT).show();
+                    getcheck = false;
+                }
+                else{
+                    Log.d("rating,ratinguser", new Gson().toJson(response.errorBody()));
+                    Log.d("rating,ratinguser", response.toString());
+                    Log.d("rating,ratinguser", String.valueOf(response.code()));
+                    Log.d("rating,ratinguser", response.message());
+                    Log.d("rating,ratinguser", String.valueOf(response.raw().request().url().url()));
+                    Log.d("rating,ratinguser", new Gson().toJson(response.raw().request()));
                     getcheck = false;
                 }
 
@@ -215,7 +219,7 @@ public class RatingActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("외않되", String.valueOf(t));
+                Log.d("rating,ratinguser", String.valueOf(t));
                 getcheck = false;
 
             }
@@ -244,12 +248,12 @@ public class RatingActivity extends AppCompatActivity {
 
                     }
                 }else{
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                    Log.d("rating,getchatuser", new Gson().toJson(response.errorBody()));
+                    Log.d("rating,getchatuser", response.toString());
+                    Log.d("rating,getchatuser", String.valueOf(response.code()));
+                    Log.d("rating,getchatuser", response.message());
+                    Log.d("rating,getchatuser", String.valueOf(response.raw().request().url().url()));
+                    Log.d("rating,getchatuser", new Gson().toJson(response.raw().request()));
                 }
             }
 

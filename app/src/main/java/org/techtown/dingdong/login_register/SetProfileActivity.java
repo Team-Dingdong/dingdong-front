@@ -316,25 +316,17 @@ public class SetProfileActivity extends AppCompatActivity {
                         }, 1000);
                     }
                 }
-                else{
-                    if(response.code() == 409) {
+                else if(response.code() == 409) {
                         Toast.makeText(SetProfileActivity.this,"이미 사용중인 닉네임입니다. 다른 닉네임을 설정해주세요.",Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        Log.d("실패", new Gson().toJson(response.errorBody()));
-                        Log.d("실패", response.toString());
-                        Log.d("실패", String.valueOf(response.code()));
-                        Log.d("실패", response.message());
-                        Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                        Log.d("실패", new Gson().toJson(response.raw().request()));
-                    }
                 }
-
+                else if(response.code() == 404) {
+                    Toast.makeText(SetProfileActivity.this,"해당 프로필을 찾을 수 없습니다",Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("외않되", String.valueOf(t));
+                Log.d("setprofile,setprofile", String.valueOf(t));
             }
         });
 

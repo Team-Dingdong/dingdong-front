@@ -121,8 +121,7 @@ public class ChattingFragment extends Fragment {
                                                     Toast.makeText(getActivity(),"퇴장되었습니다.",Toast.LENGTH_LONG).show();
                                                 }
 
-                                            } else {
-                                                if(response.code() == 403){
+                                            }if(response.code() == 403){
                                                     final Snackbar snackbar = Snackbar.make(v,"방장은 거래를 나갈 수 없습니다.\n" + "채팅방-더보기-나눔파기를 통해 나눔을 파기해주세요.", Snackbar.LENGTH_INDEFINITE);
                                                     snackbar.setAction("확인", new View.OnClickListener() {
                                                         @Override
@@ -130,27 +129,14 @@ public class ChattingFragment extends Fragment {
                                                             snackbar.dismiss();
                                                         }
                                                     });
-
                                                     TextView tvs = snackbar.getView().findViewById(com.google.android.material.R.id.snackbar_text);
-
                                                     tvs.setTextSize(13);
-
                                                     snackbar.show();
 
-                                                }else if(response.code() == 404){
-
-                                                    Toast.makeText(getActivity(),"해당 사용자가 채팅방에 속해 있지 않습니다",Toast.LENGTH_LONG).show();
-
-
-                                                }else{
-                                                Log.d("실패", new Gson().toJson(response.errorBody()));
-                                                Log.d("실패", response.toString());
-                                                Log.d("실패", String.valueOf(response.code()));
-                                                Log.d("실패", response.message());
-                                                Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                                                Log.d("실패", new Gson().toJson(response.raw().request()));
-                                                }
-
+                                            }else if(response.code() == 404){
+                                                Toast.makeText(getActivity(),"해당 사용자가 채팅방에 속해 있지 않습니다",Toast.LENGTH_LONG).show();
+                                            }else if(response.code() == 400){
+                                                Toast.makeText(getActivity(),"해당 거래 약속 때문에 퇴장할 수 없습니다.",Toast.LENGTH_LONG).show();
                                             }
                                         }
 
@@ -215,12 +201,12 @@ public class ChattingFragment extends Fragment {
                 }
                 else{
 
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                    Log.d("chattingF,getChatRL", new Gson().toJson(response.errorBody()));
+                    Log.d("chattingF,getChatRL", response.toString());
+                    Log.d("chattingF,getChatRL", String.valueOf(response.code()));
+                    Log.d("chattingF,getChatRL", response.message());
+                    Log.d("chattingF,getChatRL", String.valueOf(response.raw().request().url().url()));
+                    Log.d("chattingF,getChatRL", new Gson().toJson(response.raw().request()));
 
                 }
 
@@ -229,7 +215,7 @@ public class ChattingFragment extends Fragment {
             @Override
             public void onFailure(Call<ChatRoomResponse> call, Throwable t) {
 
-                Log.d("외않되", String.valueOf(t));
+                Log.d("chattingF,getChatRL", String.valueOf(t));
 
             }
         });

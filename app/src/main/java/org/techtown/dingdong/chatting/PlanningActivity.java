@@ -275,13 +275,14 @@ public class PlanningActivity extends AppCompatActivity {
                         tv_info.setText(info);
 
                     }
-                } else {
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                } else if(response.body().getResult().equals("CHAT_ROOM_NOT_FOUND")) {
+                    Log.w("planning,getInfo","해당 채팅방을 찾을 수 없습니다.");
+
+                } else if(response.body().getResult().equals("CHAT_JOIN_NOT_FOUND")) {
+                    Log.w("planning,getInfo","해당 사용자가 채팅방에 속해있지 않습니다.");
+
+                } else if(response.body().getResult().equals("CHAT_PROMISE_NOT_FOUND")) {
+                    Log.w("planning,getInfo","해당 채팅 약속을 찾을 수 없습니다.");
 
                 }
 
@@ -304,7 +305,7 @@ public class PlanningActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
-                    if (response.code() == 201) {
+                    if (response.code() == 200) {
 
                         Toast.makeText(PlanningActivity.this, "생성이 완료되었습니다.",Toast.LENGTH_LONG).show();
 
@@ -318,15 +319,14 @@ public class PlanningActivity extends AppCompatActivity {
 
 
                     }
-                }else{
-
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
-
+                }else if(response.code() == 400){
+                    Toast.makeText(PlanningActivity.this, "약속이 확정되어 수정할 수 없습니다.",Toast.LENGTH_SHORT).show();
+                }
+                else if(response.code() == 403){
+                    Toast.makeText(PlanningActivity.this, "해당 채팅방의 방장이 아닙니다.",Toast.LENGTH_SHORT).show();
+                }
+                else if(response.code() == 404){
+                    Toast.makeText(PlanningActivity.this, "해당 채팅방을 찾을 수 없습니다.",Toast.LENGTH_SHORT).show();
                 }
             }
 

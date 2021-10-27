@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 
 import org.techtown.dingdong.BuildConfig;
@@ -152,7 +153,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
                         if(response.isSuccessful()){
-
                             //기기 내부에 토큰 정보 저장
                             SharedPreferences preferences = getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
 
@@ -174,31 +174,64 @@ public class LoginActivity extends AppCompatActivity {
                             }
 
                             else if(response.body().result.equals("LOGIN_SUCCESS")){
-
-
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
 
                                 return;
-
-
                             }
                             
-                        }else{
-                            if(response.code() == 400){
+                        }else if(response.body().result.equals("AUTH_FAIL")){
                                 //다시인증해주세요
                                 Toast.makeText(LoginActivity.this, "인증번호가 올바르지 않습니다.", Toast.LENGTH_SHORT).show();
                                 finish();
-                            }
-                        }
+                        }else if(response.body().result.equals("AUTH_TIME_OUT")){
+                            Toast.makeText(LoginActivity.this, "인증 시간을 초과하였습니다.", Toast.LENGTH_SHORT).show();
+                            finish();
 
+                        }else if(response.body().result.equals("AUTH_COOL_TIME_LIMIT")){
+                            final Snackbar snackbar = Snackbar.make(view,"정회원 인증 제한 - 5분 후에 시도해주세요", Snackbar.LENGTH_INDEFINITE);
+                            snackbar.setAction("확인", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    snackbar.dismiss();
+                                }
+                            });
+                            TextView tvs = snackbar.getView().findViewById(com.google.android.material.R.id.snackbar_text);
+                            tvs.setTextSize(13);
+                            snackbar.show();
+                            finish();
+
+                        }else if(response.body().result.equals("AUTH_ATTEMPT_COUNT_LIMIT")){
+                            final Snackbar snackbar = Snackbar.make(view,"정회원 인증 제한 - 인증 시도 횟수 초과", Snackbar.LENGTH_INDEFINITE);
+                            snackbar.setAction("확인", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    snackbar.dismiss();
+                                }
+                            });
+                            TextView tvs = snackbar.getView().findViewById(com.google.android.material.R.id.snackbar_text);
+                            tvs.setTextSize(13);
+                            snackbar.show();
+                            finish();
+
+                        }else if(response.body().result.equals("AUTH_NOT_FOUND")){
+                            Toast.makeText(LoginActivity.this, "해당 사용자의 인증 정보를 찾을 수 없습니다", Toast.LENGTH_SHORT).show();
+                            finish();
+
+                        }else{
+                            Log.d("login,loginreq", new Gson().toJson(response.errorBody()));
+                            Log.d("login,loginreq", response.toString());
+                            Log.d("login,loginreq", String.valueOf(response.code()));
+                            Log.d("login,loginreq", response.message());
+                            Log.d("login,loginreq", String.valueOf(response.raw().request().url().url()));
+                            Log.d("login,loginreq", new Gson().toJson(response.raw().request()));
+                        }
 
                     }
 
                     @Override
                     public void onFailure(Call<LoginResponse> call, Throwable t) {
-                        Log.d("실패", "외않되");
-
+                        Log.d("login,loginreq", String.valueOf(t));
                     }
 
 

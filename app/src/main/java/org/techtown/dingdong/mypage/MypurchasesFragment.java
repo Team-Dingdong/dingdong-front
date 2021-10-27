@@ -67,16 +67,20 @@ public class MypurchasesFragment extends Fragment {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         historyAdapter = new HistoryAdapter(purchasesList,getActivity(),"mypurchases");
+        /*
         historyAdapter.setListener(new HistoryAdapter.onItemClickListener() {
             @Override
             public void onItemClick(int position, String id) {
                 Toast.makeText(getActivity(),id + ": 거래를 확정하였습니다.", Toast.LENGTH_SHORT).show();
-                /*Intent intent = new Intent(getActivity(),RatingActivity.class);
+                Intent intent = new Intent(getActivity(),RatingActivity.class);
                 intent.putExtra("id",id);
-                getActivity().startActivity(intent);*/
+                getActivity().startActivity(intent);
 
             }
         });
+        */
+
+
         recyclerView.setAdapter(historyAdapter);
 
         getHistory(token);
@@ -100,12 +104,12 @@ public class MypurchasesFragment extends Fragment {
                     }
 
                 }else{
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                    Log.d("mypur,getPurcHistory", new Gson().toJson(response.errorBody()));
+                    Log.d("mypur,getPurcHistory", response.toString());
+                    Log.d("mypur,getPurcHistory", String.valueOf(response.code()));
+                    Log.d("mypur,getPurcHistory", response.message());
+                    Log.d("mypur,getPurcHistory", String.valueOf(response.raw().request().url().url()));
+                    Log.d("mypur,getPurcHistory", new Gson().toJson(response.raw().request()));
                 }
 
             }

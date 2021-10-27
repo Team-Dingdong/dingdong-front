@@ -135,20 +135,15 @@ public class myPageFragment extends Fragment{
                         }
                     }
                 }
-                else{
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                else if(response.code() == 404){
+                    Log.w("mypage,getuserprof","해당 프로필을 찾을 수 없습니다.");
                 }
             }
 
             @Override
             public void onFailure(Call<UserProfileResponse> call, Throwable t) {
 
-                Log.d("외않되", String.valueOf(t));
+                Log.d("mypage,getuserprof", String.valueOf(t));
 
             }
         });
@@ -169,20 +164,15 @@ public class myPageFragment extends Fragment{
                         tv_dislike.setText(res.getBad());
                     }
                 }
-                else{
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                else if(response.code() == 404){
+                    Log.w("mypage,getuserprof","해당 유저에 대한 평가를 찾을 수 없습니다");
                 }
 
             }
 
             @Override
             public void onFailure(Call<UserRatingResponse> call, Throwable t) {
-                Log.d("외않되", String.valueOf(t));
+                Log.d("mypage,getuserprof", String.valueOf(t));
             }
         });
     }
