@@ -121,7 +121,7 @@ public class ChattingFragment extends Fragment {
                                                     Toast.makeText(getActivity(),"퇴장되었습니다.",Toast.LENGTH_LONG).show();
                                                 }
 
-                                            }if(response.message().equals("CHAT_ROOM_QUIT_FAIL_OWNER")){
+                                            }else if(response.code() == 403){
                                                     final Snackbar snackbar = Snackbar.make(v,"방장은 거래를 나갈 수 없습니다.\n" + "채팅방-더보기-나눔파기를 통해 나눔을 파기해주세요.", Snackbar.LENGTH_INDEFINITE);
                                                     snackbar.setAction("확인", new View.OnClickListener() {
                                                         @Override
@@ -133,20 +133,24 @@ public class ChattingFragment extends Fragment {
                                                     tvs.setTextSize(13);
                                                     snackbar.show();
 
-                                            }else if(response.message().equals("CHAT_ROOM_QUIT_FAIL")){
+                                            }else if(response.code() == 400){
                                                 Toast.makeText(getActivity(),"해당 거래 약속 때문에 퇴장할 수 없습니다.",Toast.LENGTH_LONG).show();
-                                            }else if(response.message().equals("CHAT_ROOM_NOT_FOUND")){
+                                            }else if(response.code() == 404){
                                                 Toast.makeText(getActivity(),"해당 채팅방을 찾을 수 없습니다.",Toast.LENGTH_LONG).show();
-                                            }else if(response.message().equals("CHAT_JOIN_NOT_FOUND")){
-                                                Toast.makeText(getActivity(),"해당 사용자가 채팅방에 속해 있지 않습니다.",Toast.LENGTH_LONG).show();
+                                            }else{
+                                                Log.d("chatF,exit", new Gson().toJson(response.errorBody()));
+                                                Log.d("chatF,exit", response.toString());
+                                                Log.d("chatF,exit", String.valueOf(response.code()));
+                                                Log.d("chatF,exit", response.message());
+                                                Log.d("chatF,exit", String.valueOf(response.raw().request().url().url()));
+                                                Log.d("chatF,exit", new Gson().toJson(response.raw().request()));
+
                                             }
                                         }
 
                                         @Override
                                         public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                                            Log.d("chattingF,exitchatr", String.valueOf(t));
-
+                                                Log.d("chatF,exit", String.valueOf(t));
                                         }
                                     });
 
@@ -194,7 +198,7 @@ public class ChattingFragment extends Fragment {
 
                         ChatRoomResponse res = response.body();
 
-                        Log.d("성공", new Gson().toJson(res));
+                        //Log.d("성공", new Gson().toJson(res));
 
                         chatRooms = res.getChatRooms();
                         setChatRecycler(recyclerView, chatRooms);
@@ -203,12 +207,12 @@ public class ChattingFragment extends Fragment {
                 }
                 else{
 
-                    Log.d("chattingF,getChatRL", new Gson().toJson(response.errorBody()));
-                    Log.d("chattingF,getChatRL", response.toString());
-                    Log.d("chattingF,getChatRL", String.valueOf(response.code()));
-                    Log.d("chattingF,getChatRL", response.message());
-                    Log.d("chattingF,getChatRL", String.valueOf(response.raw().request().url().url()));
-                    Log.d("chattingF,getChatRL", new Gson().toJson(response.raw().request()));
+                    Log.d("chatF,getChatRL", new Gson().toJson(response.errorBody()));
+                    Log.d("chatF,getChatRL", response.toString());
+                    Log.d("chatF,getChatRL", String.valueOf(response.code()));
+                    Log.d("chatF,getChatRL", response.message());
+                    Log.d("chatF,getChatRL", String.valueOf(response.raw().request().url().url()));
+                    Log.d("chatF,getChatRL", new Gson().toJson(response.raw().request()));
 
                 }
 
@@ -217,7 +221,7 @@ public class ChattingFragment extends Fragment {
             @Override
             public void onFailure(Call<ChatRoomResponse> call, Throwable t) {
 
-                Log.d("chattingF,getChatRL", String.valueOf(t));
+                Log.d("chatF,getChatRL", String.valueOf(t));
 
             }
         });

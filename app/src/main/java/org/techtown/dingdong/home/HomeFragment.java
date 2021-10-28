@@ -260,12 +260,6 @@ public class HomeFragment extends Fragment {
         });
 
 
-
-
-
-
-
-
         btn_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -372,7 +366,7 @@ public class HomeFragment extends Fragment {
                 if(response.isSuccessful() && response.body() != null){
                     if(response.body().getResult().equals("POST_READ_SUCCESS")){
                         PostResponse res = response.body();
-                        Log.d("성공", new Gson().toJson(res));
+                        //Log.d("성공", new Gson().toJson(res));
 
                         if(page == 0 && !shareList.isEmpty()){
                             shareList = new ArrayList<>();
@@ -384,19 +378,22 @@ public class HomeFragment extends Fragment {
 
                     }
 
+                }else if(response.code() == 404){
+                    Log.w("home,getCreatedD","해당 동네를 찾을 수 없습니다.");
+
                 }else{
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                    Log.d("home,getCreatedD", new Gson().toJson(response.errorBody()));
+                    Log.d("home,getCreatedD", response.toString());
+                    Log.d("home,getCreatedD", String.valueOf(response.code()));
+                    Log.d("home,getCreatedD", response.message());
+                    Log.d("home,getCreatedD", String.valueOf(response.raw().request().url().url()));
+                    Log.d("home,getCreatedD", new Gson().toJson(response.raw().request()));
                 }
             }
 
             @Override
             public void onFailure(Call<PostResponse> call, Throwable t) {
-                Log.d("외않되", String.valueOf(t));
+                Log.d("home,getCreatedD", String.valueOf(t));
 
             }
         });
@@ -418,7 +415,7 @@ public class HomeFragment extends Fragment {
                 if(response.isSuccessful() && response.body() != null){
                     if(response.body().getResult().equals("POST_READ_SUCCESS")){
                         PostResponse res = response.body();
-                        Log.d("성공", new Gson().toJson(res));
+                        //Log.d("성공", new Gson().toJson(res));
 
                         if(page == 0 && !shareList.isEmpty()){
                             shareList = new ArrayList<>();
@@ -430,19 +427,22 @@ public class HomeFragment extends Fragment {
 
                     }
 
+                }else if(response.code() == 404){
+                    Log.w("home,getEndD","해당 동네를 찾을 수 없습니다.");
+
                 }else{
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                    Log.d("home,getEndD", new Gson().toJson(response.errorBody()));
+                    Log.d("home,getEndD", response.toString());
+                    Log.d("home,getEndD", String.valueOf(response.code()));
+                    Log.d("home,getEndD", response.message());
+                    Log.d("home,getEndD", String.valueOf(response.raw().request().url().url()));
+                    Log.d("home,getEndD", new Gson().toJson(response.raw().request()));
                 }
             }
 
             @Override
             public void onFailure(Call<PostResponse> call, Throwable t) {
-                Log.d("외않되", String.valueOf(t));
+                Log.d("home,getEndD", String.valueOf(t));
 
             }
         });

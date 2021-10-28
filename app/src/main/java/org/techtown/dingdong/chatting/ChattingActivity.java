@@ -172,13 +172,13 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
             String type = jsonObject.getString("type");
             String sender = jsonObject.getString("sender");
             String profileUrl = jsonObject.getString("profileImageUrl");
-            Log.d("onnext",jsonObject.toString());
+            //Log.d("onnext",jsonObject.toString());
 
 
             if(type.equals("TALK") && !sender.equals(username)){
                 Chat chat = new Chat(msg,sender,profileUrl,new Timestamp(System.currentTimeMillis()).toString(), "FALSE", ChatType.ViewType.LEFT_CONTENT);
                 addItem(chat);
-                Log.d("talk","get");
+                //Log.d("talk","get");
                 }
             else if(type.equals("ENTER")){
                 Chat chat = new Chat(msg,sender,profileUrl,new Timestamp(System.currentTimeMillis()).toString(), "FALSE", ChatType.ViewType.CENTER_CONTENT);
@@ -274,11 +274,9 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                     });
 
         btn_back.setOnClickListener(new View.OnClickListener()
-
                     {
                         @Override
                         public void onClick (View v){
-
                         finish();
                     }
                     });
@@ -394,29 +392,32 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                                     }
                                 }, 1000);
                             }
-                        } else {
-
-                            Log.d("실패", new Gson().toJson(response.errorBody()));
-                            Log.d("실패", response.toString());
-                            Log.d("실패", String.valueOf(response.code()));
-                            Log.d("실패", response.message());
-                            Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                            Log.d("실패", new Gson().toJson(response.raw().request()));
-
+                        }else if(response.code() == 404){
+                            Toast.makeText(ChattingActivity.this, "해당 포스트를 찾을 수 없습니다.", Toast.LENGTH_LONG).show();
+                            //Log.d("sharedetail,del", "해당 포스트를 찾을 수 없습니다.");
+                        }else if(response.code() == 400){
+                            Toast.makeText(ChattingActivity.this, "해당 권한이 없습니다.", Toast.LENGTH_LONG).show();
+                            //Log.d("sharedetail,del", "해당 권한이 없습니다.");
                         }
-
+                        else {
+                            Log.d("sharedetail,del", new Gson().toJson(response.errorBody()));
+                            Log.d("sharedetail,del", response.toString());
+                            Log.d("sharedetail,del", String.valueOf(response.code()));
+                            Log.d("sharedetail,del", response.message());
+                            Log.d("sharedetail,del", String.valueOf(response.raw().request().url().url()));
+                            Log.d("sharedetail,del", new Gson().toJson(response.raw().request()));
+                        }
                     }
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
 
-                        Log.d("외않되", String.valueOf(t));
+                        Log.d("sharedetail,del", String.valueOf(t));
 
                     }
                 });
                 chattingBottomDialogFragment.dismiss();
                 break;
-
         }
 
     }
@@ -446,12 +447,8 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                         setChatRecycler(recycler_chat, chats);
 
                     }
-                }else if(response.message().equals("CHAT_ROOM_NOT_FOUND")){
-                    Toast.makeText(ChattingActivity.this, "해당 채팅방을 찾을 수 없습니다", Toast.LENGTH_LONG).show();
-                    finish();
-
-                }else if(response.message().equals("CHAT_JOIN_NOT_FOUND")){
-                    Toast.makeText(ChattingActivity.this, "해당 사용자가 채팅방에 속해 있지 않습니다", Toast.LENGTH_LONG).show();
+                }else if(response.code() == 404){
+                    Toast.makeText(ChattingActivity.this, "조회할 수 없는 채팅방입니다.", Toast.LENGTH_LONG).show();
                     finish();
                 }
                 else{
@@ -461,7 +458,6 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                     Log.d("chatting,getchats", response.message());
                     Log.d("chatting,getchats", String.valueOf(response.raw().request().url().url()));
                     Log.d("chatting,getchats", new Gson().toJson(response.raw().request()));
-
                 }
             }
 
@@ -538,12 +534,8 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                             ismaster = false;
                         }
                     }
-                }else if(response.message().equals("CHAT_ROOM_NOT_FOUND")){
-                    Toast.makeText(ChattingActivity.this, "해당 채팅방을 찾을 수 없습니다", Toast.LENGTH_LONG).show();
-                    finish();
-                }
-                else if(response.message().equals("CHAT_JOIN_NOT_FOUND")){
-                    Toast.makeText(ChattingActivity.this, "해당 사용자가 채팅방에 속해 있지 않습니다", Toast.LENGTH_LONG).show();
+                }else if(response.code() == 404){
+                    Toast.makeText(ChattingActivity.this, "조회할 수 없는 채팅방입니다.", Toast.LENGTH_LONG).show();
                     finish();
                 }
                 else{
@@ -561,7 +553,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
             @Override
             public void onFailure(Call<ChatRoomInformResponse> call, Throwable t) {
 
-                Log.d("외않되", String.valueOf(t));
+                Log.d("chatting,getChatRoom", String.valueOf(t));
 
             }
         });
@@ -591,7 +583,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
             @Override
             public void onFailure(Call<UserProfileResponse> call, Throwable t) {
 
-                Log.d("외않되", String.valueOf(t));
+                Log.d("chatting,getuserprof", String.valueOf(t));
 
             }
         });
@@ -611,17 +603,14 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                         Toast.makeText(ChattingActivity.this,"약속에 동의하셨습니다.",Toast.LENGTH_SHORT).show();
 
                     }
-                }else if(response.message().equals("CHAT_PROMISE_NOT_IN_PROGRESS")){
+                }else if(response.code() == 400){
                     Toast.makeText(ChattingActivity.this,"약속 투표가 진행중이지 않습니다",Toast.LENGTH_SHORT).show();
-                }else if(response.message().equals("CHAT_ROOM_NOT_FOUND")){
-                    Toast.makeText(ChattingActivity.this,"해당 채팅 방을 찾을 수 없습니다.",Toast.LENGTH_SHORT).show();
-                }else if(response.message().equals("CHAT_JOIN_NOT_FOUND")){
-                    Toast.makeText(ChattingActivity.this,"해당 사용자가 채팅방에 속해 있지 않습니다",Toast.LENGTH_SHORT).show();
-                }else if(response.message().equals("CHAT_PROMISE_NOT_FOUND")){
-                    Toast.makeText(ChattingActivity.this,"해당 채팅 약속을 찾을 수 없습니다.",Toast.LENGTH_SHORT).show();
-                }else if(response.message().equals("CHAT_PROMISE_VOTE_DUPLICATION")){
+                }else if(response.code() == 409){
                     Toast.makeText(ChattingActivity.this,"이미 기동의한 약속입니다.",Toast.LENGTH_SHORT).show();
+                }else if(response.code() == 404){
+                    Toast.makeText(ChattingActivity.this,"동의할 수 없는 약속입니다.",Toast.LENGTH_SHORT).show();
                 }
+
             }
 
             @Override
@@ -654,22 +643,25 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                         tv_info.setText(info);
 
                     }
-                } else if(response.message().equals("CHAT_ROOM_NOT_FOUND")) {
-                    Log.w("chatting,getPromise","해당 채팅방을 찾을 수 없습니다.");
-
-                } else if(response.message().equals("CHAT_JOIN_NOT_FOUND")) {
-                    Log.w("chatting,getPromise","해당 사용자가 채팅방에 속해있지 않습니다.");
-
-                } else if(response.message().equals("CHAT_PROMISE_NOT_FOUND")) {
-                    Log.w("chatting,getPromise","해당 채팅 약속을 찾을 수 없습니다.");
+                } else if(response.code() == 404){
+                    Toast.makeText(ChattingActivity.this, "조회할 수 없는 채팅방입니다.", Toast.LENGTH_LONG).show();
+                    finish();
                 }
+                else{
+                    Log.d("chatting,getpromise", new Gson().toJson(response.errorBody()));
+                    Log.d("chatting,getpromise", response.toString());
+                    Log.d("chatting,getpromise", String.valueOf(response.code()));
+                    Log.d("chatting,getpromise", response.message());
+                    Log.d("chatting,getpromise", String.valueOf(response.raw().request().url().url()));
+                    Log.d("chatting,getpromise", new Gson().toJson(response.raw().request()));
 
+                }
             }
 
             @Override
             public void onFailure(Call<ChatPromiseResponse> call, Throwable t) {
 
-                Log.d("외않되", String.valueOf(t));
+                Log.d("chatting,getpromise", String.valueOf(t));
 
             }
         });

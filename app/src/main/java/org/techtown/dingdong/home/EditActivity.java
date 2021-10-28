@@ -55,6 +55,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.techtown.dingdong.BuildConfig;
+import org.techtown.dingdong.MainActivity;
 import org.techtown.dingdong.R;
 import org.techtown.dingdong.chatting.ChattingActivity;
 import org.techtown.dingdong.chatting.UserListActivity;
@@ -491,16 +492,19 @@ public class EditActivity extends AppCompatActivity {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if(response.isSuccessful()){
                     resId = id;
-                    Log.d("성공","수정이완료됨");
+                    //Log.d("성공","수정이완료됨");
                     onfinish(1);
 
+                }else if(response.code() == 404){
+                    Toast.makeText(EditActivity.this,"해당 포스트를 찾을 수 없습니다.", Toast.LENGTH_LONG).show();
+                    finish();
                 }else{
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                    Log.d("edit,setpatch", new Gson().toJson(response.errorBody()));
+                    Log.d("edit,setpatch", response.toString());
+                    Log.d("edit,setpatch", String.valueOf(response.code()));
+                    Log.d("edit,setpatch", response.message());
+                    Log.d("edit,setpatch", String.valueOf(response.raw().request().url().url()));
+                    Log.d("edit,setpatch", new Gson().toJson(response.raw().request()));
 
                 }
             }
@@ -564,13 +568,16 @@ public class EditActivity extends AppCompatActivity {
                    Log.d("성공",resId);
                    onfinish(1);
 
+                }else if(response.code() == 404){
+                    Toast.makeText(EditActivity.this,"해당 동네를 찾을 수 없습니다. 동네 선택을 확인해주세요.", Toast.LENGTH_LONG).show();
+                    finish();
                 }else{
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                    Log.d("edit,setpost", new Gson().toJson(response.errorBody()));
+                    Log.d("edit,setpost", response.toString());
+                    Log.d("edit,setpost", String.valueOf(response.code()));
+                    Log.d("edit,setpost", response.message());
+                    Log.d("edit,setpost", String.valueOf(response.raw().request().url().url()));
+                    Log.d("edit,setpost", new Gson().toJson(response.raw().request()));
 
                 }
 
@@ -578,9 +585,7 @@ public class EditActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<EditResponse> call, Throwable t) {
-
-                Log.d("외않되",t.toString() );
-                Log.d("외않되",call.toString() );
+                Log.d("edit,setpost",t.toString());
 
             }
         });
@@ -603,7 +608,7 @@ public class EditActivity extends AppCompatActivity {
                 if(response.isSuccessful() && response.body() != null){
                     if(response.body().getResult().equals("POST_READ_SUCCESS")){
                         ShareResponse res = response.body();
-                        Log.d("성공", new Gson().toJson(res));
+                        //Log.d("성공", new Gson().toJson(res));
 
                         Share share;
                         share = res.getShare();
@@ -658,20 +663,26 @@ public class EditActivity extends AppCompatActivity {
 
                     }
 
-                }else{
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                }else if(response.code() == 404){
+                    Toast.makeText(EditActivity.this,"해당 포스트를 찾을 수 없습니다.", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(EditActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }
+                else{
+                    Log.d("edit,getshare", new Gson().toJson(response.errorBody()));
+                    Log.d("edit,getshare", response.toString());
+                    Log.d("edit,getshare", String.valueOf(response.code()));
+                    Log.d("edit,getshare", response.message());
+                    Log.d("edit,getshare", String.valueOf(response.raw().request().url().url()));
+                    Log.d("edit,getshare", new Gson().toJson(response.raw().request()));
                 }
             }
 
             @Override
             public void onFailure(Call<ShareResponse> call, Throwable t) {
 
-                Log.d("외않되", String.valueOf(t));
+                Log.d("edit,getshare", String.valueOf(t));
 
             }
         });

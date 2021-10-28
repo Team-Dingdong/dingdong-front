@@ -69,7 +69,7 @@ public class SearchResultActivity extends AppCompatActivity {
                 if(response.isSuccessful() && response.body() != null){
                     if(response.body().getResult().equals("SEARCH_SUCCESS")){
                         PostResponse res = response.body();
-                        Log.d("성공", new Gson().toJson(res));
+                        //Log.d("성공", new Gson().toJson(res));
 
                         ArrayList<Share> mList = new ArrayList<>();
                         mList = res.getData().getShare();

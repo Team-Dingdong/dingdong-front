@@ -83,14 +83,8 @@ public class UserListActivity extends AppCompatActivity {
                         chatUserAdapter = new ChatUserAdapter(chatUsers, UserListActivity.this);
                         recyclerView.setAdapter(chatUserAdapter);
                     }
-                }else if(response.message().equals("CHAT_ROOM_NOT_FOUND")){
-                    Toast.makeText(UserListActivity.this, "해당 채팅방을 찾을 수 없습니다", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(UserListActivity.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-
-                }else if(response.message().equals("CHAT_JOIN_NOT_FOUND")){
-                    Toast.makeText(UserListActivity.this, "해당 사용자가 채팅방에 속해 있지 않습니다", Toast.LENGTH_LONG).show();
+                }else if(response.code() == 404){
+                    Toast.makeText(UserListActivity.this, "해당 채팅방을 찾을 수 없습니다.", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(UserListActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
@@ -138,7 +132,7 @@ public class UserListActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     Log.i("Dialog", "네");
-                                    if(chatUser.getIsmaster() == "fasle"){
+                                    if(chatUser.getIsmaster().equals("false")){
                                     chatUserAdapter.removeItem(position);
                                     Toast.makeText(UserListActivity.this,"퇴장되었습니다.",Toast.LENGTH_LONG).show();}
                                     else{
@@ -199,17 +193,9 @@ public class UserListActivity extends AppCompatActivity {
                         tv_title.setText(chatRoom.getTitle());
                         tv_people.setText(chatRoom.getPersonnel());
                     }
-                }else if(response.message().equals("CHAT_ROOM_NOT_FOUND")){
-                    Toast.makeText(UserListActivity.this, "해당 채팅방을 찾을 수 없습니다", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(UserListActivity.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                }
-                else if(response.message().equals("CHAT_JOIN_NOT_FOUND")){
-                    Toast.makeText(UserListActivity.this, "해당 사용자가 채팅방에 속해 있지 않습니다", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(UserListActivity.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
+                }else if(response.code() == 404){
+                    Toast.makeText(UserListActivity.this, "조회할 수 없는 채팅방입니다.", Toast.LENGTH_LONG).show();
+                    finish();
                 }
                 else{
                     Log.d("userlist,getChatRoom", new Gson().toJson(response.errorBody()));
@@ -218,7 +204,6 @@ public class UserListActivity extends AppCompatActivity {
                     Log.d("userlist,getChatRoom", response.message());
                     Log.d("userlist,getChatRoom", String.valueOf(response.raw().request().url().url()));
                     Log.d("userlist,getChatRoom", new Gson().toJson(response.raw().request()));
-
                 }
 
             }

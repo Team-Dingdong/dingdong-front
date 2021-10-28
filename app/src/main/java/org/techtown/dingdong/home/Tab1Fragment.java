@@ -197,7 +197,7 @@ public class Tab1Fragment extends Fragment {
                 if(response.isSuccessful() && response.body() != null){
                     if(response.body().getResult().equals("POST_READ_SUCCESS")){
                         PostResponse res = response.body();
-                        Log.d("성공", new Gson().toJson(res));
+                        //Log.d("성공", new Gson().toJson(res));
 
                         if(page == 0 && !shareList.isEmpty()){
                             shareList = new ArrayList<>();
@@ -207,25 +207,27 @@ public class Tab1Fragment extends Fragment {
                         shareList.addAll(res.getData().getShare());
                         shareListAdpater.notifyDataSetChanged();
 
-
-                        Log.d("성공", new Gson().toJson(response.raw().request()));
+                        //Log.d("성공", new Gson().toJson(response.raw().request()));
 
                     }
 
+                }else if(response.code() == 404){
+                    Log.w("tab1,getEndD","해당 동네를 찾을 수 없습니다.");
+
                 }else{
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                    Log.d("tab1,getEndD", new Gson().toJson(response.errorBody()));
+                    Log.d("tab1,getEndD", response.toString());
+                    Log.d("tab1,getEndD", String.valueOf(response.code()));
+                    Log.d("tab1,getEndD", response.message());
+                    Log.d("tab1,getEndD", String.valueOf(response.raw().request().url().url()));
+                    Log.d("tab1,getEndD", new Gson().toJson(response.raw().request()));
                 }
 
             }
 
             @Override
             public void onFailure(Call<PostResponse> call, Throwable t) {
-                Log.d("외않되", String.valueOf(t));
+                Log.d("tab1,getEndD", String.valueOf(t));
 
             }
         });
@@ -258,20 +260,23 @@ public class Tab1Fragment extends Fragment {
 
                     }
 
+                }else if(response.code() == 404){
+                    Log.w("tab1,getCreatedD","해당 동네를 찾을 수 없습니다.");
+
                 }else{
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                    Log.d("tab1,getCreatedD", new Gson().toJson(response.errorBody()));
+                    Log.d("tab1,getCreatedD", response.toString());
+                    Log.d("tab1,getCreatedD", String.valueOf(response.code()));
+                    Log.d("tab1,getCreatedD", response.message());
+                    Log.d("tab1,getCreatedD", String.valueOf(response.raw().request().url().url()));
+                    Log.d("tab1,getCreatedD", new Gson().toJson(response.raw().request()));
                 }
 
             }
 
             @Override
             public void onFailure(Call<PostResponse> call, Throwable t) {
-                Log.d("외않되", String.valueOf(t));
+                Log.d("tab1,getCreatedD", String.valueOf(t));
 
             }
         });

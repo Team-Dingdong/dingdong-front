@@ -275,14 +275,18 @@ public class PlanningActivity extends AppCompatActivity {
                         tv_info.setText(info);
 
                     }
-                } else if(response.message().equals("CHAT_ROOM_NOT_FOUND")) {
-                    Log.w("planning,getPromise","해당 채팅방을 찾을 수 없습니다.");
+                } else if(response.code() == 404){
+                    Toast.makeText(PlanningActivity.this, "조회할 수 없는 채팅방입니다.", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+                else{
+                    Log.d("planning,getpromise", new Gson().toJson(response.errorBody()));
+                    Log.d("planning,getpromise", response.toString());
+                    Log.d("planning,getpromise", String.valueOf(response.code()));
+                    Log.d("planning,getpromise", response.message());
+                    Log.d("planning,getpromise", String.valueOf(response.raw().request().url().url()));
+                    Log.d("planning,getpromise", new Gson().toJson(response.raw().request()));
 
-                } else if(response.message().equals("CHAT_JOIN_NOT_FOUND")) {
-                    Log.w("planning,getPromise","해당 사용자가 채팅방에 속해있지 않습니다.");
-
-                } else if(response.message().equals("CHAT_PROMISE_NOT_FOUND")) {
-                    Log.w("planning,getPromise","해당 채팅 약속을 찾을 수 없습니다.");
                 }
 
             }
@@ -318,16 +322,12 @@ public class PlanningActivity extends AppCompatActivity {
 
 
                     }
-                }else if(response.message().equals("CHAT_PROMISE_UPDATE_FAIL_CONFIRMED")){
+                }else if(response.code() == 400){
                     Toast.makeText(PlanningActivity.this, "약속이 확정되어 수정할 수 없습니다.",Toast.LENGTH_SHORT).show();
-                }
-                else if(response.message().equals("CHAT_ROOM_NOT_OWNER")){
+                }else if(response.code() == 403){
                     Toast.makeText(PlanningActivity.this, "해당 채팅방의 방장이 아닙니다.",Toast.LENGTH_SHORT).show();
-                }
-                else if(response.message().equals("CHAT_ROOM_NOT_FOUND")){
+                }else if(response.code() == 404){
                     Toast.makeText(PlanningActivity.this, "해당 채팅방을 찾을 수 없습니다.",Toast.LENGTH_SHORT).show();
-                }else if(response.message().equals("CHAT_PROMISE_NOT_FOUND")){
-                    Toast.makeText(PlanningActivity.this, "해당 채팅 약속을 찾을 수 없습니다",Toast.LENGTH_SHORT).show();
                 }
             }
 

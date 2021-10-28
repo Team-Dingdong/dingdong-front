@@ -165,14 +165,20 @@ public class ShareDetailActivity extends AppCompatActivity {
                                                             }
 
 
-                                                        } else {
-
-                                                            Log.d("실패", new Gson().toJson(response.errorBody()));
-                                                            Log.d("실패", response.toString());
-                                                            Log.d("실패", String.valueOf(response.code()));
-                                                            Log.d("실패", response.message());
-                                                            Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                                                            Log.d("실패", new Gson().toJson(response.raw().request()));
+                                                        }else if(response.code() == 404){
+                                                            Toast.makeText(ShareDetailActivity.this, "해당 포스트를 찾을 수 없습니다.", Toast.LENGTH_LONG).show();
+                                                            //Log.d("sharedetail,del", "해당 포스트를 찾을 수 없습니다.");
+                                                        }else if(response.code() == 400){
+                                                            Toast.makeText(ShareDetailActivity.this, "해당 권한이 없습니다.", Toast.LENGTH_LONG).show();
+                                                            //Log.d("sharedetail,del", "해당 권한이 없습니다.");
+                                                        }
+                                                        else {
+                                                            Log.d("sharedetail,del", new Gson().toJson(response.errorBody()));
+                                                            Log.d("sharedetail,del", response.toString());
+                                                            Log.d("sharedetail,del", String.valueOf(response.code()));
+                                                            Log.d("sharedetail,del", response.message());
+                                                            Log.d("sharedetail,del", String.valueOf(response.raw().request().url().url()));
+                                                            Log.d("sharedetail,del", new Gson().toJson(response.raw().request()));
 
                                                         }
 
@@ -181,7 +187,7 @@ public class ShareDetailActivity extends AppCompatActivity {
                                                     @Override
                                                     public void onFailure(Call<ResponseBody> call, Throwable t) {
 
-                                                        Log.d("외않되", String.valueOf(t));
+                                                        Log.d("sharedetail,del", String.valueOf(t));
 
                                                     }
                                                 });
@@ -232,34 +238,19 @@ public class ShareDetailActivity extends AppCompatActivity {
 
                         }else{
 
-                            if(response.message().equals("CHAT_ROOM_DUPLICATION")){
+                            if(response.code() == 409){
                                 Toast.makeText(ShareDetailActivity.this,"이미 입장한 채팅방입니다.", Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(ShareDetailActivity.this, ChattingActivity.class);
                                 intent.putExtra("id",id);
                                 startActivity(intent);
 
                             }
-                            else if(response.message().equals("CHAT_ROOM_NOT_FOUND")){
+                            else if(response.code() == 404){
                                 Toast.makeText(ShareDetailActivity.this,"해당 채팅방을 찾을 수 없습니다.", Toast.LENGTH_LONG).show();
                             }
-                            else if(response.message().equals("CHAT_ROOM_ENTER_FAIL_DONE")){
-                                Toast.makeText(ShareDetailActivity.this,"해당 거래가 완료되어 입장할 수 없습니다.", Toast.LENGTH_LONG).show();
+                            else if(response.code() == 400){
+                                Toast.makeText(ShareDetailActivity.this,"이미 진행되어 참여할 수 없는 거래입니다.", Toast.LENGTH_LONG).show();
                             }
-                            else if(response.message().equals("CHAT_ROOM_ENTER_FAIL_PROMISE")){
-                                Toast.makeText(ShareDetailActivity.this,"해당 거래 약속이 생성되어 입장할 수 없습니다.", Toast.LENGTH_LONG).show();
-                            }
-                            else if(response.message().equals("CHAT_ROOM_ENTER_FAIL_LIMIT")){
-                                Toast.makeText(ShareDetailActivity.this,"해당 거래의 인원이 가득 찼습니다.", Toast.LENGTH_LONG).show();
-                            }
-                            else{
-                            Log.d("실패", new Gson().toJson(response.errorBody()));
-                            Log.d("실패", response.toString());
-                            Log.d("실패", String.valueOf(response.code()));
-                            Log.d("실패", response.message());
-                            Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                            Log.d("실패", new Gson().toJson(response.raw().request()));
-                            }
-
                         }
 
                     }
@@ -267,7 +258,7 @@ public class ShareDetailActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
 
-                        Log.d("외않되", String.valueOf(t));
+                        Log.d("sharedetail,enter", String.valueOf(t));
 
                     }
                 });
@@ -346,20 +337,25 @@ public class ShareDetailActivity extends AppCompatActivity {
                         }}
                     }
 
-                }else{
-                    Log.d("실패", new Gson().toJson(response.errorBody()));
-                    Log.d("실패", response.toString());
-                    Log.d("실패", String.valueOf(response.code()));
-                    Log.d("실패", response.message());
-                    Log.d("실패", String.valueOf(response.raw().request().url().url()));
-                    Log.d("실패", new Gson().toJson(response.raw().request()));
+                }else if(response.code() == 404){
+                    Toast.makeText(ShareDetailActivity.this,"해당 포스트를 찾을 수 없습니다.", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(ShareDetailActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }
+                else{
+                    Log.d("sharedetail,getshare", new Gson().toJson(response.errorBody()));
+                    Log.d("sharedetail,getshare", response.toString());
+                    Log.d("sharedetail,getshare", String.valueOf(response.code()));
+                    Log.d("sharedetail,getshare", response.message());
+                    Log.d("sharedetail,getshare", String.valueOf(response.raw().request().url().url()));
+                    Log.d("sharedetail,getshare", new Gson().toJson(response.raw().request()));
                 }
             }
 
             @Override
             public void onFailure(Call<ShareResponse> call, Throwable t) {
-
-                Log.d("외않되", String.valueOf(t));
+                Log.d("sharedetail,getshare", String.valueOf(t));
 
             }
         });
