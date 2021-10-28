@@ -96,7 +96,7 @@ public class MysalesFragment extends Fragment {
                 if(response.isSuccessful() && response.body() != null){
                     if(response.body().getResult().equals("POST_READ_SUCCESS")){
                         HistoryResponse res = response.body();
-                        Log.d("성공", new Gson().toJson(res));
+                        //Log.d("성공", new Gson().toJson(res));
                         if(!salesList.isEmpty()){
                             salesList = new ArrayList<>();
                         }

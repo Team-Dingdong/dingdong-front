@@ -100,7 +100,7 @@ public class RatingActivity extends AppCompatActivity {
                 if(response.isSuccessful() && response.body() != null) {
                     if (response.body().getResult().equals("PROFILE_READ_SUCCESS")) {
                         UserProfileResponse res = response.body();
-                        Log.d("성공", new Gson().toJson(res));
+                        //Log.d("성공", new Gson().toJson(res));
                         username = res.getData().getNickname();
                     }
                 }else{
@@ -120,7 +120,7 @@ public class RatingActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<UserProfileResponse> call, Throwable t) {
 
-                Log.d("외않되", String.valueOf(t));
+                Log.d("rating,getuserpro", String.valueOf(t));
 
             }
         });

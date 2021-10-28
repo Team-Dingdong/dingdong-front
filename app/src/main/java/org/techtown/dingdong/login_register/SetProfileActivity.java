@@ -314,7 +314,7 @@ public class SetProfileActivity extends AppCompatActivity {
                     }
                 }
                 else if(response.code() == 409) {
-                        Toast.makeText(SetProfileActivity.this,"이미 사용중인 닉네임입니다. 다른 닉네임을 설정해주세요.",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SetProfileActivity.this,"이미 사용중인 닉네임입니다. 다른 닉네임을 설정해주세요.",Toast.LENGTH_SHORT).show();
                 }
                 else if(response.code() == 404) {
                     Toast.makeText(SetProfileActivity.this,"해당 프로필을 찾을 수 없습니다",Toast.LENGTH_SHORT).show();

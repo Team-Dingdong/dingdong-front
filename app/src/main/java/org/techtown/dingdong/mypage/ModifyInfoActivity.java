@@ -342,6 +342,8 @@ public class ModifyInfoActivity extends AppCompatActivity {
                                                 startActivity(intent);
                                             }
 
+                                        }else if(response.code() == 404){
+                                            Toast.makeText(ModifyInfoActivity.this, "해당 유저 정보를 찾을 수 없습니다.", Toast.LENGTH_LONG).show();
                                         } else {
 
                                             Log.d("실패", new Gson().toJson(response.errorBody()));
