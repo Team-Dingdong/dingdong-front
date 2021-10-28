@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -123,8 +124,12 @@ public class UserProfileActivity extends AppCompatActivity {
                                 case R.id.report:
                                     popupMenu.dismiss();
                                     final EditText editText = new EditText(UserProfileActivity.this);
+                                    //글자수 제한을 위한 인풋필터 코드 처리
+                                    InputFilter[] inputFilters = new InputFilter[1];
+                                    inputFilters[0] = new InputFilter.LengthFilter(30);
+                                    editText.setFilters(inputFilters);
                                     AlertDialog.Builder builder = new AlertDialog.Builder(UserProfileActivity.this);
-                                    builder.setTitle("신고 사유를 입력하세요.");
+                                    builder.setTitle("신고 사유를 입력하세요.").setMessage("30자 이내로 입력이 가능합니다.");
                                     builder.setView(editText);
                                     builder.setPositiveButton("입력", new DialogInterface.OnClickListener() {
                                         @Override
@@ -138,7 +143,7 @@ public class UserProfileActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                                     if(response.isSuccessful() && response.body() != null){
-                                                        if(response.code() == 201) {
+                                                        if(response.code() == 200) {
                                                             Toast.makeText(UserProfileActivity.this, "신고가 완료되었습니다.", Toast.LENGTH_SHORT).show();
                                                         }
                                                     }
@@ -150,11 +155,20 @@ public class UserProfileActivity extends AppCompatActivity {
 
                                                     }else if(response.code() == 409){
                                                         Toast.makeText(UserProfileActivity.this, "이미 신고한 사용자입니다", Toast.LENGTH_SHORT).show();
+                                                    }else{
+                                                        Log.d("userporf.report", new Gson().toJson(response.errorBody()));
+                                                        Log.d("userporf.report", response.toString());
+                                                        Log.d("userporf.report", String.valueOf(response.code()));
+                                                        Log.d("userporf.report", response.message());
+                                                        Log.d("userporf.report", String.valueOf(response.raw().request().url().url()));
+                                                        Log.d("userporf.report", new Gson().toJson(response.raw().request()));
                                                     }
                                                 }
 
                                                 @Override
                                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                                    Log.d("userporf.report",t.toString());
 
                                                 }
                                             });

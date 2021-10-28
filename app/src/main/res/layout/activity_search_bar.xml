@@ -57,6 +57,7 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="8dp"
             android:ems="10"
+            android:maxLength="10"
             android:fontFamily="@font/montserrat_regular"
             android:hint="무엇을 찾으시나요?"
             android:imeOptions="actionSearch"

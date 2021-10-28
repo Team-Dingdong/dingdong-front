@@ -276,8 +276,8 @@ public class PlanningActivity extends AppCompatActivity {
 
                     }
                 } else if(response.code() == 404){
-                    Toast.makeText(PlanningActivity.this, "조회할 수 없는 채팅방입니다.", Toast.LENGTH_LONG).show();
-                    finish();
+                    //Toast.makeText(PlanningActivity.this, "조회할 수 없는 채팅방입니다.", Toast.LENGTH_LONG).show();
+                    //finish();
                 }
                 else{
                     Log.d("planning,getpromise", new Gson().toJson(response.errorBody()));
