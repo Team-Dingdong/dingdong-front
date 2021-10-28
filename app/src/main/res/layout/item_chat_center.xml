@@ -30,6 +30,7 @@
 
         <TextView
             android:id="@+id/chat"
+            android:textAlignment="center"
             android:layout_width="400dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/noto_sans"
@@ -38,9 +39,10 @@
             android:text="노원구청 앞 20210801 17시 17분 나눔 약속이 확정되었어요.
              약속 시간 세 시간 전, 알림을 드릴게요!"
             android:textColor="#000000"
-            android:textFontWeight="400"
+            android:textFontWeight="500"
             android:textSize="13dp"
-            android:textStyle="normal" />
+            android:textStyle="normal"
+            android:gravity="center_horizontal" />
 
         <TextView
             android:id="@+id/time"
