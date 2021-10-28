@@ -448,8 +448,8 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
 
                     }
                 }else if(response.code() == 404){
-                    Toast.makeText(ChattingActivity.this, "조회할 수 없는 채팅방입니다.", Toast.LENGTH_LONG).show();
-                    finish();
+                    //Toast.makeText(ChattingActivity.this, "조회할 수 없는 채팅방입니다.", Toast.LENGTH_LONG).show();
+                    //finish();
                 }
                 else{
                     Log.d("chatting,getchats", new Gson().toJson(response.errorBody()));
@@ -535,8 +535,8 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                         }
                     }
                 }else if(response.code() == 404){
-                    Toast.makeText(ChattingActivity.this, "조회할 수 없는 채팅방입니다.", Toast.LENGTH_LONG).show();
-                    finish();
+                    //Toast.makeText(ChattingActivity.this, "조회할 수 없는 채팅방입니다.", Toast.LENGTH_LONG).show();
+                    //finish();
                 }
                 else{
                     Log.d("chatting,getChatRoom", new Gson().toJson(response.errorBody()));
