@@ -37,6 +37,7 @@ public class TownActivity extends AppCompatActivity {
     String town1, town2;
     String num_town1, num_town2;
     String state;
+    Boolean ok;
 
 
 
@@ -65,6 +66,7 @@ public class TownActivity extends AppCompatActivity {
 
         Token token = new Token(access,refresh,expire,tokentype);
 
+        ok= false;
         town1="";
         town2="";
 
@@ -100,6 +102,7 @@ public class TownActivity extends AppCompatActivity {
             tv_town2.setVisibility(View.VISIBLE);
             button.setClickable(true);
             button.setBackgroundTintList(getResources().getColorStateList(R.color.blue));
+            ok =true;
         }
 
         btn_back.setOnClickListener(new View.OnClickListener() {
@@ -150,6 +153,7 @@ public class TownActivity extends AppCompatActivity {
               imgbtn_AddTown1.setVisibility(View.VISIBLE);
                 button.setClickable(false);
                 button.setBackgroundTintList(getResources().getColorStateList(R.color.grey));
+                ok = false;
 
             }
         });
@@ -164,6 +168,7 @@ public class TownActivity extends AppCompatActivity {
                 imgbtn_AddTown2.setVisibility(View.VISIBLE);
                 button.setClickable(false);
                 button.setBackgroundTintList(getResources().getColorStateList(R.color.grey));
+                ok = true;
             }
         });
 
@@ -173,35 +178,37 @@ public class TownActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //서버로 리퀘스트
-                int local1, local2;
-                local1 = Integer.parseInt(num_town1);
-                local2 = Integer.parseInt(num_town2);
-                AuthLocalRequest authLocalRequest = new AuthLocalRequest(local1, local2);
-                Apiinterface apiinterface = Api.createService(Apiinterface.class, token, TownActivity.this);
-                Call<AuthLocalResponse> call = apiinterface.authLocal(authLocalRequest);
-                call.enqueue(new Callback<AuthLocalResponse>() {
+                if (ok.equals(true)) {
+                    int local1, local2;
+                    local1 = Integer.parseInt(num_town1);
+                    local2 = Integer.parseInt(num_town2);
+                    AuthLocalRequest authLocalRequest = new AuthLocalRequest(local1, local2);
+                    Apiinterface apiinterface = Api.createService(Apiinterface.class, token, TownActivity.this);
+                    Call<AuthLocalResponse> call = apiinterface.authLocal(authLocalRequest);
+                    call.enqueue(new Callback<AuthLocalResponse>() {
 
-                    @Override
-                    public void onResponse(Call<AuthLocalResponse> call, Response<AuthLocalResponse> response) {
-                        if(response.body().code.equals("LOCAL_CREATE_SUCCESS")){
-                            Toast.makeText(getApplicationContext(),"동네 설정이 완료됐습니다.",Toast.LENGTH_LONG);
-                            Log.d("TAG","동네설정 성공");
+                        @Override
+                        public void onResponse(Call<AuthLocalResponse> call, Response<AuthLocalResponse> response) {
+                            if (response.body().code.equals("LOCAL_CREATE_SUCCESS")) {
+                                Toast.makeText(getApplicationContext(), "동네 설정이 완료됐습니다.", Toast.LENGTH_LONG);
+                                Log.d("TAG", "동네설정 성공");
 
-                            Intent intent = new Intent(TownActivity.this, MainActivity.class);
-                            startActivity(intent);
+                                Intent intent = new Intent(TownActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onFailure(Call<AuthLocalResponse> call, Throwable t) {
+                        @Override
+                        public void onFailure(Call<AuthLocalResponse> call, Throwable t) {
 
-                    }
-                });
+                        }
+                    });
 
                 /*
                 //화면전환
                 Intent intent = new Intent(TownActivity.this, MainActivity.class);
                 startActivity(intent);*/
+                }
             }
         });
     }
