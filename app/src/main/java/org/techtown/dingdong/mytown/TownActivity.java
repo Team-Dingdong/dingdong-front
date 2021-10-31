@@ -178,7 +178,7 @@ public class TownActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //서버로 리퀘스트
-                if (ok.equals(true)) {
+                if (ok) {
                     int local1, local2;
                     local1 = Integer.parseInt(num_town1);
                     local2 = Integer.parseInt(num_town2);
