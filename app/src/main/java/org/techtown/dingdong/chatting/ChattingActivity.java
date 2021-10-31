@@ -262,7 +262,6 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                     });
 
 
-        chattingBottomDialogFragment =new ChattingBottomDialogFragment(getApplicationContext(),ismaster);
 
         btn_plus.setOnClickListener(new View.OnClickListener()
                     {
@@ -533,6 +532,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                         }else{
                             ismaster = false;
                         }
+                        chattingBottomDialogFragment =new ChattingBottomDialogFragment(getApplicationContext(),ismaster);
                     }
                 }else if(response.code() == 404){
                     //Toast.makeText(ChattingActivity.this, "조회할 수 없는 채팅방입니다.", Toast.LENGTH_LONG).show();
@@ -606,7 +606,7 @@ public class ChattingActivity extends AppCompatActivity implements ChattingBotto
                 }else if(response.code() == 400){
                     Toast.makeText(ChattingActivity.this,"약속 투표가 진행중이지 않습니다",Toast.LENGTH_SHORT).show();
                 }else if(response.code() == 409){
-                    Toast.makeText(ChattingActivity.this,"이미 기동의한 약속입니다.",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChattingActivity.this,"이미 동의한 약속입니다.",Toast.LENGTH_SHORT).show();
                 }else if(response.code() == 404){
                     Toast.makeText(ChattingActivity.this,"동의할 수 없는 약속입니다.",Toast.LENGTH_SHORT).show();
                 }

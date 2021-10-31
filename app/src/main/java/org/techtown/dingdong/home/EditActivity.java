@@ -668,6 +668,7 @@ public class EditActivity extends AppCompatActivity {
                     Intent intent = new Intent(EditActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
+                    finish();
                 }
                 else{
                     Log.d("edit,getshare", new Gson().toJson(response.errorBody()));
@@ -856,6 +857,7 @@ public class EditActivity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("id",resId);
                 startActivity(intent);
+                finish();
             }
         }, 1000);
 

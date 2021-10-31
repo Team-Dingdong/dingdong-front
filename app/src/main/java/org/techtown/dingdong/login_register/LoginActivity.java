@@ -182,8 +182,7 @@ public class LoginActivity extends AppCompatActivity {
                             
                         }else if(response.code() == 400){
                                 //다시인증해주세요
-                                Toast.makeText(LoginActivity.this, "인증번호가 올바르지 않습니다.", Toast.LENGTH_SHORT).show();
-                                finish();
+                                Toast.makeText(LoginActivity.this, "인증번호를 다시 한번 확인해주세요.", Toast.LENGTH_SHORT).show();
                         }else if(response.code() == 403){
                             Toast.makeText(LoginActivity.this, "인증 시간을 초과하였습니다.", Toast.LENGTH_SHORT).show();
                             finish();

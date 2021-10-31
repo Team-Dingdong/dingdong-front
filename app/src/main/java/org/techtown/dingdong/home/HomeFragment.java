@@ -73,6 +73,7 @@ public class HomeFragment extends Fragment {
     ProgressBar pgbar;
     ArrayList<Share> shareList = new ArrayList<>();
     int Id = 0;
+    String[] region = new String[]{"동네택 선","지역1", "지역2"};
 
     public HomeFragment() {
         // Required empty public constructor
@@ -91,6 +92,7 @@ public class HomeFragment extends Fragment {
 
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -100,6 +102,8 @@ public class HomeFragment extends Fragment {
         List<String> where = new ArrayList<String>();
         where.add("동네선택");
 
+        Log.d("home",region[0].toString());
+        Log.d("home",region[1].toString());
 
         View v = inflater.inflate(R.layout.fragment_home, container, false);
         btn_edit = v.findViewById(R.id.btn_edit);
@@ -144,7 +148,7 @@ public class HomeFragment extends Fragment {
                         LocalResponse.Data data2 = res.getData().get(1);
                         where.add(data1.getName());
                         where.add(data2.getName());
-                        String[] region = new String[where.size()];
+                        region = new String[where.size()];
                         where.toArray(region);
                         tv_region.setText(region[Id]);
                         //동네 선택 스피너 세팅
@@ -449,10 +453,19 @@ public class HomeFragment extends Fragment {
 
         loading = false;
 
-
     }
 
-
-
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        tv_region.setText(region[Id]);
+        page = 0;
+        tv_align.setText("최신순");
+        shareList = new ArrayList<>();
+        shareListAdpater = new ShareListAdpater(getActivity(), shareList);
+        sharelistrecycler.setAdapter(shareListAdpater);
+        sharelistrecycler.scrollToPosition(0);
+        setCreatedData(token);
+        trans = true;
+    }
 }

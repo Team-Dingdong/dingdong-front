@@ -69,10 +69,14 @@ public class ChattingBottomDialogFragment extends BottomSheetDialogFragment {
         btn_gallery = v.findViewById(R.id.btn_gallery);
         btn_planning = v.findViewById(R.id.btn_palnning);
         btn_delete = v.findViewById(R.id.btn_delete);
+        sec_delete = v.findViewById(R.id.sec_delete);
+        sec_planning = v.findViewById(R.id.sec_planning);
 
         if(!ismaster){
-            btn_planning.setVisibility(View.GONE);
-            btn_delete.setVisibility(View.GONE);
+            sec_planning.setVisibility(View.GONE);
+            sec_delete.setVisibility(View.GONE);
+            //btn_planning.setVisibility(View.GONE);
+            //btn_delete.setVisibility(View.GONE);
         }
 
         btn_gallery.setOnClickListener(new View.OnClickListener() {

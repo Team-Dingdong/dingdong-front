@@ -74,23 +74,23 @@
                         android:id="@+id/cardView"
                         android:layout_width="85dp"
                         android:layout_height="85dp"
-                        android:layout_marginLeft="36dp"
                         android:layout_marginStart="33dp"
+                        android:layout_marginLeft="36dp"
                         app:cardCornerRadius="75dp"
                         app:cardElevation="0dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
 
-                    <ImageView
-                        android:id="@+id/imageView2"
-                        android:layout_width="match_parent"
-                        android:scaleType="centerCrop"
-                        android:layout_height="match_parent"
-                        android:background="#c5c5c5"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        <ImageView
+                            android:id="@+id/imageView2"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="#c5c5c5"
+                            android:scaleType="centerCrop"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                     </androidx.cardview.widget.CardView>
 
@@ -99,9 +99,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="16dp"
+                        android:layout_marginTop="1dp"
                         android:fontFamily="@font/noto_sans"
                         android:text="젤리"
-                        android:layout_marginTop="1dp"
                         android:textColor="#000000"
                         android:textFontWeight="700"
                         android:textSize="20dp"
@@ -225,8 +225,25 @@
 
                     </TextView>
 
+
                 </LinearLayout>
 
+
+                <TextView
+                    android:id="@+id/tv_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="22dp"
+                    android:fontFamily="@font/noto_sans"
+                    android:text="7분전"
+                    android:textColor="#AEAEB2"
+                    android:textFontWeight="700"
+                    android:textSize="13dp"
+                    android:textStyle="normal"
+                    app:layout_constraintStart_toEndOf="@+id/peoplenumber"
+                    app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"></TextView>
 
                 <LinearLayout
                     android:id="@+id/linearLayout"
@@ -411,9 +428,10 @@
 
                     <ImageButton
                         android:id="@+id/ic_more"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="20dp"
+                        android:layout_width="45dp"
+                        android:visibility="gone"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="9dp"
                         android:background="@android:color/transparent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"

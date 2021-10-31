@@ -31,6 +31,7 @@ import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 
 import okhttp3.ResponseBody;
@@ -88,6 +89,7 @@ public class PlanningActivity extends AppCompatActivity {
         getInfo(token);
 
 
+        Calendar cal = Calendar.getInstance();
 
         Timestamp curTime = new Timestamp(System.currentTimeMillis());
         String cur = curTime.toString();
@@ -127,9 +129,10 @@ public class PlanningActivity extends AppCompatActivity {
             }
         };
 
+
         //데이트 피커 팝업 세팅
         DatePickerDialog datePickerDialog = new DatePickerDialog(this,dateSetListener,Integer.parseInt(year), Integer.parseInt(mon)-1, Integer.parseInt(day));
-
+        datePickerDialog.getDatePicker().setMinDate(cal.getTimeInMillis());
 
         btn_datepick.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,9 +164,6 @@ public class PlanningActivity extends AppCompatActivity {
                 info = makeInfo(date, time, place);
                 tv_info.setText(info);
                 tv_time.setText(time);
-                //gett = true;
-                //setBtnFinish(gett, getd, getp);
-
             }
         };
 
@@ -199,8 +199,6 @@ public class PlanningActivity extends AppCompatActivity {
                 place = et_place.getText().toString();
                 info = makeInfo(date, time, place);
                 tv_info.setText(info);
-                //getp = true;
-                //setBtnFinish(gett, getd, getp);
 
             }
         });
@@ -223,9 +221,9 @@ public class PlanningActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(tv_date.getText().toString().length() > 0 && et_place.getText().toString().length() > 0 && tv_time.getText().toString().length() > 0){
-                    if(Integer.parseInt(mm) < 10){
+                    /*if(Integer.parseInt(mm) < 10){
                         //gettime = h + ":" + mm + ":00";
-                    }
+                    }*/
                     sendInfo(token);
 
                 }
@@ -245,12 +243,6 @@ public class PlanningActivity extends AppCompatActivity {
         return date + ", " + time + "에 " + place + "에서";
     }
 
-    /*private void setBtnFinish(Boolean time, Boolean place, Boolean date){
-        if(time && place && date){
-            btn_finish.setBackgroundColor(Color.parseColor("#B2FFE2"));
-        }
-    }*/
-
     public void getInfo(Token token) {
         Apiinterface apiinterface = Api.createService(Apiinterface.class, token, PlanningActivity.this);
         Call<ChatPromiseResponse> call = apiinterface.getPromise(Integer.parseInt(id));
@@ -260,14 +252,16 @@ public class PlanningActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getResult().equals("CHAT_PROMISE_READ_SUCCESS")) {
                         ChatPromiseResponse res = response.body();
-                        Log.d("성공", new Gson().toJson(res));
+                        //Log.d("성공", new Gson().toJson(res));
                         getdate = res.getData().getPromiseDate();
                         gethour = res.getData().getPromiseTime().substring(0, 2);
                         getmin = res.getData().getPromiseTime().substring(3, 5);
-                        Log.d("성공", date);
+                        //Log.d("성공", getdate + gethour + getmin);
 
                         et_place.setText(getlocal);
                         gettime = gethour + "시 " + getmin + "분";
+                        time = gethour + ":" + getmin;
+                        date = getdate;
                         getlocal = res.getData().getPromiseLocal();
                         info = makeInfo(getdate, gettime, getlocal);
                         tv_date.setText(getdate);
@@ -322,12 +316,31 @@ public class PlanningActivity extends AppCompatActivity {
 
 
                     }
+                    if (response.code() == 201) {
+
+                        Toast.makeText(PlanningActivity.this, "수정이 완료되었습니다.",Toast.LENGTH_LONG).show();
+
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                finish();
+                            }
+                        }, 1000);
+                    }
                 }else if(response.code() == 400){
                     Toast.makeText(PlanningActivity.this, "약속이 확정되어 수정할 수 없습니다.",Toast.LENGTH_SHORT).show();
                 }else if(response.code() == 403){
                     Toast.makeText(PlanningActivity.this, "해당 채팅방의 방장이 아닙니다.",Toast.LENGTH_SHORT).show();
                 }else if(response.code() == 404){
                     Toast.makeText(PlanningActivity.this, "해당 채팅방을 찾을 수 없습니다.",Toast.LENGTH_SHORT).show();
+                }else{
+                    Log.d("sharedetail,del", new Gson().toJson(response.errorBody()));
+                    Log.d("sharedetail,del", response.toString());
+                    Log.d("sharedetail,del", String.valueOf(response.code()));
+                    Log.d("sharedetail,del", response.message());
+                    Log.d("sharedetail,del", String.valueOf(response.raw().request().url().url()));
+                    Log.d("sharedetail,del", new Gson().toJson(response.raw().request()));
                 }
             }
 

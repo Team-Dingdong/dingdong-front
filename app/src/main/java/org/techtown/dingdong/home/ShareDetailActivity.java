@@ -38,7 +38,10 @@ import org.techtown.dingdong.chatting.UserListActivity;
 import org.techtown.dingdong.login_register.Token;
 import org.techtown.dingdong.network.Api;
 import org.techtown.dingdong.network.Apiinterface;
+import org.techtown.dingdong.profile.UserProfileActivity;
+import org.techtown.dingdong.profile.UserProfileResponse;
 
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,11 +61,12 @@ public class ShareDetailActivity extends AppCompatActivity {
             "\n" +
             "날짜별 예약 대상은 해당 날짜 끝자리와 생년월일 끝자리가 일치하는 사람으로 지정된다. 가령, 예약이 시작되는 9일의 경우, 생년월일 끝자리가 9인 사람들이 예약 대상이다. 날짜별 예약은 오후 8시부터 이튿날 오후 6시까지 진행된다.";
     private String title = "18~49세 다음달 9일부터 10부제";
-    private TextView tv_detail, tv_title, tv_userbio, tv_username, tv_like, tv_dislike, tv_place, tv_people, tv_people2, tv_info, tv_price, tv_category, tv_hashtag;
+    private TextView tv_detail, tv_title, tv_userbio, tv_date, tv_username, tv_like, tv_dislike, tv_place, tv_people, tv_people2, tv_info, tv_price, tv_category, tv_hashtag;
     private ImageButton btn_back, btn_more;
     private String id;
     private ImageView img_profile;
     private Button btn_enroll;
+    private String username, editname;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +92,8 @@ public class ShareDetailActivity extends AppCompatActivity {
         btn_enroll = findViewById(R.id.btn_enroll);
         tv_category = findViewById(R.id.tv_category);
         tv_hashtag = findViewById(R.id.hashtag);
+        tv_date = findViewById(R.id.tv_date);
+        btn_more = findViewById(R.id.ic_more);
 
 
         SharedPreferences pref = this.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
@@ -103,118 +109,15 @@ public class ShareDetailActivity extends AppCompatActivity {
         id = intent.getStringExtra("id");
 
         setShare(token);
-
-        btn_more.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                final PopupMenu popupMenu = new PopupMenu(getApplicationContext(), v);
-                getMenuInflater().inflate(R.menu.menu_share_detail, popupMenu.getMenu());
-
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.correct:
-                                Intent intent = new Intent(ShareDetailActivity.this, EditActivity.class);
-                                intent.putExtra("id",id);
-                                startActivity(intent);
-                                popupMenu.dismiss();
-                                break;
-                            case R.id.delete:
-                                AlertDialog.Builder dialog = new AlertDialog.Builder(ShareDetailActivity.this);
-
-                                dialog.setMessage("게시물을 삭제하시겠어요?")
-                                        .setTitle("게시물 삭제")
-                                        .setPositiveButton("아니오", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                Log.i("Dialog", "아니오");
-                                            }
-                                        })
-                                        .setNegativeButton("네", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                Log.i("Dialog", "네");
-
-                                                Apiinterface apiinterface = Api.createService(Apiinterface.class,token,ShareDetailActivity.this);
-
-                                                Call<ResponseBody> call = apiinterface.deleteShare(Integer.parseInt(id));
-                                                call.enqueue(new Callback<ResponseBody>() {
-                                                    @Override
-                                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                                                        if (response.isSuccessful()) {
-
-                                                            if (response.code() == 200) {
-                                                                Log.d("성공", new Gson().toJson(response.code()));
-
-                                                                Toast.makeText(ShareDetailActivity.this, "삭제가 완료되었습니다.", Toast.LENGTH_LONG).show();
-
-                                                                //핸들러를 통한 액티비티 종료 시점 조절
-                                                                Handler handler = new Handler();
-                                                                handler.postDelayed(new Runnable() {
-                                                                    @Override
-                                                                    public void run() {
-                                                                        Intent intent = new Intent(ShareDetailActivity.this, MainActivity.class);
-                                                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                                        startActivity(intent);
-                                                                    }
-                                                                }, 1000);
-
-                                                            }
-
-
-                                                        }else if(response.code() == 404){
-                                                            Toast.makeText(ShareDetailActivity.this, "해당 포스트를 찾을 수 없습니다.", Toast.LENGTH_LONG).show();
-                                                            //Log.d("sharedetail,del", "해당 포스트를 찾을 수 없습니다.");
-                                                        }else if(response.code() == 400){
-                                                            Toast.makeText(ShareDetailActivity.this, "해당 권한이 없습니다.", Toast.LENGTH_LONG).show();
-                                                            //Log.d("sharedetail,del", "해당 권한이 없습니다.");
-                                                        }
-                                                        else {
-                                                            Log.d("sharedetail,del", new Gson().toJson(response.errorBody()));
-                                                            Log.d("sharedetail,del", response.toString());
-                                                            Log.d("sharedetail,del", String.valueOf(response.code()));
-                                                            Log.d("sharedetail,del", response.message());
-                                                            Log.d("sharedetail,del", String.valueOf(response.raw().request().url().url()));
-                                                            Log.d("sharedetail,del", new Gson().toJson(response.raw().request()));
-
-                                                        }
-
-                                                    }
-
-                                                    @Override
-                                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                                                        Log.d("sharedetail,del", String.valueOf(t));
-
-                                                    }
-                                                });
-                                            }
-                                        }).show();
-                                popupMenu.dismiss();
-                                break;
-                        }
-
-
-                        return false;
-                    }
-                });
-                popupMenu.show();
-            }
-
-        });
-
-
+        getUser(token);
 
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //finish();
-                Intent intent = new Intent(ShareDetailActivity.this, MainActivity.class);
+                finish();
+                /*Intent intent = new Intent(ShareDetailActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                startActivity(intent);*/
             }
         });
 
@@ -234,6 +137,7 @@ public class ShareDetailActivity extends AppCompatActivity {
                                 Intent intent = new Intent(ShareDetailActivity.this, ChattingActivity.class);
                                 intent.putExtra("id",id);
                                 startActivity(intent);
+                                finish();
                             }
 
                         }else{
@@ -243,6 +147,7 @@ public class ShareDetailActivity extends AppCompatActivity {
                                 Intent intent = new Intent(ShareDetailActivity.this, ChattingActivity.class);
                                 intent.putExtra("id",id);
                                 startActivity(intent);
+                                finish();
 
                             }
                             else if(response.code() == 404){
@@ -292,6 +197,8 @@ public class ShareDetailActivity extends AppCompatActivity {
                         tv_title.setText(share.getTitle());
                         tv_dislike.setText(share.getUserbad());
                         tv_like.setText(share.getUsergood());
+                        editname = share.getUsername();
+                        //Log.d("edit",editname);
                         tv_username.setText(share.getUsername());
                         tv_userbio.setText(share.getUsertext());
                         tv_place.setText(share.getPlace());
@@ -304,6 +211,7 @@ public class ShareDetailActivity extends AppCompatActivity {
                                 .into(img_profile);
                         tv_category.setText(share.getCategory());
                         List<String> hashtag = share.getHashtag();
+                        tv_date.setText(calcDate(share.getDate()));
 
                         String str="";
                         for(int i=0; i < hashtag.size(); i++){
@@ -342,6 +250,7 @@ public class ShareDetailActivity extends AppCompatActivity {
                     Intent intent = new Intent(ShareDetailActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
+                    finish();
                 }
                 else{
                     Log.d("sharedetail,getshare", new Gson().toJson(response.errorBody()));
@@ -370,6 +279,176 @@ public class ShareDetailActivity extends AppCompatActivity {
         res_price = df.format(Double.parseDouble(price.replaceAll(",","")));
 
         return res_price;
+    }
+
+    public String calcDate(String date){
+        String time = date;
+        String result;
+        time = time.substring(0,10) + " " +time.substring(11,19);
+        Log.d("time",time);
+        Timestamp posttime = Timestamp.valueOf(time);
+        Timestamp curtime = new Timestamp(System.currentTimeMillis());
+        long diff = curtime.getTime() - posttime.getTime();
+        //long mysec = diff / 1000 % 60;
+        long mymin = diff / (60 * 1000) % 60;
+        long myhour = diff / (60 * 60 * 1000) % 24;
+        long myday = diff / (24 * 60 * 60 * 1000);
+
+        if(myday > 0){
+            result = Integer.toString((int) myday) + "일전";
+
+        }else if(myday <= 0 && myhour > 0){
+            result = Integer.toString((int) myhour) + "시간" + "전";
+        }
+        else{
+            result = Integer.toString((int) mymin) + "분" + "전";
+        }
+
+        return result;
+    }
+
+    public void getUser(Token token){
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, ShareDetailActivity.this);
+        Call<UserProfileResponse> call = apiinterface.getUserProfile();
+        call.enqueue(new Callback<UserProfileResponse>() {
+            @Override
+            public void onResponse(Call<UserProfileResponse> call, Response<UserProfileResponse> response) {
+
+                if(response.isSuccessful() && response.body() != null) {
+                    if (response.body().getResult().equals("PROFILE_READ_SUCCESS")) {
+                        UserProfileResponse res = response.body();
+                        username = res.getData().getNickname();
+
+                        if(username.equals(editname)){
+                            btn_more.setVisibility(View.VISIBLE);
+                            btn_more.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    final PopupMenu popupMenu = new PopupMenu(getApplicationContext(), v);
+                                    getMenuInflater().inflate(R.menu.menu_share_detail, popupMenu.getMenu());
+
+                                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                                        @Override
+                                        public boolean onMenuItemClick(MenuItem item) {
+                                            switch (item.getItemId()) {
+                                                case R.id.correct:
+                                                    Intent intent = new Intent(ShareDetailActivity.this, EditActivity.class);
+                                                    intent.putExtra("id",id);
+                                                    startActivity(intent);
+                                                    popupMenu.dismiss();
+                                                    break;
+                                                case R.id.delete:
+                                                    AlertDialog.Builder dialog = new AlertDialog.Builder(ShareDetailActivity.this);
+
+                                                    dialog.setMessage("게시물을 삭제하시겠어요?")
+                                                            .setTitle("게시물 삭제")
+                                                            .setPositiveButton("아니오", new DialogInterface.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(DialogInterface dialog, int which) {
+                                                                    Log.i("Dialog", "아니오");
+                                                                }
+                                                            })
+                                                            .setNegativeButton("네", new DialogInterface.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(DialogInterface dialog, int which) {
+                                                                    Log.i("Dialog", "네");
+
+                                                                    Apiinterface apiinterface = Api.createService(Apiinterface.class,token,ShareDetailActivity.this);
+
+                                                                    Call<ResponseBody> call = apiinterface.deleteShare(Integer.parseInt(id));
+                                                                    call.enqueue(new Callback<ResponseBody>() {
+                                                                        @Override
+                                                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                                                                            if (response.isSuccessful()) {
+
+                                                                                if (response.code() == 200) {
+                                                                                    Log.d("성공", new Gson().toJson(response.code()));
+
+                                                                                    Toast.makeText(ShareDetailActivity.this, "삭제가 완료되었습니다.", Toast.LENGTH_LONG).show();
+
+                                                                                    //핸들러를 통한 액티비티 종료 시점 조절
+                                                                                    Handler handler = new Handler();
+                                                                                    handler.postDelayed(new Runnable() {
+                                                                                        @Override
+                                                                                        public void run() {
+                                                                                            finish();
+                                                                        /*Intent intent = new Intent(ShareDetailActivity.this, MainActivity.class);
+                                                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                                        startActivity(intent);*/
+                                                                                        }
+                                                                                    }, 1000);
+
+                                                                                }
+
+
+                                                                            }else if(response.code() == 404){
+                                                                                Toast.makeText(ShareDetailActivity.this, "해당 포스트를 찾을 수 없습니다.", Toast.LENGTH_LONG).show();
+                                                                                //Log.d("sharedetail,del", "해당 포스트를 찾을 수 없습니다.");
+                                                                            }else if(response.code() == 400){
+                                                                                Toast.makeText(ShareDetailActivity.this, "해당 권한이 없습니다.", Toast.LENGTH_LONG).show();
+                                                                                //Log.d("sharedetail,del", "해당 권한이 없습니다.");
+                                                                            }
+                                                                            else {
+                                                                                Log.d("sharedetail,del", new Gson().toJson(response.errorBody()));
+                                                                                Log.d("sharedetail,del", response.toString());
+                                                                                Log.d("sharedetail,del", String.valueOf(response.code()));
+                                                                                Log.d("sharedetail,del", response.message());
+                                                                                Log.d("sharedetail,del", String.valueOf(response.raw().request().url().url()));
+                                                                                Log.d("sharedetail,del", new Gson().toJson(response.raw().request()));
+
+                                                                            }
+
+                                                                        }
+
+                                                                        @Override
+                                                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                                                            Log.d("sharedetail,del", String.valueOf(t));
+
+                                                                        }
+                                                                    });
+                                                                }
+                                                            }).show();
+                                                    popupMenu.dismiss();
+                                                    break;
+                                            }
+
+
+                                            return false;
+                                        }
+                                    });
+                                    popupMenu.show();
+                                }
+
+                            });
+                        }
+                    }
+                }else if(response.code() == 404){
+                    Log.w("userprof,getuserprof","해당 프로필을 찾을 수 없습니다");
+                }
+                else{
+
+                    Log.d("userprof,getuserprof", new Gson().toJson(response.errorBody()));
+                    Log.d("userprof,getuserprof", response.toString());
+                    Log.d("userprof,getuserprof", String.valueOf(response.code()));
+                    Log.d("userprof,getuserprof", response.message());
+                    Log.d("userprof,getuserprof", String.valueOf(response.raw().request().url().url()));
+                    Log.d("userprof,getuserprof", new Gson().toJson(response.raw().request()));
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<UserProfileResponse> call, Throwable t) {
+
+                Log.d("userprof,getuserprof", String.valueOf(t));
+
+            }
+        });
+
     }
 
 }
