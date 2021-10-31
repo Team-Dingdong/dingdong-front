@@ -363,6 +363,7 @@ public class ModifyInfoActivity extends AppCompatActivity {
                                     }
                                 });
 
+                                pref.edit().putBoolean("oauth.loggedin",false).apply();
                                 Intent intent = new Intent(ModifyInfoActivity.this, TutorialActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
