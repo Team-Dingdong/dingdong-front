@@ -53,6 +53,7 @@ public class PlanningActivity extends AppCompatActivity {
     private String info = null;
     private String id;
     private Token token;
+    private Boolean state = true; //true시 생성 false시 수
 
 
     @Override
@@ -224,7 +225,12 @@ public class PlanningActivity extends AppCompatActivity {
                     /*if(Integer.parseInt(mm) < 10){
                         //gettime = h + ":" + mm + ":00";
                     }*/
-                    sendInfo(token);
+                    if(state){
+                        sendInfo(token);
+                    }else{
+                        correctInfo(token);
+                    }
+
 
                 }
                 else{
@@ -258,15 +264,19 @@ public class PlanningActivity extends AppCompatActivity {
                         getmin = res.getData().getPromiseTime().substring(3, 5);
                         //Log.d("성공", getdate + gethour + getmin);
 
-                        et_place.setText(getlocal);
                         gettime = gethour + "시 " + getmin + "분";
                         time = gethour + ":" + getmin;
                         date = getdate;
                         getlocal = res.getData().getPromiseLocal();
                         info = makeInfo(getdate, gettime, getlocal);
                         tv_date.setText(getdate);
+                        et_place.setText(getlocal);
                         tv_time.setText(gettime);
                         tv_info.setText(info);
+
+                        if( res.getData().getPromiseDate().length() > 0 && res.getData().getPromiseTime().length() >0 && res.getData().getPromiseLocal().length() > 0){
+                            state = false; //수정으로 변경
+                        }
 
                     }
                 } else if(response.code() == 404){
@@ -335,12 +345,12 @@ public class PlanningActivity extends AppCompatActivity {
                 }else if(response.code() == 404){
                     Toast.makeText(PlanningActivity.this, "해당 채팅방을 찾을 수 없습니다.",Toast.LENGTH_SHORT).show();
                 }else{
-                    Log.d("sharedetail,del", new Gson().toJson(response.errorBody()));
-                    Log.d("sharedetail,del", response.toString());
-                    Log.d("sharedetail,del", String.valueOf(response.code()));
-                    Log.d("sharedetail,del", response.message());
-                    Log.d("sharedetail,del", String.valueOf(response.raw().request().url().url()));
-                    Log.d("sharedetail,del", new Gson().toJson(response.raw().request()));
+                    Log.d("planning,setprom", new Gson().toJson(response.errorBody()));
+                    Log.d("planning,setprom", response.toString());
+                    Log.d("planning,setprom", String.valueOf(response.code()));
+                    Log.d("planning,setprom", response.message());
+                    Log.d("planning,setprom", String.valueOf(response.raw().request().url().url()));
+                    Log.d("planning,setprom", new Gson().toJson(response.raw().request()));
                 }
             }
 
@@ -348,6 +358,67 @@ public class PlanningActivity extends AppCompatActivity {
             public void onFailure(Call<ResponseBody> call, Throwable t) {
 
                 Log.d("planning,setprom", String.valueOf(t));
+
+
+            }
+        });
+
+    }
+
+    public void correctInfo(Token token){
+        ChatPromiseRequest chatPromiseRequest = new ChatPromiseRequest(tv_date.getText().toString(),tv_time.getText().toString(),et_place.getText().toString());
+        Apiinterface apiinterface = Api.createService(Apiinterface.class, token, PlanningActivity.this);
+        Call<ResponseBody> call = apiinterface.setPatchPromise(Integer.parseInt(id), chatPromiseRequest);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    if (response.code() == 200) {
+
+                        Toast.makeText(PlanningActivity.this, "생성이 완료되었습니다.",Toast.LENGTH_LONG).show();
+
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                finish();
+                            }
+                        }, 1000);
+
+
+                    }
+                    if (response.code() == 201) {
+
+                        Toast.makeText(PlanningActivity.this, "수정이 완료되었습니다.",Toast.LENGTH_LONG).show();
+
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                finish();
+                            }
+                        }, 1000);
+                    }
+                }else if(response.code() == 400){
+                    Toast.makeText(PlanningActivity.this, "약속이 확정되어 수정할 수 없습니다.",Toast.LENGTH_SHORT).show();
+                }else if(response.code() == 403){
+                    Toast.makeText(PlanningActivity.this, "해당 채팅방의 방장이 아닙니다.",Toast.LENGTH_SHORT).show();
+                }else if(response.code() == 404){
+                    Toast.makeText(PlanningActivity.this, "해당 채팅방을 찾을 수 없습니다.",Toast.LENGTH_SHORT).show();
+                }else{
+                    Log.d("planning,patchprom", new Gson().toJson(response.errorBody()));
+                    Log.d("planning,patchprom", response.toString());
+                    Log.d("planning,patchprom", String.valueOf(response.code()));
+                    Log.d("planning,patchprom", response.message());
+                    Log.d("planning,patchprom", String.valueOf(response.raw().request().url().url()));
+                    Log.d("planning,patchprom", new Gson().toJson(response.raw().request()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                Log.d("planning,patchprom", String.valueOf(t));
 
 
             }
