@@ -37,7 +37,6 @@ public class TownActivity extends AppCompatActivity {
     String town1, town2;
     String num_town1, num_town2;
     String state;
-    Boolean ok;
 
 
 
@@ -56,7 +55,7 @@ public class TownActivity extends AppCompatActivity {
         tv_town1 = findViewById(R.id.tv_town1);
         tv_town2 = findViewById(R.id.tv_town2);
         btn_back = findViewById(R.id.ic_back);
-
+        button.setEnabled(false);
 
         SharedPreferences pref = getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         String access = pref.getString("oauth.accesstoken","");
@@ -66,7 +65,6 @@ public class TownActivity extends AppCompatActivity {
 
         Token token = new Token(access,refresh,expire,tokentype);
 
-        ok= false;
         town1="";
         town2="";
 
@@ -100,9 +98,8 @@ public class TownActivity extends AppCompatActivity {
             imgbtn_2.setEnabled(true);
             imgbtn_2.setVisibility(View.VISIBLE);
             tv_town2.setVisibility(View.VISIBLE);
-            button.setClickable(true);
+            button.setEnabled(true);
             button.setBackgroundTintList(getResources().getColorStateList(R.color.blue));
-            ok =true;
         }
 
         btn_back.setOnClickListener(new View.OnClickListener() {
@@ -151,9 +148,8 @@ public class TownActivity extends AppCompatActivity {
               imgbtn_1.setEnabled(false);
               imgbtn_1.setVisibility(View.INVISIBLE);
               imgbtn_AddTown1.setVisibility(View.VISIBLE);
-                button.setClickable(false);
+                button.setEnabled(false);
                 button.setBackgroundTintList(getResources().getColorStateList(R.color.grey));
-                ok = false;
 
             }
         });
@@ -166,9 +162,8 @@ public class TownActivity extends AppCompatActivity {
                 imgbtn_2.setEnabled(false);
                 imgbtn_2.setVisibility(View.INVISIBLE);
                 imgbtn_AddTown2.setVisibility(View.VISIBLE);
-                button.setClickable(false);
+                button.setEnabled(false);
                 button.setBackgroundTintList(getResources().getColorStateList(R.color.grey));
-                ok = true;
             }
         });
 
@@ -178,7 +173,7 @@ public class TownActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //서버로 리퀘스트
-                if (ok) {
+
                     int local1, local2;
                     local1 = Integer.parseInt(num_town1);
                     local2 = Integer.parseInt(num_town2);
@@ -209,7 +204,6 @@ public class TownActivity extends AppCompatActivity {
                 Intent intent = new Intent(TownActivity.this, MainActivity.class);
                 startActivity(intent);*/
                 }
-            }
         });
     }
 
@@ -257,7 +251,7 @@ public class TownActivity extends AppCompatActivity {
                         tv_town2.setVisibility(View.VISIBLE);
                         imgbtn_2.setVisibility(View.VISIBLE);
                         imgbtn_2.setEnabled(true);
-                        button.setClickable(true);
+                        button.setEnabled(true);
                         button.setBackgroundTintList(getResources().getColorStateList(R.color.blue));
                         Log.d("동 확인",town2 + num_town2);
                     }
