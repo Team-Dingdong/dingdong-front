@@ -49,7 +49,11 @@ public class UserRatingAdapter extends RecyclerView.Adapter<UserRatingAdapter.Vi
         Glide.with(holder.img_profile.getContext())
                 .load(chatUser.getImgUrl())
                 .into(holder.img_profile);
-        holder.tv_username.setText(chatUser.getUsername());
+        if(chatUser.getUsername().equals("null")){
+            holder.tv_username.setText("탈퇴한 회원");
+        }else{
+            holder.tv_username.setText(chatUser.getUsername());
+        }
         holder.radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {

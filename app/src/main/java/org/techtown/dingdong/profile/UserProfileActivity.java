@@ -225,8 +225,12 @@ public class UserProfileActivity extends AppCompatActivity {
                     if(response.body().getResult().equals("PROFILE_READ_SUCCESS")) {
                         UserProfileResponse.Data res = response.body().getData();
                         Log.d("성공", new Gson().toJson(res));
-                        tv_nickname.setText(res.getNickname());
                         nickname = res.getNickname();
+                        if(nickname.equals("null")){
+                            tv_nickname.setText("탈퇴한 회원");
+                        }else{
+                            tv_nickname.setText(res.getNickname());
+                        }
                         Glide.with(UserProfileActivity.this)
                                 .load(res.getProfileImg())
                                 .into(img_profile);

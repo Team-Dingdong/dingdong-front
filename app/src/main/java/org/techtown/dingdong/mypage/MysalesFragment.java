@@ -171,7 +171,6 @@ public class MysalesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getHistory(token);
     }
 
     public void setDummy(){

@@ -114,7 +114,11 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
                 ((ChattingAdapter.LeftViewHolder)holder).tv_date.setVisibility(View.VISIBLE);
                 ((ChattingAdapter.LeftViewHolder)holder).tv_date.setText(mydate);
             }
-            ((ChattingAdapter.LeftViewHolder)holder).tv_username.setText(myChatList.get(position).getName());
+            if(myChatList.get(position).getName().equals("null")){
+                ((ChattingAdapter.LeftViewHolder)holder).tv_username.setText("탈퇴한 회원");
+            }else{
+                ((ChattingAdapter.LeftViewHolder)holder).tv_username.setText(myChatList.get(position).getName());
+            }
             ((ChattingAdapter.LeftViewHolder)holder).tv_content.setText(myChatList.get(position).getContent());
             ((ChattingAdapter.LeftViewHolder)holder).tv_time.setText(mytime);
             Glide.with(((ChattingAdapter.LeftViewHolder) holder).profile.getContext())
@@ -166,7 +170,11 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
                 ((ChattingAdapter.LeftIMGViewHolder)holder).tv_date.setVisibility(View.VISIBLE);
                 ((ChattingAdapter.LeftIMGViewHolder)holder).tv_date.setText(mydate);
             }
-            ((ChattingAdapter.LeftIMGViewHolder)holder).tv_username.setText(myChatList.get(position).getName());
+            if(myChatList.get(position).getName().equals("null")){
+                ((ChattingAdapter.LeftIMGViewHolder)holder).tv_username.setText("탈퇴한 회원");
+            }else{
+                ((ChattingAdapter.LeftIMGViewHolder)holder).tv_username.setText(myChatList.get(position).getName());
+            }
             Glide.with(((ChattingAdapter.LeftIMGViewHolder) holder).img_content.getContext())
                     .load(myChatList.get(position).getContent())
                     .into(((ChattingAdapter.LeftIMGViewHolder) holder).img_content);

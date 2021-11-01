@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -199,7 +200,7 @@ public class ShareDetailActivity extends AppCompatActivity {
                         tv_like.setText(share.getUsergood());
                         editname = share.getUsername();
                         //Log.d("edit",editname);
-                        tv_username.setText(share.getUsername());
+                        //tv_username.setText(share.getUsername());
                         tv_userbio.setText(share.getUsertext());
                         tv_place.setText(share.getPlace());
                         tv_people.setText(people);
@@ -212,6 +213,14 @@ public class ShareDetailActivity extends AppCompatActivity {
                         tv_category.setText(share.getCategory());
                         List<String> hashtag = share.getHashtag();
                         tv_date.setText(calcDate(share.getDate()));
+
+                        if(editname.equals("null")){
+                            btn_enroll.setEnabled(false);
+                            btn_enroll.setBackgroundColor(Color.parseColor("#c5c5c5"));
+                            tv_username.setText("탈퇴한 회원");
+                        }else{
+                            tv_username.setText(share.getUsername());
+                        }
 
                         String str="";
                         for(int i=0; i < hashtag.size(); i++){
