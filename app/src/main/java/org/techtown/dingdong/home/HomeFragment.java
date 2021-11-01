@@ -119,7 +119,7 @@ public class HomeFragment extends Fragment {
         btn_search = v.findViewById(R.id.ic_search);
         nestedScrollView = v.findViewById(R.id.scrollView);
         pgbar = v.findViewById(R.id.pgbar);
-        btn_list = v.findViewById(R.id.btn_list);
+//        btn_list = v.findViewById(R.id.btn_list);
 
         sharelistrecycler.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL, false));
         shareListAdpater = new ShareListAdpater(getActivity(), shareList);
