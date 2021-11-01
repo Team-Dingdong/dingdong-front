@@ -57,7 +57,7 @@ import retrofit2.Retrofit;
 
 public class HomeFragment extends Fragment {
 
-    private ImageButton btn_edit, cat1, cat2, cat3, cat4, btn_trans, btn_search;
+    private ImageButton btn_edit, cat1, cat2, cat3, cat4, btn_trans, btn_search, btn_list;
     private RecyclerView sharelistrecycler;
     ShareListAdpater shareListAdpater;
     private TextView tv_align, tv_region;
@@ -119,6 +119,7 @@ public class HomeFragment extends Fragment {
         btn_search = v.findViewById(R.id.ic_search);
         nestedScrollView = v.findViewById(R.id.scrollView);
         pgbar = v.findViewById(R.id.pgbar);
+        btn_list = v.findViewById(R.id.btn_list);
 
         sharelistrecycler.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL, false));
         shareListAdpater = new ShareListAdpater(getActivity(), shareList);
@@ -193,6 +194,8 @@ public class HomeFragment extends Fragment {
                             }
                         });
                         select_region.setSelection(0);
+
+
                     }
                 }else{
 
@@ -232,7 +235,6 @@ public class HomeFragment extends Fragment {
         });
 
         trans = true;
-
 
 
         tv_align.setOnClickListener(new View.OnClickListener() {

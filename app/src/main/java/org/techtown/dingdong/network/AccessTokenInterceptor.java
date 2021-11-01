@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import org.json.JSONException;
 import org.techtown.dingdong.BuildConfig;
 import org.techtown.dingdong.home.Share;
 import org.techtown.dingdong.login_register.AuthResponse;
@@ -25,6 +26,7 @@ import retrofit2.Callback;
 public class AccessTokenInterceptor implements Interceptor {
 
     private final Token tokenRepo;
+    private Token token;
 
     public AccessTokenInterceptor(Token tokenRepo) {
         this.tokenRepo = tokenRepo;
@@ -37,6 +39,7 @@ public class AccessTokenInterceptor implements Interceptor {
 
 
         if(response.code() == 401){
+            Response r = null;
             String accessToken = tokenRepo.getAccessToken();
             String refreshToken = tokenRepo.getRefreshToken();
             Context context = tokenRepo.getContext();
@@ -49,7 +52,7 @@ public class AccessTokenInterceptor implements Interceptor {
                     if(response.isSuccessful()){
                         if(response.body().getResult().equals("REISSUE_SUCCESS")){
                             LoginResponse.Data mToken = response.body().getData();
-                            Token token = new Token(mToken.getAccessToken(),mToken.getRefreshToken(),mToken.getExpireIn(),mToken.getTokentype());
+                            token = new Token(mToken.getAccessToken(),mToken.getRefreshToken(),mToken.getExpireIn(),mToken.getTokentype());
 
                             SharedPreferences pref = context.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
 
@@ -81,8 +84,33 @@ public class AccessTokenInterceptor implements Interceptor {
                 }
             });
 
+            try {
+                r = makeTokenRefeshCall(request, chain);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return r;
         }
 
         return response;
+    }
+
+    private Response makeTokenRefeshCall(Request request, Chain chain) throws IOException {
+        Log.d("actojintcept", "Retrying new request");
+
+        Request newRequest;
+        newRequest = request.newBuilder()
+                .header("Accept","application/json")
+                .header("Content-type", "application/json")
+                .header("Authorization",
+                        token.getGrantType() + " " + token.getAccessToken())
+                .method(request.method(), request.body()).build();
+
+        Response another = chain.proceed(newRequest);
+        while (another.code() > 201) {
+            makeTokenRefeshCall(newRequest, chain);
+        }
+        return another;
     }
 }

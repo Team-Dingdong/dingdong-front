@@ -214,7 +214,7 @@ public class ShareDetailActivity extends AppCompatActivity {
                         List<String> hashtag = share.getHashtag();
                         tv_date.setText(calcDate(share.getDate()));
 
-                        if(editname.equals("null")){
+                        if(editname.equals("leave")){
                             btn_enroll.setEnabled(false);
                             btn_enroll.setBackgroundColor(Color.parseColor("#c5c5c5"));
                             tv_username.setText("탈퇴한 회원");

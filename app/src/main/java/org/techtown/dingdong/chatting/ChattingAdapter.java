@@ -114,7 +114,7 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
                 ((ChattingAdapter.LeftViewHolder)holder).tv_date.setVisibility(View.VISIBLE);
                 ((ChattingAdapter.LeftViewHolder)holder).tv_date.setText(mydate);
             }
-            if(myChatList.get(position).getName().equals("null")){
+            if(myChatList.get(position).getName().equals("leave")){
                 ((ChattingAdapter.LeftViewHolder)holder).tv_username.setText("탈퇴한 회원");
             }else{
                 ((ChattingAdapter.LeftViewHolder)holder).tv_username.setText(myChatList.get(position).getName());
@@ -170,7 +170,7 @@ public class ChattingAdapter extends RecyclerView.Adapter<ChattingAdapter.ChatVi
                 ((ChattingAdapter.LeftIMGViewHolder)holder).tv_date.setVisibility(View.VISIBLE);
                 ((ChattingAdapter.LeftIMGViewHolder)holder).tv_date.setText(mydate);
             }
-            if(myChatList.get(position).getName().equals("null")){
+            if(myChatList.get(position).getName().equals("leave")){
                 ((ChattingAdapter.LeftIMGViewHolder)holder).tv_username.setText("탈퇴한 회원");
             }else{
                 ((ChattingAdapter.LeftIMGViewHolder)holder).tv_username.setText(myChatList.get(position).getName());

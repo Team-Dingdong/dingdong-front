@@ -60,7 +60,7 @@ public class ChatUserAdapter extends RecyclerView.Adapter<ChatUserAdapter.ViewHo
                 .load(chatuser.getImgUrl())
                 .into(holder.img_profile);
         holder.tv_username.setText(chatuser.getUsername());
-        if(chatuser.getUsername().equals("null")){
+        if(chatuser.getUsername().equals("leave")){
             holder.tv_username.setText("탈퇴한 회원");
         }else{
             holder.tv_username.setText(chatuser.getUsername());

@@ -117,7 +117,7 @@ public class EditActivity extends AppCompatActivity {
 
 
     String[] categories = {"과일·채소", "육류·계란", "간식류", "생필품", "기타"};
-    String[] personnels = {"1", "2", "3", "4", "5"};
+    String[] personnels = {"2", "3", "4", "5"};
     //String[] region = {"미아2동", "안암동"};
 
 
@@ -617,7 +617,7 @@ public class EditActivity extends AppCompatActivity {
                         et_title.setText(share.getTitle());
                         et_price.setText(share.getPrice());
                         et_place.setText(share.getPlace());
-                        int capa = Integer.parseInt(share.getPersonnelcapacity()) -1;
+                        int capa = Integer.parseInt(share.getPersonnelcapacity()) -2;
                         select_personnel.setSelection(capa);
                         List<String> hashtag = share.getHashtag();
                         for(int i=0; i < hashtag.size(); i++){

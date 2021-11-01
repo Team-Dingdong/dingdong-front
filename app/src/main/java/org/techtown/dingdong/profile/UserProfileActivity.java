@@ -226,7 +226,7 @@ public class UserProfileActivity extends AppCompatActivity {
                         UserProfileResponse.Data res = response.body().getData();
                         Log.d("성공", new Gson().toJson(res));
                         nickname = res.getNickname();
-                        if(nickname.equals("null")){
+                        if(nickname.equals("leave")){
                             tv_nickname.setText("탈퇴한 회원");
                         }else{
                             tv_nickname.setText(res.getNickname());

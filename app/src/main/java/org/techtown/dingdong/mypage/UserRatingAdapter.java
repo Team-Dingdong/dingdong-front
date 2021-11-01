@@ -49,7 +49,7 @@ public class UserRatingAdapter extends RecyclerView.Adapter<UserRatingAdapter.Vi
         Glide.with(holder.img_profile.getContext())
                 .load(chatUser.getImgUrl())
                 .into(holder.img_profile);
-        if(chatUser.getUsername().equals("null")){
+        if(chatUser.getUsername().equals("leave")){
             holder.tv_username.setText("탈퇴한 회원");
         }else{
             holder.tv_username.setText(chatUser.getUsername());
