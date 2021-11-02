@@ -84,13 +84,13 @@ public class AccessTokenInterceptor implements Interceptor {
                 }
             });
 
-            try {
+            /*try {
                 r = makeTokenRefeshCall(request, chain);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            return r;
+            return r;*/
         }
 
         return response;
