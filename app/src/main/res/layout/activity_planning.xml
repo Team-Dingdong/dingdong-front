@@ -163,6 +163,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:backgroundTint="#C4C4C4"
+            android:maxLength="10"
             android:fontFamily="@font/noto_sans"
             android:paddingHorizontal="10dp"
             android:paddingVertical="5dp"

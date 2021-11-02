@@ -84,13 +84,15 @@ public class AccessTokenInterceptor implements Interceptor {
                 }
             });
 
-            /*try {
+            /*
+
+            try {
                 r = makeTokenRefeshCall(request, chain);
+                return r;
             } catch (IOException e) {
                 e.printStackTrace();
-            }
+            }*/
 
-            return r;*/
         }
 
         return response;
@@ -108,9 +110,9 @@ public class AccessTokenInterceptor implements Interceptor {
                 .method(request.method(), request.body()).build();
 
         Response another = chain.proceed(newRequest);
-        while (another.code() > 201) {
+        /*while (another.code() > 201) {
             makeTokenRefeshCall(newRequest, chain);
-        }
+        }*/
         return another;
     }
 }
